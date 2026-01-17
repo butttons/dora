@@ -1,0 +1,12 @@
+{
+  "name": "dora-docs",
+  "main": "./dist/_worker.js/index.js",
+  "compatibility_date": "2026-01-17",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": "./dist",
+  },
+  "observability": {
+    "enabled": true,
+  },
+}

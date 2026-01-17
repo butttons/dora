@@ -307,7 +307,7 @@ dora requires a SCIP indexer for your language:
 - **Python:** `scip-python`
 - **Go:** `scip-go`
 
-See [SCIP indexers](https://github.com/sourcegraph/scip#indexers) for full list.
+See [SCIP indexers](https://github.com/sourcegraph/scip?tab=readme-ov-file#tools-using-scip) for full list.
 
 ## Common Commands
 
@@ -370,7 +370,7 @@ Errors go to stderr with exit code 1.
 - **Validate architecture:** Run `dora cycles` periodically
 - **Pipe to jq** for filtering JSON output
 
-### ❌ Never Do This
+### Never Do This
 
 - **Don't modify .dora/ directory** - it's auto-generated
 - **Don't commit .dora/dora.db** - add to .gitignore

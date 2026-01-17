@@ -1,0 +1,149 @@
+---
+import "../styles/global.css";
+import { Terminal } from "lucide-astro";
+
+interface Props {
+    title: string;
+    description?: string;
+}
+
+const {
+    title,
+    description = "Code context CLI for AI agents. Fast, local, and built for speed.",
+} = Astro.props;
+const currentPath = Astro.url.pathname;
+const canonicalURL = new URL(
+    currentPath,
+    "https://dora-docs.butttons.workers.dev",
+).href;
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="icon" type="image/png" href="/favicon.png" />
+        <link rel="canonical" href={canonicalURL} />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
+        <title>{title}</title>
+        <meta name="description" content={description} />
+        <meta name="generator" content={Astro.generator} />
+
+        <!-- Open Graph -->
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={canonicalURL} />
+        <meta
+            property="og:image"
+            content="https://dora-docs.butttons.workers.dev/og-image.webp"
+        />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+
+        <!-- Twitter -->
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta
+            name="twitter:image"
+            content="https://dora-docs.butttons.workers.dev/og-image.webp"
+        />
+    </head>
+    <body class="bg-zinc-950 text-zinc-100 min-h-screen">
+        <nav
+            class="border-b border-zinc-800 bg-zinc-950/50 backdrop-blur-sm sticky top-0 z-50"
+        >
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
+                <div class="flex items-center justify-between">
+                    <a
+                        href="/"
+                        class="flex items-center gap-2 text-lg sm:text-xl font-bold text-blue-500"
+                    >
+                        <Terminal class="w-5 h-5 sm:w-6 sm:h-6" />
+                        <span>dora</span>
+                    </a>
+                    <div
+                        class="flex items-center gap-3 sm:gap-6 text-sm sm:text-base"
+                    >
+                        <a
+                            href="/"
+                            class:list={[
+                                "hover:text-blue-500 transition-colors",
+                                currentPath === "/"
+                                    ? "text-blue-500"
+                                    : "text-zinc-400",
+                            ]}
+                        >
+                            Home
+                        </a>
+                        <a
+                            href="/docs"
+                            class:list={[
+                                "hover:text-blue-500 transition-colors",
+                                currentPath === "/docs"
+                                    ? "text-blue-500"
+                                    : "text-zinc-400",
+                            ]}
+                        >
+                            Docs
+                        </a>
+                        <a
+                            href="/commands"
+                            class:list={[
+                                "hover:text-blue-500 transition-colors",
+                                currentPath === "/commands"
+                                    ? "text-blue-500"
+                                    : "text-zinc-400",
+                            ]}
+                        >
+                            Commands
+                        </a>
+                        <a
+                            href="/architecture"
+                            class:list={[
+                                "hover:text-blue-500 transition-colors hidden sm:inline",
+                                currentPath === "/architecture"
+                                    ? "text-blue-500"
+                                    : "text-zinc-400",
+                            ]}
+                        >
+                            Architecture
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <main>
+            <slot />
+        </main>
+        <footer class="border-t border-zinc-800 mt-20">
+            <div class="max-w-6xl mx-auto px-6 py-8">
+                <div
+                    class="flex items-center justify-between text-zinc-500 text-sm"
+                >
+                    <p>
+                        Built by <a
+                            href="https://butttons.dev"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="text-blue-500 hover:underline">Yash</a
+                        >
+                    </p>
+                    <a
+                        href="https://github.com/butttons/dora"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="text-blue-500 hover:underline">GitHub</a
+                    >
+                </div>
+            </div>
+        </footer>
+    </body>
+</html>

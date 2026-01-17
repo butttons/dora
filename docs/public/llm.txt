@@ -1,0 +1,156 @@
+# dora - Code Context CLI for AI Agents
+
+> Fast, local code intelligence for AI coding assistants
+
+## Overview
+
+dora is a command-line tool that helps AI agents understand large codebases by querying SCIP (SCIP Code Intelligence Protocol) indexes. It converts SCIP protobuf indexes into an optimized SQLite database for instant code intelligence queries.
+
+## Key Features
+
+- **Fast Queries**: Optimized SQLite database with denormalized fields for instant lookups
+- **SCIP Powered**: Built on SCIP protobuf indexes for accurate symbol information
+- **Symbol Search**: Find symbols, definitions, and references across your entire codebase
+- **Dependency Analysis**: Understand file dependencies, reverse dependencies, and impact analysis
+- **Architecture Queries**: Detect cycles, coupling, complexity, and architectural smells
+- **Custom Queries**: Write arbitrary SQL queries for advanced codebase analysis
+
+## Quick Start
+
+```bash
+dora init
+dora index
+dora symbol Logger
+```
+
+## Commands
+
+### Setup
+- `dora init` - Initialize dora in your project
+- `dora index` - Index the codebase (supports --full, --skip-scip)
+- `dora status` - Check index health and statistics
+
+### Code Exploration
+- `dora map` - High-level overview: packages, files, symbols
+- `dora ls [dir]` - List files with metadata (supports --limit, --sort)
+- `dora symbol <query>` - Search for symbols (supports --kind, --limit)
+- `dora file <path>` - Analyze a specific file's symbols and dependencies
+- `dora refs <symbol>` - Find all references to a symbol
+
+### Dependencies
+- `dora deps <path>` - Show dependencies (supports --depth)
+- `dora rdeps <path>` - Show reverse dependencies (supports --depth)
+- `dora adventure <from> <to>` - Find shortest path between files
+- `dora exports <path>` - List exported symbols
+- `dora imports <path>` - Show file imports
+
+### Architecture Analysis
+- `dora cycles` - Find circular dependencies (supports --limit)
+- `dora coupling` - Find tightly coupled files (supports --threshold)
+- `dora complexity` - Show complexity metrics (supports --sort)
+- `dora treasure` - Find most referenced files and hub files
+- `dora lost` - Find potentially unused symbols (supports --limit)
+- `dora leaves` - Find leaf nodes (supports --max-dependents)
+
+### Advanced
+- `dora schema` - Show database schema for custom queries
+- `dora query "<sql>"` - Execute custom SQL queries (read-only)
+- `dora changes [ref]` - Show changed files and impact
+- `dora graph <path>` - Generate dependency graph data
+
+## Architecture & Philosophy
+
+### The Problem
+
+AI coding assistants struggle with large codebases. They can't read every file, it's too slow and exceeds token limits. Without context, they make uninformed changes that break dependencies, miss important patterns, and create architectural debt.
+
+Traditional approaches like vector search or AST parsing are either imprecise or too slow. What AI agents need is fast, accurate code intelligence; the ability to understand symbols, dependencies, and architecture without reading source code.
+
+### The Solution
+
+dora builds a queryable index of your codebase using SCIP (SCIP Code Intelligence Protocol). SCIP is a language-agnostic format for code navigation data, developed at Sourcegraph.
+
+Instead of grepping files or parsing syntax trees, dora converts SCIP indexes into an optimized SQLite database. This gives AI agents instant access to:
+
+- Symbol definitions and their locations
+- File dependencies and reverse dependencies
+- Symbol references across the entire codebase
+- Architectural metrics like coupling and complexity
+
+### Design Principles
+
+1. **Speed Over Everything**: AI agents need instant answers. dora uses denormalized SQLite tables with pre-computed aggregates. Queries that would normally require expensive JOINs and COUNTs run in milliseconds.
+
+2. **No Source Code in Database**: dora stores metadata only; symbol names, locations, dependencies. The actual source code stays in your files. This keeps the database small and queries fast. AI agents can use dora to find the right code, then read only what they need.
+
+3. **Incremental by Default**: dora only reindexes files that changed. On subsequent runs, it's 10-50x faster than a full rebuild. This makes it practical to keep indexes up-to-date without waiting.
+
+4. **Queryable, Not Opinionated**: Built-in commands cover common cases, but dora exposes the full SQLite database. AI agents can write custom SQL queries for advanced analysis. The schema is simple and well-documented.
+
+5. **JSON All the Way**: All output is valid JSON. No pretty-printing, no colors, no extra formatting. This makes dora trivial to integrate with AI agents, scripts, and other tools.
+
+### Performance Optimizations
+
+- **Denormalized Fields**: Pre-computed counts stored directly on rows: symbol_count, dependency_count, reference_count. No expensive aggregations at query time.
+- **Local Symbol Filtering**: Function parameters and closure variables are flagged as "local" and filtered by default. Reduces noise by ~20% in symbol searches.
+- **Indexed Lookups**: Strategic indexes on file_id, symbol_id, path, and kind enable instant filtering and joins.
+- **Single-Query References**: Symbol references use a single JOIN with GROUP_CONCAT. No N+1 queries, no multiple round-trips.
+
+## Use Cases
+
+- **Refactoring**: Find all references to a symbol before renaming it. Understand the impact of moving a file.
+- **Code Review**: Detect new circular dependencies. Flag files with high coupling or complexity.
+- **Onboarding**: Explore the codebase structure. Find entry points and understand dependencies.
+- **Dead Code Detection**: Find symbols with zero references. Identify unused exports and leaf files.
+- **AI-Assisted Development**: Give AI agents the context they need to make informed changes without reading every file.
+
+## Common Workflows
+
+### Initial Setup
+```bash
+dora init
+dora index
+```
+
+### Find and Understand Code
+```bash
+dora symbol AuthService
+dora file src/auth/service.ts
+dora refs validateToken
+```
+
+### Impact Analysis
+```bash
+dora rdeps src/types.ts --depth 2
+dora lost --limit 50
+```
+
+### Architecture Health
+```bash
+dora cycles
+dora coupling --threshold 10
+dora complexity --sort complexity
+```
+
+### Custom Analysis
+```bash
+dora query "SELECT kind, COUNT(*) FROM symbols GROUP BY kind"
+```
+
+## Output Format
+
+All commands output valid JSON to stdout. Errors are sent to stderr. This makes dora easy to integrate with AI agents and scripts.
+
+## Future
+
+- Multi-language support (Python, Go, Rust, Java)
+- Watch mode for automatic reindexing
+- Integration with language servers (LSP)
+- Visualization tools for dependency graphs
+
+The goal is simple: make code intelligence fast, accurate, and accessible to AI agents.
+
+---
+
+Built for AI agents. Open source.
+Built by Yash (https://butttons.dev)

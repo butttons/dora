@@ -1,0 +1,1162 @@
+---
+import Layout from "../layouts/Layout.astro";
+import {
+    Terminal,
+    Download,
+    Package,
+    Zap,
+    Code,
+    AlertCircle,
+} from "lucide-astro";
+---
+
+<Layout
+    title="Documentation - dora"
+    description="Complete documentation for dora - Code Context CLI for AI Agents. Learn installation, setup, commands, and integration with AI agents."
+>
+    <div class="max-w-6xl mx-auto px-6 py-20">
+        <!-- Header -->
+        <div class="mb-12">
+            <h1 class="text-5xl font-bold mb-4">Documentation</h1>
+            <p class="text-xl text-zinc-400">
+                Complete guide to using dora - Code Context CLI for AI Agents
+            </p>
+        </div>
+
+        <!-- Features -->
+        <div class="mb-16">
+            <h2 class="text-2xl font-bold mb-6 text-blue-400">Features</h2>
+            <ul class="space-y-3 text-zinc-300">
+                <li class="flex items-start gap-3">
+                    <span class="text-blue-400 mt-1">•</span>
+                    <span
+                        ><strong>Language-Agnostic SCIP Support</strong> - Works with
+                        any SCIP-compatible indexer (TypeScript, Java, Rust, Python,
+                        etc.)</span
+                    >
+                </li>
+                <li class="flex items-start gap-3">
+                    <span class="text-blue-400 mt-1">•</span>
+                    <span
+                        ><strong>Fast Queries</strong> - Uses denormalized database
+                        with pre-computed aggregates for common operations</span
+                    >
+                </li>
+                <li class="flex items-start gap-3">
+                    <span class="text-blue-400 mt-1">•</span>
+                    <span
+                        ><strong>Architecture Analysis</strong> - Detect circular
+                        dependencies, coupling, and complexity hotspots</span
+                    >
+                </li>
+                <li class="flex items-start gap-3">
+                    <span class="text-blue-400 mt-1">•</span>
+                    <span
+                        ><strong>Dependency Tracking</strong> - Track dependencies
+                        at any depth with symbol-level granularity</span
+                    >
+                </li>
+                <li class="flex items-start gap-3">
+                    <span class="text-blue-400 mt-1">•</span>
+                    <span
+                        ><strong>JSON Output</strong> - Structured data for AI agent
+                        consumption</span
+                    >
+                </li>
+            </ul>
+        </div>
+
+        <!-- System Requirements -->
+        <div class="mb-16">
+            <h2 class="text-2xl font-bold mb-6 text-blue-400">
+                System Requirements
+            </h2>
+            <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-6">
+                <ul class="space-y-2 text-zinc-300">
+                    <li>
+                        <strong>Binary users:</strong> No dependencies - standalone
+                        executable
+                    </li>
+                    <li><strong>From source:</strong> Bun 1.0+ required</li>
+                    <li>
+                        <strong>SCIP indexer:</strong> Language-specific (e.g., scip-typescript
+                        for TS/JS)
+                    </li>
+                    <li>
+                        <strong>Supported OS:</strong> macOS, Linux, Windows
+                    </li>
+                    <li>
+                        <strong>Disk space:</strong> ~5-50MB for index (varies by
+                        codebase size)
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- AI Agent Integration -->
+        <div class="mb-16">
+            <h2 class="text-2xl font-bold mb-6 text-blue-400">
+                AI Agent Integration
+            </h2>
+            <div
+                class="bg-blue-950/20 border border-blue-900/50 rounded-lg p-6 mb-6"
+            >
+                <p class="text-zinc-300 mb-4">
+                    <strong
+                        >→ See <a
+                            href="https://github.com/butttons/dora/blob/main/AGENTS.md"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="text-blue-400 hover:underline">AGENTS.md</a
+                        > for complete integration guides</strong
+                    > for:
+                </p>
+                <ul class="space-y-2 text-zinc-300 ml-4">
+                    <li>
+                        • <strong>Claude Code</strong> - Skills, hooks, auto-indexing
+                    </li>
+                    <li>
+                        • <strong>Cursor</strong> - Rules and terminal integration
+                    </li>
+                    <li>
+                        • <strong>Aider</strong> - CLI pair programming workflow
+                    </li>
+                    <li>
+                        • <strong>Cline / Continue</strong> - VSCode/JetBrains extensions
+                    </li>
+                    <li>
+                        • <strong>Windsurf</strong> - Cascade agent integration
+                    </li>
+                    <li>
+                        • <strong>Other AI agents</strong> - Generic integration patterns
+                    </li>
+                </ul>
+            </div>
+
+            <h3 class="text-xl font-semibold mb-4 text-blue-300">
+                Quick start for any agent
+            </h3>
+            <div
+                class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm space-y-2 mb-8"
+            >
+                <div>
+                    <span class="text-zinc-500">$</span>
+                    <span class="text-zinc-300">dora init && dora index</span
+                    ><span class="text-zinc-500 ml-2"
+                        ># Initialize and index your codebase</span>
+                </div>
+                <div>
+                    <span class="text-zinc-500">$</span>
+                    <span class="text-zinc-300">dora status</span><span
+                        class="text-zinc-500 ml-2"
+                        ># Verify index is ready</span>
+                </div>
+                <div>
+                    <span class="text-zinc-500">$</span>
+                    <span class="text-zinc-300">dora map</span><span
+                        class="text-zinc-500 ml-2"
+                        ># See codebase overview</span>
+                </div>
+            </div>
+
+            <!-- Claude Code Integration -->
+            <h3 class="text-xl font-semibold mb-4 text-blue-300">
+                Claude Code Integration
+            </h3>
+            <p class="text-zinc-300 mb-4">
+                dora integrates deeply with Claude Code via skills, hooks, and
+                pre-approved permissions. See <a
+                    href="https://github.com/butttons/dora/blob/main/AGENTS.md#claude-code-integration"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-blue-400 hover:underline">AGENTS.md</a
+                > for full setup instructions.
+            </p>
+
+            <div class="space-y-4">
+                <div>
+                    <h4 class="font-semibold text-zinc-200 mb-2">
+                        1. Add to your project's CLAUDE.md:
+                    </h4>
+                    <ul class="text-zinc-300 ml-6 space-y-1">
+                        <li>
+                            • Copy the contents of <code
+                                class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded"
+                                >.dora/docs/SNIPPET.md</code
+                            > from this repo
+                        </li>
+                        <li>• Paste it into your project's CLAUDE.md file</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold text-zinc-200 mb-2">
+                        2. Add settings configuration:
+                    </h4>
+                    <ul class="text-zinc-300 ml-6 space-y-1">
+                        <li>
+                            • Copy <code
+                                class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded"
+                                >.claude/settings.json</code
+                            > from this repo to your project
+                        </li>
+                        <li>
+                            • This enables automatic indexing and permissions
+                        </li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold text-zinc-200 mb-2">
+                        3. Add the dora skill (optional):
+                    </h4>
+                    <p class="text-zinc-300 mb-2 ml-6">
+                        For project-specific skill (recommended - symlink after <code
+                            class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded"
+                            >dora init</code
+                        >):
+                    </p>
+                    <div
+                        class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm ml-6 mb-2"
+                    >
+                        <div class="text-zinc-300">
+                            mkdir -p .claude/skills/dora
+                        </div>
+                        <div class="text-zinc-300">
+                            ln -s ../../../.dora/docs/SKILL.md
+                            .claude/skills/dora/SKILL.md
+                        </div>
+                    </div>
+                    <p class="text-zinc-300 mb-2 ml-6">
+                        For global skill (available in all projects):
+                    </p>
+                    <div
+                        class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm ml-6"
+                    >
+                        <div class="text-zinc-500 mb-2">
+                            # Clone the dora repo if you haven't already
+                        </div>
+                        <div class="text-zinc-300 mb-2">
+                            git clone https://github.com/butttons/dora.git
+                            /tmp/dora
+                        </div>
+                        <div class="text-zinc-500 mb-2"># macOS/Linux</div>
+                        <div class="text-zinc-300 mb-1">
+                            mkdir -p ~/.claude/skills/dora
+                        </div>
+                        <div class="text-zinc-300 mb-2">
+                            cp /tmp/dora/.claude/skills/dora/SKILL.md
+                            ~/.claude/skills/dora/SKILL.md
+                        </div>
+                        <div class="text-zinc-500 mb-2">
+                            # Windows (PowerShell)
+                        </div>
+                        <div class="text-zinc-300 mb-1">
+                            New-Item -ItemType Directory -Force -Path
+                            "$env:USERPROFILE\.claude\skills\dora"
+                        </div>
+                        <div class="text-zinc-300">
+                            Copy-Item "C:\tmp\dora\.claude\skills\dora\SKILL.md"
+                            "$env:USERPROFILE\.claude\skills\dora\SKILL.md"
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold text-zinc-200 mb-2">
+                        4. Initialize dora:
+                    </h4>
+                    <div
+                        class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm ml-6"
+                    >
+                        <div class="text-zinc-300">dora init</div>
+                        <div class="text-zinc-300">dora index</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Installation -->
+        <div class="mb-16">
+            <h2 class="text-2xl font-bold mb-6 text-blue-400">Installation</h2>
+
+            <h3 class="text-xl font-semibold mb-4 text-blue-300">
+                Option 1: Download Pre-built Binary (Recommended)
+            </h3>
+            <p class="text-zinc-300 mb-4">
+                Download the latest binary for your platform from the <a
+                    href="https://github.com/butttons/dora/releases"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-blue-400 hover:underline">releases page</a
+                >:
+            </p>
+            <div
+                class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm space-y-4 mb-8"
+            >
+                <div>
+                    <div class="text-zinc-500 mb-1"># macOS (ARM64)</div>
+                    <div class="text-zinc-300">
+                        curl -L
+                        https://github.com/butttons/dora/releases/latest/download/dora-darwin-arm64
+                        -o dora
+                    </div>
+                    <div class="text-zinc-300">chmod +x dora</div>
+                    <div class="text-zinc-300">
+                        sudo mv dora /usr/local/bin/
+                    </div>
+                </div>
+                <div>
+                    <div class="text-zinc-500 mb-1"># macOS (Intel)</div>
+                    <div class="text-zinc-300">
+                        curl -L
+                        https://github.com/butttons/dora/releases/latest/download/dora-darwin-x64
+                        -o dora
+                    </div>
+                    <div class="text-zinc-300">chmod +x dora</div>
+                    <div class="text-zinc-300">
+                        sudo mv dora /usr/local/bin/
+                    </div>
+                </div>
+                <div>
+                    <div class="text-zinc-500 mb-1"># Linux</div>
+                    <div class="text-zinc-300">
+                        curl -L
+                        https://github.com/butttons/dora/releases/latest/download/dora-linux-x64
+                        -o dora
+                    </div>
+                    <div class="text-zinc-300">chmod +x dora</div>
+                    <div class="text-zinc-300">
+                        sudo mv dora /usr/local/bin/
+                    </div>
+                </div>
+                <div>
+                    <div class="text-zinc-500 mb-1"># Windows</div>
+                    <div class="text-zinc-300">
+                        # Download dora-windows-x64.exe and add to PATH
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="text-xl font-semibold mb-4 text-blue-300">
+                Option 2: Build from Source
+            </h3>
+            <div
+                class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm space-y-2 mb-8"
+            >
+                <div class="text-zinc-500">
+                    # Install Bun (if not already installed)
+                </div>
+                <div class="text-zinc-300">
+                    curl -fsSL https://bun.sh/install | bash
+                </div>
+                <div class="text-zinc-500 mt-3"># Clone the repository</div>
+                <div class="text-zinc-300">
+                    git clone https://github.com/butttons/dora.git
+                </div>
+                <div class="text-zinc-300">cd dora</div>
+                <div class="text-zinc-500 mt-3"># Install dependencies</div>
+                <div class="text-zinc-300">bun install</div>
+                <div class="text-zinc-500 mt-3"># Build the binary</div>
+                <div class="text-zinc-300">bun run build</div>
+                <div class="text-zinc-500 mt-3">
+                    # The binary will be at dist/dora
+                </div>
+                <div class="text-zinc-500"># Move it to your PATH</div>
+                <div class="text-zinc-300">
+                    sudo mv dist/dora /usr/local/bin/
+                </div>
+            </div>
+
+            <h3 class="text-xl font-semibold mb-4 text-blue-300">
+                Install SCIP Indexer
+            </h3>
+            <p class="text-zinc-300 mb-4">
+                You'll need a SCIP indexer for your language. For
+                TypeScript/JavaScript:
+            </p>
+            <div
+                class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm space-y-2 mb-4"
+            >
+                <div class="text-zinc-500">
+                    # Install scip-typescript globally
+                </div>
+                <div class="text-zinc-300">
+                    npm install -g @sourcegraph/scip-typescript
+                </div>
+                <div class="text-zinc-500 mt-2"># Verify installation</div>
+                <div class="text-zinc-300">scip-typescript --help</div>
+            </div>
+            <p class="text-zinc-400 text-sm">
+                For other languages, see <a
+                    href="#scip-indexers"
+                    class="text-blue-400 hover:underline">SCIP Indexers</a
+                > section below.
+            </p>
+        </div>
+
+        <!-- Quick Start -->
+        <div class="mb-16">
+            <h2 class="text-2xl font-bold mb-6 text-blue-400">Quick Start</h2>
+
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 text-blue-300">
+                        1. Initialize
+                    </h3>
+                    <div
+                        class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm"
+                    >
+                        <div class="text-zinc-300">dora init</div>
+                    </div>
+                    <p class="text-zinc-400 mt-2 text-sm">
+                        This creates a <code
+                            class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded"
+                            >.dora/</code
+                        > directory with a default config.
+                    </p>
+                </div>
+
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 text-blue-300">
+                        2. Configure Commands
+                    </h3>
+                    <p class="text-zinc-300 mb-3">
+                        Edit <code
+                            class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded"
+                            >.dora/config.json</code
+                        > to configure your SCIP indexer:
+                    </p>
+
+                    <p class="text-zinc-400 text-sm mb-2">
+                        For TypeScript/JavaScript:
+                    </p>
+                    <pre
+                        class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm mb-4 overflow-x-auto"><code class="text-zinc-300">{`{
+  "commands": {
+    "index": "scip-typescript index --output .dora/index.scip"
+  }
+}`}</code></pre>
+
+                    <p class="text-zinc-400 text-sm mb-2">For Rust:</p>
+                    <pre
+                        class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm overflow-x-auto"><code class="text-zinc-300">{`{
+  "commands": {
+    "index": "rust-analyzer scip . --output .dora/index.scip"
+  }
+}`}</code></pre>
+                </div>
+
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 text-blue-300">
+                        3. Index Your Codebase
+                    </h3>
+                    <div
+                        class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm space-y-2"
+                    >
+                        <div class="text-zinc-500">
+                            # If commands are configured:
+                        </div>
+                        <div class="text-zinc-300">dora index</div>
+                        <div class="text-zinc-500 mt-2"># Or manually:</div>
+                        <div class="text-zinc-300">
+                            scip-typescript index --output .dora/index.scip
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 text-blue-300">
+                        4. Try It Out
+                    </h3>
+                    <div
+                        class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm space-y-2"
+                    >
+                        <div class="text-zinc-500"># Check index status</div>
+                        <div class="text-zinc-300">dora status</div>
+                        <div class="text-zinc-500 mt-2">
+                            # Get codebase overview
+                        </div>
+                        <div class="text-zinc-300">dora map</div>
+                        <div class="text-zinc-500 mt-2"># Find a symbol</div>
+                        <div class="text-zinc-300">dora symbol Logger</div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 text-blue-300">
+                        5. Example Workflow
+                    </h3>
+                    <div
+                        class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm space-y-2"
+                    >
+                        <div class="text-zinc-500">
+                            # Find a class definition
+                        </div>
+                        <div class="text-zinc-300">dora symbol AuthService</div>
+                        <div class="text-zinc-500 mt-2"># Explore the file</div>
+                        <div class="text-zinc-300">
+                            dora file src/auth/service.ts
+                        </div>
+                        <div class="text-zinc-500 mt-2">
+                            # See what depends on it
+                        </div>
+                        <div class="text-zinc-300">
+                            dora rdeps src/auth/service.ts --depth 2
+                        </div>
+                        <div class="text-zinc-500 mt-2">
+                            # Check for circular dependencies
+                        </div>
+                        <div class="text-zinc-300">dora cycles</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Commands Overview -->
+        <div class="mb-16">
+            <h2 class="text-2xl font-bold mb-6 text-blue-400">
+                Commands Overview
+            </h2>
+
+            <div class="space-y-8">
+                <div>
+                    <h3 class="text-xl font-semibold mb-4 text-blue-300">
+                        Setup & Status
+                    </h3>
+                    <div
+                        class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm space-y-2"
+                    >
+                        <div>
+                            <span class="text-blue-300">dora init</span><span
+                                class="text-zinc-500 ml-8"
+                                ># Initialize in repo</span>
+                        </div>
+                        <div>
+                            <span class="text-blue-300">dora index</span><span
+                                class="text-zinc-500 ml-7"
+                                ># Index codebase</span>
+                        </div>
+                        <div>
+                            <span class="text-blue-300">dora status</span><span
+                                class="text-zinc-500 ml-6"
+                                ># Show index health</span>
+                        </div>
+                        <div>
+                            <span class="text-blue-300">dora map</span><span
+                                class="text-zinc-500 ml-9"
+                                ># High-level statistics</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-xl font-semibold mb-4 text-blue-300">
+                        Code Navigation
+                    </h3>
+                    <div
+                        class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm space-y-2"
+                    >
+                        <div>
+                            <span class="text-blue-300"
+                                >dora ls [directory]</span
+                            ><span class="text-zinc-500 ml-4"
+                                ># List files in directory with metadata</span>
+                        </div>
+                        <div>
+                            <span class="text-blue-300"
+                                >dora symbol &lt;query&gt;</span
+                            ><span class="text-zinc-500 ml-4"
+                                ># Find symbols by name</span>
+                        </div>
+                        <div>
+                            <span class="text-blue-300"
+                                >dora file &lt;path&gt;</span
+                            ><span class="text-zinc-500 ml-6"
+                                ># File info with dependencies</span>
+                        </div>
+                        <div>
+                            <span class="text-blue-300"
+                                >dora refs &lt;symbol&gt;</span
+                            ><span class="text-zinc-500 ml-4"
+                                ># Find all references</span>
+                        </div>
+                        <div>
+                            <span class="text-blue-300"
+                                >dora deps &lt;path&gt; --depth 2</span
+                            ><span class="text-zinc-500 ml-2"
+                                ># Show dependencies</span>
+                        </div>
+                        <div>
+                            <span class="text-blue-300"
+                                >dora rdeps &lt;path&gt; --depth 2</span
+                            ><span class="text-zinc-500 ml-1"
+                                ># Show dependents</span>
+                        </div>
+                        <div>
+                            <span class="text-blue-300"
+                                >dora adventure &lt;from&gt; &lt;to&gt;</span
+                            ><span class="text-zinc-500 ml-1"
+                                ># Find shortest path</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-xl font-semibold mb-4 text-blue-300">
+                        Architecture Analysis
+                    </h3>
+                    <div
+                        class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm space-y-2"
+                    >
+                        <div>
+                            <span class="text-blue-300">dora cycles</span><span
+                                class="text-zinc-500 ml-16"
+                                ># Find bidirectional dependencies</span>
+                        </div>
+                        <div>
+                            <span class="text-blue-300"
+                                >dora coupling --threshold 5</span
+                            ><span class="text-zinc-500 ml-2"
+                                ># Find tightly coupled files</span>
+                        </div>
+                        <div>
+                            <span class="text-blue-300"
+                                >dora complexity --sort complexity</span
+                            ><span class="text-zinc-500 ml-1"
+                                ># High-impact files</span>
+                        </div>
+                        <div>
+                            <span class="text-blue-300"
+                                >dora treasure --limit 20</span
+                            ><span class="text-zinc-500 ml-4"
+                                ># Most referenced files</span>
+                        </div>
+                        <div>
+                            <span class="text-blue-300"
+                                >dora lost --limit 50</span
+                            ><span class="text-zinc-500 ml-7"
+                                ># Potentially dead code</span>
+                        </div>
+                        <div>
+                            <span class="text-blue-300"
+                                >dora leaves --max-dependents 3</span
+                            ><span class="text-zinc-500 ml-1"
+                                ># Leaf nodes</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-xl font-semibold mb-4 text-blue-300">
+                        Advanced Queries
+                    </h3>
+                    <div
+                        class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm space-y-2"
+                    >
+                        <div>
+                            <span class="text-blue-300">dora schema</span><span
+                                class="text-zinc-500 ml-16"
+                                ># Show database schema</span>
+                        </div>
+                        <div>
+                            <span class="text-blue-300"
+                                >dora query "&lt;sql&gt;"</span
+                            ><span class="text-zinc-500 ml-9"
+                                ># Execute raw SQL (read-only)</span>
+                        </div>
+                        <div>
+                            <span class="text-blue-300"
+                                >dora changes &lt;ref&gt;</span
+                            ><span class="text-zinc-500 ml-10"
+                                ># Changed/impacted files</span>
+                        </div>
+                        <div>
+                            <span class="text-blue-300"
+                                >dora exports &lt;path|package&gt;</span
+                            ><span class="text-zinc-500 ml-3"
+                                ># List exports</span>
+                        </div>
+                        <div>
+                            <span class="text-blue-300"
+                                >dora imports &lt;path&gt;</span
+                            ><span class="text-zinc-500 ml-10"
+                                ># Show imports</span>
+                        </div>
+                        <div>
+                            <span class="text-blue-300"
+                                >dora graph &lt;path&gt;</span
+                            ><span class="text-zinc-500 ml-11"
+                                ># Dependency graph</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-zinc-400 mt-6 text-sm">
+                For detailed command reference with flags and options, see the <a
+                    href="/commands"
+                    class="text-blue-400 hover:underline">Commands</a
+                > page.
+            </p>
+        </div>
+
+        <!-- SCIP Indexers -->
+        <div class="mb-16" id="scip-indexers">
+            <h2 class="text-2xl font-bold mb-6 text-blue-400">SCIP Indexers</h2>
+            <div class="grid md:grid-cols-2 gap-4">
+                <a
+                    href="https://github.com/sourcegraph/scip-typescript"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-4 hover:border-blue-500/50 transition-colors"
+                >
+                    <div class="text-blue-300 font-semibold">
+                        scip-typescript
+                    </div>
+                    <div class="text-zinc-400 text-sm mt-1">
+                        TypeScript, JavaScript
+                    </div>
+                </a>
+                <a
+                    href="https://github.com/sourcegraph/scip-java"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-4 hover:border-blue-500/50 transition-colors"
+                >
+                    <div class="text-blue-300 font-semibold">scip-java</div>
+                    <div class="text-zinc-400 text-sm mt-1">
+                        Java, Scala, Kotlin
+                    </div>
+                </a>
+                <a
+                    href="https://github.com/rust-lang/rust-analyzer"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-4 hover:border-blue-500/50 transition-colors"
+                >
+                    <div class="text-blue-300 font-semibold">rust-analyzer</div>
+                    <div class="text-zinc-400 text-sm mt-1">Rust</div>
+                </a>
+                <a
+                    href="https://github.com/sourcegraph/scip-clang"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-4 hover:border-blue-500/50 transition-colors"
+                >
+                    <div class="text-blue-300 font-semibold">scip-clang</div>
+                    <div class="text-zinc-400 text-sm mt-1">C++, C</div>
+                </a>
+                <a
+                    href="https://github.com/sourcegraph/scip-ruby"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-4 hover:border-blue-500/50 transition-colors"
+                >
+                    <div class="text-blue-300 font-semibold">scip-ruby</div>
+                    <div class="text-zinc-400 text-sm mt-1">Ruby</div>
+                </a>
+                <a
+                    href="https://github.com/sourcegraph/scip-python"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-4 hover:border-blue-500/50 transition-colors"
+                >
+                    <div class="text-blue-300 font-semibold">scip-python</div>
+                    <div class="text-zinc-400 text-sm mt-1">Python</div>
+                </a>
+                <a
+                    href="https://github.com/sourcegraph/scip-dotnet"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-4 hover:border-blue-500/50 transition-colors"
+                >
+                    <div class="text-blue-300 font-semibold">scip-dotnet</div>
+                    <div class="text-zinc-400 text-sm mt-1">
+                        C#, Visual Basic
+                    </div>
+                </a>
+                <a
+                    href="https://github.com/Workiva/scip-dart"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-4 hover:border-blue-500/50 transition-colors"
+                >
+                    <div class="text-blue-300 font-semibold">scip-dart</div>
+                    <div class="text-zinc-400 text-sm mt-1">Dart</div>
+                </a>
+                <a
+                    href="https://github.com/davidrjenni/scip-php"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-4 hover:border-blue-500/50 transition-colors"
+                >
+                    <div class="text-blue-300 font-semibold">scip-php</div>
+                    <div class="text-zinc-400 text-sm mt-1">PHP</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Output Format -->
+        <div class="mb-16">
+            <h2 class="text-2xl font-bold mb-6 text-blue-400">Output Format</h2>
+            <p class="text-zinc-300">
+                All commands output valid JSON to stdout. Errors go to stderr
+                with exit code 1.
+            </p>
+        </div>
+
+        <!-- Debug Logging -->
+        <div class="mb-16">
+            <h2 class="text-2xl font-bold mb-6 text-blue-400">Debug Logging</h2>
+            <p class="text-zinc-300 mb-4">
+                For debug logging, testing, building, and development
+                instructions, see
+                <a
+                    href="https://github.com/butttons/dora/blob/main/CONTRIBUTING.md"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-blue-400 hover:underline">CONTRIBUTING.md</a
+                >.
+            </p>
+        </div>
+
+        <!-- Troubleshooting -->
+        <div class="mb-16">
+            <h2 class="text-2xl font-bold mb-6 text-blue-400">
+                Troubleshooting
+            </h2>
+
+            <h3 class="text-xl font-semibold mb-4 text-blue-300">
+                Common Issues
+            </h3>
+            <div class="overflow-x-auto mb-8">
+                <table class="w-full border border-zinc-800">
+                    <thead class="bg-zinc-900">
+                        <tr>
+                            <th
+                                class="text-left p-4 border-b border-zinc-800 text-blue-300"
+                                >Issue</th
+                            >
+                            <th
+                                class="text-left p-4 border-b border-zinc-800 text-blue-300"
+                                >Solution</th
+                            >
+                        </tr>
+                    </thead>
+                    <tbody class="text-zinc-300">
+                        <tr class="border-b border-zinc-800">
+                            <td class="p-4"
+                                ><strong>Database not found</strong></td
+                            >
+                            <td class="p-4"
+                                >Run <code
+                                    class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded"
+                                    >dora index</code
+                                > to create the database</td
+                            >
+                        </tr>
+                        <tr class="border-b border-zinc-800">
+                            <td class="p-4"
+                                ><strong>File not in index</strong></td
+                            >
+                            <td class="p-4"
+                                >Check if file is in .gitignore, run <code
+                                    class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded"
+                                    >dora index</code
+                                ></td
+                            >
+                        </tr>
+                        <tr class="border-b border-zinc-800">
+                            <td class="p-4"><strong>Stale results</strong></td>
+                            <td class="p-4"
+                                >Run <code
+                                    class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded"
+                                    >dora index</code
+                                > to rebuild</td
+                            >
+                        </tr>
+                        <tr class="border-b border-zinc-800">
+                            <td class="p-4"><strong>Slow queries</strong></td>
+                            <td class="p-4"
+                                >Use <code
+                                    class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded"
+                                    >--depth 1</code
+                                > when possible, reduce <code
+                                    class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded"
+                                    >--limit</code
+                                ></td
+                            >
+                        </tr>
+                        <tr class="border-b border-zinc-800">
+                            <td class="p-4"
+                                ><strong>Symbol not found</strong></td
+                            >
+                            <td class="p-4"
+                                >Ensure index is up to date: <code
+                                    class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded"
+                                    >dora status</code
+                                >, then <code
+                                    class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded"
+                                    >dora index</code
+                                ></td
+                            >
+                        </tr>
+                        <tr>
+                            <td class="p-4"
+                                ><strong>dora command not found</strong></td
+                            >
+                            <td class="p-4"
+                                >Ensure dora is in PATH: <code
+                                    class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded"
+                                    >which dora</code
+                                >, reinstall if needed</td
+                            >
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 class="text-xl font-semibold mb-4 text-blue-300">
+                Integration Issues
+            </h3>
+            <div
+                class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-6 mb-8"
+            >
+                <h4 class="font-semibold text-zinc-200 mb-3">
+                    Claude Code index not updating:
+                </h4>
+                <ul class="space-y-2 text-zinc-300 ml-4">
+                    <li>
+                        • Check <code
+                            class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded"
+                            >/tmp/dora-index.log</code
+                        > for errors
+                    </li>
+                    <li>
+                        • Verify dora is in PATH: <code
+                            class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded"
+                            >which dora</code>
+                    </li>
+                    <li>
+                        • Test manually: <code
+                            class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded"
+                            >dora index</code>
+                    </li>
+                    <li>
+                        • Ensure <code
+                            class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded"
+                            >dora index</code
+                        > is in the allow permissions list in <code
+                            class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded"
+                            >.claude/settings.json</code>
+                    </li>
+                </ul>
+            </div>
+
+            <div
+                class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-6 mb-8"
+            >
+                <h4 class="font-semibold text-zinc-200 mb-3">
+                    Stop hook not firing:
+                </h4>
+                <ul class="space-y-2 text-zinc-300 ml-4">
+                    <li>
+                        • Verify <code
+                            class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded"
+                            >.claude/settings.json</code
+                        > syntax is correct (valid JSON)
+                    </li>
+                    <li>• Check that the hook runs by viewing verbose logs</li>
+                    <li>• Try manually running the hook command</li>
+                </ul>
+            </div>
+
+            <div
+                class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-6 mb-8"
+            >
+                <h4 class="font-semibold text-zinc-200 mb-3">
+                    Want to see indexing progress:
+                </h4>
+                <ul class="space-y-2 text-zinc-300 ml-4">
+                    <li>
+                        • Edit <code
+                            class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded"
+                            >.claude/settings.json</code
+                        > Stop hook
+                    </li>
+                    <li>
+                        • Change command to: <code
+                            class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded"
+                            >"DEBUG=dora:* dora index 2>&1 || true"</code
+                        > (removes background <code
+                            class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded"
+                            >&</code
+                        >)
+                    </li>
+                    <li>
+                        • You'll see progress after each turn, but will wait
+                        15-30s
+                    </li>
+                </ul>
+            </div>
+
+            <h3 class="text-xl font-semibold mb-4 text-blue-300">
+                Performance Issues
+            </h3>
+            <div class="overflow-x-auto">
+                <table class="w-full border border-zinc-800">
+                    <thead class="bg-zinc-900">
+                        <tr>
+                            <th
+                                class="text-left p-4 border-b border-zinc-800 text-blue-300"
+                                >Issue</th
+                            >
+                            <th
+                                class="text-left p-4 border-b border-zinc-800 text-blue-300"
+                                >Solution</th
+                            >
+                        </tr>
+                    </thead>
+                    <tbody class="text-zinc-300">
+                        <tr class="border-b border-zinc-800">
+                            <td class="p-4"
+                                ><strong>Index takes too long</strong></td
+                            >
+                            <td class="p-4">
+                                <ul class="space-y-1 ml-4">
+                                    <li>
+                                        • Run SCIP indexer separately if it
+                                        supports caching
+                                    </li>
+                                    <li>
+                                        • Use background indexing mode in Claude
+                                        Code integration
+                                    </li>
+                                    <li>
+                                        • Check if your SCIP indexer can be
+                                        optimized
+                                    </li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="p-4"
+                                ><strong>Queries are slow</strong></td
+                            >
+                            <td class="p-4">
+                                <ul class="space-y-1 ml-4">
+                                    <li>
+                                        • Use <code
+                                            class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded"
+                                            >--depth 1</code
+                                        > instead of deep traversals
+                                    </li>
+                                    <li>
+                                        • Reduce <code
+                                            class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded"
+                                            >--limit</code
+                                        > for large result sets
+                                    </li>
+                                    <li>
+                                        • Ensure database indexes are created
+                                        (automatic)
+                                    </li>
+                                    <li>
+                                        • Run <code
+                                            class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded"
+                                            >dora index</code
+                                        > if database is corrupted
+                                    </li>
+                                </ul>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Contributing -->
+        <div class="mb-16">
+            <h2 class="text-2xl font-bold mb-6 text-blue-400">Contributing</h2>
+            <p class="text-zinc-300 mb-4">
+                Contributions are welcome! For development setup, testing,
+                building binaries, and code style guidelines, see <a
+                    href="https://github.com/butttons/dora/blob/main/CONTRIBUTING.md"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-blue-400 hover:underline">CONTRIBUTING.md</a
+                >.
+            </p>
+            <p class="text-zinc-300 mb-4">Quick start:</p>
+            <ol class="space-y-2 text-zinc-300 ml-6">
+                <li>1. Fork the repository</li>
+                <li>2. Create a feature branch</li>
+                <li>
+                    3. Make your changes with tests (<code
+                        class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded"
+                        >bun test</code
+                    >)
+                </li>
+                <li>4. Submit a pull request</li>
+            </ol>
+            <p class="text-zinc-400 mt-4 text-sm">
+                For detailed architecture and development guidelines, see
+                <a
+                    href="https://github.com/butttons/dora/blob/main/CLAUDE.md"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-blue-400 hover:underline">CLAUDE.md</a
+                >.
+            </p>
+        </div>
+
+        <!-- Links -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold mb-6 text-blue-400">Links</h2>
+            <ul class="space-y-3 text-zinc-300">
+                <li>
+                    <strong>AI Agent Integration:</strong>
+                    <a
+                        href="https://github.com/butttons/dora/blob/main/AGENTS.md"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="text-blue-400 hover:underline">AGENTS.md</a
+                    >
+                    - Integration guides for Claude Code, Cursor, Aider, Cline, Continue,
+                    Windsurf
+                </li>
+                <li>
+                    <strong>GitHub:</strong>
+                    <a
+                        href="https://github.com/butttons/dora"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="text-blue-400 hover:underline"
+                        >https://github.com/butttons/dora</a
+                    >
+                </li>
+                <li>
+                    <strong>SCIP Protocol:</strong>
+                    <a
+                        href="https://github.com/sourcegraph/scip"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="text-blue-400 hover:underline"
+                        >https://github.com/sourcegraph/scip</a
+                    >
+                </li>
+                <li>
+                    <strong>Claude Code:</strong>
+                    <a
+                        href="https://claude.ai/code"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="text-blue-400 hover:underline"
+                        >https://claude.ai/code</a
+                    >
+                </li>
+            </ul>
+        </div>
+    </div>
+</Layout>

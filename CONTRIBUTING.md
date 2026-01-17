@@ -217,7 +217,7 @@ For detailed schema and query patterns, see [CLAUDE.md](./CLAUDE.md).
 ### Local Development
 
 - Use `bun link` to link the development version
-- Test with `dora--version` to ensure you're using the dev version
+- Test with `dora --version` to ensure you're using the dev version
 - Unlink with `bun unlink` when done
 
 ## Questions?
@@ -225,6 +225,8 @@ For detailed schema and query patterns, see [CLAUDE.md](./CLAUDE.md).
 - Open an issue for bugs or feature requests
 - Start a discussion for architecture questions
 - Check [CLAUDE.md](./CLAUDE.md) for detailed implementation notes
+
+> `dora` is intentionally minimal. Before proposing new features, consider if the problem can be solved with existing commands or `dora query`
 
 ## License
 
