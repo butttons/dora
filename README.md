@@ -66,19 +66,19 @@ Download the latest binary for your platform from the [releases page](https://gi
 
 ```bash
 # macOS (ARM64)
-curl -L https://github.com/butttons/dora/releases/latest/download/ctx-darwin-arm64 -o ctx
+curl -L https://github.com/butttons/dora/releases/latest/download/dora-darwin-arm64 -o dora
 chmod +x ctx
-sudo mv dora/usr/local/bin/
+sudo mv dora /usr/local/bin/
 
 # macOS (Intel)
-curl -L https://github.com/butttons/dora/releases/latest/download/ctx-darwin-x64 -o ctx
+curl -L https://github.com/butttons/dora/releases/latest/download/dora-darwin-x64 -o dora
 chmod +x ctx
-sudo mv dora/usr/local/bin/
+sudo mv dora /usr/local/bin/
 
 # Linux
-curl -L https://github.com/butttons/dora/releases/latest/download/ctx-linux-x64 -o ctx
+curl -L https://github.com/butttons/dora/releases/latest/download/dora-linux-x64 -o dora
 chmod +x ctx
-sudo mv dora/usr/local/bin/
+sudo mv dora /usr/local/bin/
 
 # Windows
 # Download ctx-windows-x64.exe and add to PATH
