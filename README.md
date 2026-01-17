@@ -32,7 +32,29 @@ dora integrates with Claude Code for code navigation.
    - Copy [`.claude/settings.json`](.claude/settings.json) from this repo to your project
    - This enables automatic indexing and permissions
 
-3. **Initialize dora:**
+3. **Add the dora skill (optional):**
+
+   For project-specific skill (recommended - symlink after `dora init`):
+   ```bash
+   mkdir -p .claude/skills/dora
+   ln -s ../../../.dora/docs/SKILL.md .claude/skills/dora/SKILL.md
+   ```
+
+   For global skill (available in all projects):
+   ```bash
+   # Clone the dora repo if you haven't already
+   git clone https://github.com/butttons/dora.git /tmp/dora
+
+   # macOS/Linux
+   mkdir -p ~/.claude/skills/dora
+   cp /tmp/dora/.claude/skills/dora/SKILL.md ~/.claude/skills/dora/SKILL.md
+
+   # Windows (PowerShell)
+   New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.claude\skills\dora"
+   Copy-Item "C:\tmp\dora\.claude\skills\dora\SKILL.md" "$env:USERPROFILE\.claude\skills\dora\SKILL.md"
+   ```
+
+4. **Initialize dora:**
    ```bash
    dora init
    dora index
@@ -48,6 +70,7 @@ dora integrates with Claude Code for code navigation.
 
 - `.dora/docs/SNIPPET.md` - Documentation to paste into your CLAUDE.md
 - `.claude/settings.json` - Example settings with hooks and permissions
+- `.claude/skills/dora/SKILL.md` - Skill definition for Claude Code (optional, enables `/dora` command)
 
 **Troubleshooting:**
 
@@ -99,7 +122,7 @@ bun run build
 
 # The binary will be at dist/dora
 # Move it to your PATH
-sudo mv dist/dora/usr/local/bin/
+sudo mv dist/dora /usr/local/bin/
 ```
 
 ### Install SCIP Indexer
@@ -203,12 +226,13 @@ dora map                     # High-level statistics
 ### Code Navigation
 
 ```bash
+dora ls [directory]          # List files in directory with metadata
 dora symbol <query>          # Find symbols by name
 dora file <path>             # File info with dependencies
 dora refs <symbol>           # Find all references
 dora deps <path> --depth 2   # Show dependencies
 dora rdeps <path> --depth 2  # Show dependents
-dora adventure <from> <to>        # Find shortest path
+dora adventure <from> <to>   # Find shortest path
 ```
 
 ### Architecture Analysis
@@ -248,14 +272,15 @@ Quick reference for all commands with common flags:
 
 ### Code Navigation
 
-| Command                      | Description                    | Common Flags                 |
-| ---------------------------- | ------------------------------ | ---------------------------- |
-| `dora file <path>`           | Analyze file with dependencies | -                            |
-| `dora symbol <query>`        | Search for symbols             | `--kind <type>`, `--limit N` |
-| `dora refs <symbol>`         | Find all references            | -                            |
-| `dora deps <path>`           | Show dependencies              | `--depth N` (default: 1)     |
-| `dora rdeps <path>`          | Show reverse dependencies      | `--depth N` (default: 1)     |
-| `dora adventure <from> <to>` | Find dependency path           | -                            |
+| Command                      | Description                       | Common Flags                           |
+| ---------------------------- | --------------------------------- | -------------------------------------- |
+| `dora ls [directory]`        | List files in directory           | `--limit N`, `--sort <field>`          |
+| `dora file <path>`           | Analyze file with dependencies    | -                                      |
+| `dora symbol <query>`        | Search for symbols                | `--kind <type>`, `--limit N`           |
+| `dora refs <symbol>`         | Find all references               | -                                      |
+| `dora deps <path>`           | Show dependencies                 | `--depth N` (default: 1)               |
+| `dora rdeps <path>`          | Show reverse dependencies         | `--depth N` (default: 1)               |
+| `dora adventure <from> <to>` | Find dependency path              | -                                      |
 
 ### Architecture Analysis
 

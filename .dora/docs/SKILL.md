@@ -1,6 +1,6 @@
 ---
-name: ctx
-description: Query codebase using dora CLI for code intelligence, symbol definitions, dependencies, and architectural analysis
+name: dora-cli
+description: Query codebase using dora  CLI for code intelligence, symbol definitions, dependencies, and architectural analysis
 ---
 
 ## Philosophy
@@ -11,79 +11,81 @@ Use dora FIRST for code exploration. It understands structure, dependencies, and
 
 ### Overview
 
-**`dorastatus`** - Check index health, file/symbol counts, last indexed time
+**`dora status`** - Check index health, file/symbol counts, last indexed time
 
-**`doraoverview`** - Show packages, file count, symbol count
+**`dora map`** - Show packages, file count, symbol count
 
 ### Files & Symbols
 
-**`dorafile <path>`** - Show file's symbols, dependencies, and dependents. Note: includes local symbols (parameters).
+**`dora ls [directory] [--limit N] [--sort field]`** - List files in directory with metadata (symbols, deps, rdeps). Default limit: 100
 
-**`dorasymbol <query> [--kind type] [--limit N]`** - Find symbols by name across codebase
+**`dora file <path>`** - Show file's symbols, dependencies, and dependents. Note: includes local symbols (parameters).
 
-**`dorarefs <symbol> [--kind type] [--limit N]`** - Find all references to a symbol
+**`dora symbol <query> [--kind type] [--limit N]`** - Find symbols by name across codebase
 
-**`doraexports <path>`** - List exported symbols from a file. Note: includes function parameters.
+**`dora refs <symbol> [--kind type] [--limit N]`** - Find all references to a symbol
 
-**`doraimports <path>`** - Show what a file imports
+**`dora exports <path>`** - List exported symbols from a file. Note: includes function parameters.
+
+**`dora imports <path>`** - Show what a file imports
 
 ### Dependencies
 
-**`doradeps <path> [--depth N]`** - Show file dependencies (what this imports). Default depth: 1
+**`dora deps <path> [--depth N]`** - Show file dependencies (what this imports). Default depth: 1
 
-**`dorardeps <path> [--depth N]`** - Show reverse dependencies (what imports this). Default depth: 1
+**`dora rdeps <path> [--depth N]`** - Show reverse dependencies (what imports this). Default depth: 1
 
-**`dorapath <from> <to>`** - Find shortest dependency path between two files
+**`dora adventure <from> <to>`** - Find shortest dependency path between two files
 
 ### Code Health
 
-**`doraleaves [--max-dependents N]`** - Find files with few/no dependents. Default: 0
+**`dora leaves [--max-dependents N]`** - Find files with few/no dependents. Default: 0
 
-**`doraunused [--limit N]`** - Find unused exported symbols. Default limit: 50
+**`dora lost [--limit N]`** - Find unused exported symbols. Default limit: 50
 
-**`dorahotspots [--limit N]`** - Find most referenced files and files with most dependencies. Default: 10
+**`dora treasure [--limit N]`** - Find most referenced files and files with most dependencies. Default: 10
 
 ### Architecture Analysis
 
-**`doracycles [--limit N]`** - Detect circular dependencies. Empty = good. Default: 50
+**`dora cycles [--limit N]`** - Detect circular dependencies. Empty = good. Default: 50
 
-**`doracoupling [--threshold N]`** - Find bidirectionally dependent file pairs. Default threshold: 5
+**`dora coupling [--threshold N]`** - Find bidirectionally dependent file pairs. Default threshold: 5
 
-**`doracomplexity [--sort metric]`** - Show file complexity (symbol_count, outgoing_deps, incoming_deps, stability_ratio, complexity_score). Sort by: complexity, symbols, stability. Default: complexity
+**`dora complexity [--sort metric]`** - Show file complexity (symbol_count, outgoing_deps, incoming_deps, stability_ratio, complexity_score). Sort by: complexity, symbols, stability. Default: complexity
 
 ### Change Impact
 
-**`dorachanges <ref>`** - Show files changed since git ref and their impact
+**`dora changes <ref>`** - Show files changed since git ref and their impact
 
-**`doragraph <path> [--depth N] [--direction type]`** - Generate dependency graph. Direction: deps, rdeps, both. Default: both, depth 1
+**`dora graph <path> [--depth N] [--direction type]`** - Generate dependency graph. Direction: deps, rdeps, both. Default: both, depth 1
 
 ### Database
 
-**`doraschema`** - Show database schema (tables, columns, indexes)
+**`dora schema`** - Show database schema (tables, columns, indexes)
 
-**`doraquery "<sql>"`** - Execute read-only SQL query against the database
+**`dora query "<sql>"`** - Execute read-only SQL query against the database
 
 ## When to Use What
 
-- Finding symbols → `dorasymbol`
-- Understanding a file → `dorafile`
-- Impact of changes → `dorardeps`, `dorarefs`
-- Finding entry points → `dorahotspots`, `doraleaves`
-- Architecture issues → `doracycles`, `doracoupling`, `doracomplexity`
-- Navigation → `doradeps`, `dorapath`
-- Dead code → `doraunused`
-- Custom queries → `doraschema` then `doraquery`
+- Finding symbols → `dora symbol`
+- Understanding a file → `dora file`
+- Impact of changes → `dora rdeps`, `dora refs`
+- Finding entry points → `dora treasure`, `dora leaves`
+- Architecture issues → `dora cycles`, `dora coupling`, `dora complexity`
+- Navigation → `dora deps`, `dora adventure`
+- Dead code → `dora lost`
+- Custom queries → `dora schema` then `dora query`
 
 ## Typical Workflow
 
-1. `dorastatus` - Check index health
-2. `dorahotspots` - Find core files
-3. `dorafile <path>` - Understand specific files
-4. `doradeps`/`dorardeps` - Navigate relationships
-5. `dorarefs` - Check usage before changes
+1. `dora status` - Check index health
+2. `dora treasure` - Find core files
+3. `dora file <path>` - Understand specific files
+4. `dora deps`/`dora rdeps` - Navigate relationships
+5. `dora refs` - Check usage before changes
 
 ## Limitations
 
-- Includes local symbols (parameters) in `dorafile` and `doraexports`
+- Includes local symbols (parameters) in `dora file` and `dora exports`
 - Symbol search is substring-based, not fuzzy
 - Index is a snapshot, updates at checkpoints

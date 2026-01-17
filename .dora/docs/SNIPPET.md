@@ -1,6 +1,6 @@
-## Code Exploration with doraCLI
+## Code Exploration with dora
 
-This codebase uses doraCLI for fast code intelligence and architectural analysis.
+This codebase uses dora for fast code intelligence and architectural analysis.
 
 ### IMPORTANT: Use dora for code exploration
 
@@ -15,6 +15,7 @@ This codebase uses doraCLI for fast code intelligence and architectural analysis
 
 **Files & Symbols:**
 
+- `dora ls [directory] [--limit N] [--sort field]` - List files in directory with metadata (symbols, deps, rdeps)
 - `dora file <path>` - Show file's symbols, dependencies, and dependents
 - `dora symbol <query> [--kind type] [--limit N]` - Find symbols by name across codebase
 - `dora refs <symbol> [--kind type] [--limit N]` - Find all references to a symbol

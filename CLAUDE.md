@@ -49,6 +49,7 @@ dora/
 │   │   ├── unused.ts         # Unused symbols
 │   │   ├── hotspots.ts       # Most referenced files
 │   │   ├── graph.ts          # Dependency graph
+│   │   ├── ls.ts             # List files in directory
 │   │   └── shared.ts         # Shared utilities
 │   ├── converter/
 │   │   ├── convert.ts        # SCIP → SQLite converter
@@ -169,6 +170,9 @@ Note: Hooks are configured in .claude/settings.json (Stop and SessionStart)
 - Convert to optimized custom SQLite database
 - Support incremental builds (only reindex changed files)
 - Update lastIndexed in config
+- **Flags:**
+  - `--full` - Force full rebuild (ignore incremental detection)
+  - `--skip-scip` - Skip running SCIP indexer, use existing .scip file
 - Output: file count, symbol count, time taken, mode (full/incremental)
 
 ### dora status
@@ -211,6 +215,52 @@ Output:
 - Use `dora symbol <query>` to find specific symbols
 - Use `dora file <path>` to explore specific files with dependencies
 - Use `dora deps`/`dora rdeps` to understand relationships
+
+### dora ls [directory]
+
+List files in a directory from the index with metadata.
+
+**Arguments:**
+- `[directory]` - Optional directory path to list. Omit to list all files. Uses SQL LIKE pattern matching (`directory/%`).
+
+**Flags:**
+- `--limit <number>` - Maximum number of results (default: 100)
+- `--sort <field>` - Sort by: `path`, `symbols`, `deps`, or `rdeps` (default: `path`)
+
+**Query:**
+```sql
+SELECT
+  f.path,
+  f.symbol_count as symbols,
+  f.dependency_count as dependencies,
+  f.dependent_count as dependents
+FROM files f
+WHERE f.path LIKE ?
+ORDER BY [selected_field]
+LIMIT ?
+```
+
+**Output:**
+```json
+{
+  "directory": "src/commands",
+  "files": [
+    {
+      "path": "src/commands/shared.ts",
+      "symbols": 35,
+      "dependencies": 7,
+      "dependents": 18
+    }
+  ],
+  "total": 27
+}
+```
+
+**Use Cases:**
+- Browse files in a specific directory: `dora ls src/components`
+- Find files with most symbols: `dora ls --sort symbols --limit 10`
+- Find files with most dependencies: `dora ls --sort deps --limit 20`
+- Find hub files (most dependents): `dora ls --sort rdeps --limit 10`
 
 ### dora file <path>
 
@@ -426,6 +476,8 @@ Find bidirectional dependencies (files that import each other).
 
 **Note:** This command only detects 2-node cycles. For longer cycles (A → B → C → A), use the `dora query` command with custom SQL.
 
+**Default:** `--limit 50`
+
 Query:
 ```sql
 SELECT
@@ -635,6 +687,8 @@ Show all imports for a file.
 ### dora leaves [--max-dependents N]
 
 Find leaf nodes (files with few dependents but have dependencies).
+
+**Default:** `--max-dependents 0` (files with zero dependents)
 
 ---
 
