@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+@theme {
+    --color-blue-50: oklch(97.1% 0.013 250);
+    --color-blue-100: oklch(93.3% 0.038 250);
+    --color-blue-200: oklch(87.1% 0.072 250);
+    --color-blue-300: oklch(78.9% 0.115 250);
+    --color-blue-400: oklch(68.9% 0.165 250);
+    --color-blue-500: oklch(60.8% 0.197 250);
+    --color-blue-600: oklch(54.5% 0.206 250);
+    --color-blue-700: oklch(47.9% 0.183 250);
+    --color-blue-800: oklch(41.5% 0.149 250);
+    --color-blue-900: oklch(36.9% 0.118 250);
+    --color-blue-950: oklch(25.3% 0.075 250);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: "DM Sans", sans-serif;
+}
