@@ -74,6 +74,20 @@ export function parseStringFlag(
 }
 
 /**
+ * Parse an optional string flag (returns undefined if not provided).
+ */
+export function parseOptionalStringFlag(
+	flags: Record<string, string | boolean>,
+	key: string,
+): string | undefined {
+	const value = flags[key];
+	if (value === undefined || value === true) {
+		return undefined;
+	}
+	return value as string;
+}
+
+/**
  * Normalize path and validate it exists in the database.
  * Supports auto-resolution of directories to index files (SQL-based).
  *

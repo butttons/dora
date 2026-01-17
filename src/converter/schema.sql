@@ -1,4 +1,4 @@
--- database schema for ctx CLI
+-- database schema for dora CLI
 -- Optimized for read performance with denormalized data
 
 -- Files table with change tracking

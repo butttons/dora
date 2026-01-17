@@ -68,4 +68,4 @@ dora symbol <query>              # Find symbols
 dora refs <symbol>               # Find references
 ```
 
-For detailed usage and examples, use `Skill(dora)`.
+For detailed usage and examples, refer to `./dora/docs/SKILL.md`.

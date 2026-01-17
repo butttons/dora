@@ -1,51 +1,56 @@
-// ctx ls command - list files in a directory from the index
+// dora ls command - list files in a directory from the index
 
 import type { Database } from "bun:sqlite";
-import { outputJson, parseIntFlag, setupCommand } from "./shared.ts";
+import {
+	outputJson,
+	parseIntFlag,
+	parseStringFlag,
+	setupCommand,
+} from "./shared.ts";
 
 interface LsOptions {
-	limit?: number;
-	sort?: "path" | "symbols" | "deps" | "rdeps";
+  limit?: number;
+  sort?: "path" | "symbols" | "deps" | "rdeps";
 }
 
 interface LsFileEntry {
-	path: string;
-	symbols: number;
-	dependencies: number;
-	dependents: number;
+  path: string;
+  symbols: number;
+  dependencies: number;
+  dependents: number;
 }
 
 interface LsResult {
-	directory: string;
-	files: LsFileEntry[];
-	total: number;
+  directory: string;
+  files: LsFileEntry[];
+  total: number;
 }
 
 /**
  * Get files in a directory with metadata
  */
 function getDirectoryFiles(
-	db: Database,
-	directoryPath: string,
-	options: LsOptions = {},
+  db: Database,
+  directoryPath: string,
+  options: LsOptions = {},
 ): LsResult {
-	const limit = options.limit || 100;
-	const sortBy = options.sort || "path";
+  const limit = options.limit || 100;
+  const sortBy = options.sort || "path";
 
-	// Map sort option to SQL column
-	const orderByMap = {
-		path: "f.path",
-		symbols: "f.symbol_count DESC",
-		deps: "f.dependency_count DESC",
-		rdeps: "f.dependent_count DESC",
-	};
+  // Map sort option to SQL column
+  const orderByMap = {
+    path: "f.path",
+    symbols: "f.symbol_count DESC",
+    deps: "f.dependency_count DESC",
+    rdeps: "f.dependent_count DESC",
+  };
 
-	const orderBy = orderByMap[sortBy] || "f.path";
+  const orderBy = orderByMap[sortBy] || "f.path";
 
-	// Query files in directory with metadata
-	const pattern = directoryPath ? `${directoryPath}/%` : "%";
+  // Query files in directory with metadata
+  const pattern = directoryPath ? `${directoryPath}/%` : "%";
 
-	const query = `
+  const query = `
     SELECT
       f.path,
       f.symbol_count as symbols,
@@ -57,22 +62,22 @@ function getDirectoryFiles(
     LIMIT ?
   `;
 
-	const files = db.query(query).all(pattern, limit) as LsFileEntry[];
+  const files = db.query(query).all(pattern, limit) as LsFileEntry[];
 
-	// Get total count
-	const countQuery = `
+  // Get total count
+  const countQuery = `
     SELECT COUNT(*) as total
     FROM files
     WHERE path LIKE ?
   `;
 
-	const countResult = db.query(countQuery).get(pattern) as { total: number };
+  const countResult = db.query(countQuery).get(pattern) as { total: number };
 
-	return {
-		directory: directoryPath || ".",
-		files,
-		total: countResult.total,
-	};
+  return {
+    directory: directoryPath || ".",
+    files,
+    total: countResult.total,
+  };
 }
 
 export async function ls(
@@ -82,7 +87,7 @@ export async function ls(
 	const ctx = await setupCommand();
 
 	const limit = parseIntFlag(flags, "limit", 100);
-	const sort = (flags.sort as string) || "path";
+	const sort = parseStringFlag(flags, "sort", "path");
 
 	// Validate sort option
 	if (!["path", "symbols", "deps", "rdeps"].includes(sort)) {
@@ -91,7 +96,7 @@ export async function ls(
 		);
 	}
 
-	const result = getDirectoryFiles(ctx.db, directory, { limit, sort });
+  const result = getDirectoryFiles(ctx.db, directory, { limit, sort });
 
-	outputJson(result);
+  outputJson(result);
 }

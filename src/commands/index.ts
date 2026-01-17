@@ -1,4 +1,4 @@
-// ctx index command
+// dora index command
 
 import { existsSync } from "fs";
 import { convertToDatabase } from "../converter/convert.ts";

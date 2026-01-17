@@ -23,7 +23,7 @@ import { debugConverter } from "../utils/logger.ts";
 const BATCH_SIZE = 500;
 
 // Inlined schema for standalone binary compilation
-const SCHEMA_SQL = `-- database schema for ctx CLI
+const SCHEMA_SQL = `-- database schema for dora CLI
 -- Optimized for read performance with denormalized data
 
 -- Files table with change tracking
@@ -200,7 +200,7 @@ export async function convertToDatabase(
 
   // Build a quick document lookup (lightweight - just paths)
   const documentsByPath = new Map(
-    scipData.documents.map((doc) => [doc.relativePath, doc])
+    scipData.documents.map((doc) => [doc.relativePath, doc]),
   );
 
   let changedFiles: ChangedFile[];
@@ -301,32 +301,40 @@ async function processBatches(
 
   // Filter scipData documents to only include changed files
   const docsToProcess = scipData.documents.filter((doc) =>
-    changedPathsSet.has(doc.relativePath)
+    changedPathsSet.has(doc.relativePath),
   );
 
-  debugConverter(`Processing ${docsToProcess.length} documents in batches of ${BATCH_SIZE}...`);
+  debugConverter(
+    `Processing ${docsToProcess.length} documents in batches of ${BATCH_SIZE}...`,
+  );
 
   // Build LIGHTWEIGHT global definition map (only symbol -> file path)
   debugConverter("Building lightweight global definition map...");
-  const globalDefinitionsBySymbol = new Map<string, { file: string; definition: any }>();
+  const globalDefinitionsBySymbol = new Map<
+    string,
+    { file: string; definition: any }
+  >();
   const externalSymbols = scipData.externalSymbols;
 
   // Process documents in chunks to build definition map without keeping all in memory
   for (const doc of scipData.documents) {
     // Extract only the symbol IDs and file path (very lightweight)
     for (const occ of doc.occurrences) {
-      if (occ.symbolRoles & 0x1) {  // Definition bit
+      if (occ.symbolRoles & 0x1) {
+        // Definition bit
         // Store minimal info - we'll get full details from documentsByPath later
         if (!globalDefinitionsBySymbol.has(occ.symbol)) {
           globalDefinitionsBySymbol.set(occ.symbol, {
             file: doc.relativePath,
-            definition: { symbol: occ.symbol, range: occ.range }
+            definition: { symbol: occ.symbol, range: occ.range },
           });
         }
       }
     }
   }
-  debugConverter(`Global definition map built: ${globalDefinitionsBySymbol.size} definitions`);
+  debugConverter(
+    `Global definition map built: ${globalDefinitionsBySymbol.size} definitions`,
+  );
 
   // Build LIGHTWEIGHT global symbols map (only external symbols + doc symbols, no duplication)
   debugConverter("Building global symbols map...");
@@ -371,17 +379,17 @@ async function processBatches(
     const eta = rate > 0 ? Math.ceil(remaining / rate) : 0;
 
     process.stderr.write(
-      `\rIndexing: ${percent}% (${processedFiles}/${totalFiles} files, batch ${batchNum}/${totalBatches}, ETA: ${eta}s)      `
+      `\rIndexing: ${percent}% (${processedFiles}/${totalFiles} files, batch ${batchNum}/${totalBatches}, ETA: ${eta}s)      `,
     );
 
     // Build lightweight document map for this batch
     const documentsByPath = new Map(
-      batch.map((doc) => [doc.relativePath, doc])
+      batch.map((doc) => [doc.relativePath, doc]),
     );
 
     // Get ChangedFile objects for this batch
     const batchChangedFiles = changedFiles.filter((f) =>
-      batch.some((doc) => doc.relativePath === f.path)
+      batch.some((doc) => doc.relativePath === f.path),
     );
 
     // Convert files in this batch
@@ -414,7 +422,9 @@ async function processBatches(
   }
 
   process.stderr.write("\n");
-  debugConverter(`Batch processing complete: ${processedFiles} files processed`);
+  debugConverter(
+    `Batch processing complete: ${processedFiles} files processed`,
+  );
 }
 
 /**
@@ -992,10 +1002,7 @@ function updateDenormalizedFields(db: Database): void {
 /**
  * Update packages table
  */
-function updatePackages(
-  db: Database,
-  skipIfNoChanges: boolean = false,
-): void {
+function updatePackages(db: Database, skipIfNoChanges: boolean = false): void {
   if (skipIfNoChanges) {
     // Check if packages table needs update
     const packageCount = (

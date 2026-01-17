@@ -12,14 +12,14 @@
   },
   "license": "MIT",
   "scripts": {
-    "generate-proto": "protoc --plugin=./node_modules/.bin/protoc-gen-es --es_out=src/converter --es_opt=target=ts --proto_path=src/proto src/proto/scip.proto",
+    "test": "bun test ./test/",
     "build": "bun build src/index.ts --compile --outfile dist/dora",
+    "generate-proto": "protoc --plugin=./node_modules/.bin/protoc-gen-es --es_out=src/converter --es_opt=target=ts --proto_path=src/proto src/proto/scip.proto",
     "build:linux": "bun build src/index.ts --compile --target=bun-linux-x64 --outfile dist/dora-linux-x64",
     "build:macos": "bun build src/index.ts --compile --target=bun-darwin-x64 --outfile dist/dora-darwin-x64",
     "build:macos-arm": "bun build src/index.ts --compile --target=bun-darwin-arm64 --outfile dist/dora-darwin-arm64",
     "build:windows": "bun build src/index.ts --compile --target=bun-windows-x64 --outfile dist/dora-windows-x64.exe",
-    "build:all": "bun run build:linux && bun run build:macos && bun run build:macos-arm && bun run build:windows",
-    "test": "bun test ./test/"
+    "build:all": "bun run build:linux && bun run build:macos && bun run build:macos-arm && bun run build:windows"
   },
   "dependencies": {
     "@bufbuild/protobuf": "^2.10.2",

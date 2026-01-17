@@ -106,6 +106,7 @@ Command: `dora status 2>/dev/null || echo 'dora not initialized. Run: dora init 
 The doraCLI uses an optimized SQLite database with denormalized fields for high performance:
 
 ### files
+
 - `id` - Primary key
 - `path` - Relative path from repo root (UNIQUE)
 - `language` - Programming language
@@ -116,6 +117,7 @@ The doraCLI uses an optimized SQLite database with denormalized fields for high 
 - `dependent_count` - Number of incoming dependencies / fan-in (denormalized)
 
 ### symbols
+
 - `id` - Primary key
 - `file_id` - Foreign key to files table
 - `name` - Symbol name (e.g., "Logger", "UserContext")
@@ -129,18 +131,21 @@ The doraCLI uses an optimized SQLite database with denormalized fields for high 
 - `reference_count` - Number of references to this symbol (denormalized)
 
 ### dependencies
+
 - `from_file_id` - File that imports
 - `to_file_id` - File being imported
 - `symbol_count` - Number of symbols used
 - `symbols` - JSON array of symbol names used
 
 ### symbol_references
+
 - `id` - Primary key
 - `symbol_id` - Foreign key to symbols table
 - `file_id` - File where symbol is referenced
 - `line` - Line number of reference
 
 ### packages
+
 - `id` - Primary key
 - `name` - Package name (e.g., "@org/package")
 - `manager` - Package manager (npm, yarn, etc.)
@@ -148,6 +153,7 @@ The doraCLI uses an optimized SQLite database with denormalized fields for high 
 - `symbol_count` - Number of symbols from this package
 
 ### metadata
+
 - `key` - Metadata key
 - `value` - Metadata value
 
@@ -212,6 +218,7 @@ Output:
 ```
 
 **Note:** `dora map` provides basic statistics only. For detailed code exploration:
+
 - Use `dora symbol <query>` to find specific symbols
 - Use `dora file <path>` to explore specific files with dependencies
 - Use `dora deps`/`dora rdeps` to understand relationships
@@ -221,13 +228,16 @@ Output:
 List files in a directory from the index with metadata.
 
 **Arguments:**
+
 - `[directory]` - Optional directory path to list. Omit to list all files. Uses SQL LIKE pattern matching (`directory/%`).
 
 **Flags:**
+
 - `--limit <number>` - Maximum number of results (default: 100)
 - `--sort <field>` - Sort by: `path`, `symbols`, `deps`, or `rdeps` (default: `path`)
 
 **Query:**
+
 ```sql
 SELECT
   f.path,
@@ -241,6 +251,7 @@ LIMIT ?
 ```
 
 **Output:**
+
 ```json
 {
   "directory": "src/commands",
@@ -257,6 +268,7 @@ LIMIT ?
 ```
 
 **Use Cases:**
+
 - Browse files in a specific directory: `dora ls src/components`
 - Find files with most symbols: `dora ls --sort symbols --limit 10`
 - Find files with most dependencies: `dora ls --sort deps --limit 20`
@@ -479,6 +491,7 @@ Find bidirectional dependencies (files that import each other).
 **Default:** `--limit 50`
 
 Query:
+
 ```sql
 SELECT
   f1.path as path1,
@@ -494,11 +507,16 @@ LIMIT ?;
 ```
 
 Output:
+
 ```json
 {
   "cycles": [
     {
-      "files": ["src/billing.ts", "src/billing-subscription.ts", "src/billing.ts"],
+      "files": [
+        "src/billing.ts",
+        "src/billing-subscription.ts",
+        "src/billing.ts"
+      ],
       "length": 2
     }
   ]
@@ -506,6 +524,7 @@ Output:
 ```
 
 **Interpretation:**
+
 - Empty result = No bidirectional dependencies
 - Cycles found = Refactor to break the cycle (extract shared types, merge files, or make dependency one-way)
 
@@ -520,6 +539,7 @@ Find tightly coupled file pairs (bidirectional dependencies).
 **Purpose:** Identify files that import symbols from each other, indicating potential for refactoring.
 
 Query:
+
 ```sql
 SELECT
   f1.path as file1,
@@ -540,6 +560,7 @@ ORDER BY total_coupling DESC;
 Default threshold: 5
 
 Output:
+
 ```json
 {
   "threshold": 5,
@@ -556,6 +577,7 @@ Output:
 ```
 
 **Interpretation:**
+
 - Low coupling (< 5) = Files share a few types, normal
 - High coupling (> 20) = Consider merging or extracting shared module
 
@@ -568,6 +590,7 @@ Show file complexity metrics for refactoring prioritization.
 **Purpose:** Identify files that are risky to change based on size, dependencies, and impact.
 
 Query:
+
 ```sql
 SELECT
   f.path,
@@ -584,6 +607,7 @@ LIMIT 20;
 Flags: --sort (complexity | symbols | stability)
 
 **Metrics:**
+
 - `symbol_count` - Proxy for lines of code
 - `outgoing_deps` - Files this file imports from
 - `incoming_deps` - Files that import from this file (fan-in)
@@ -591,6 +615,7 @@ Flags: --sort (complexity | symbols | stability)
 - `complexity_score` - symbols × incoming deps (high = risky to change)
 
 Output:
+
 ```json
 {
   "sort_by": "complexity",
@@ -608,6 +633,7 @@ Output:
 ```
 
 **Interpretation:**
+
 - High complexity score (> 5000) = High-impact file, changes affect many files
 - High stability ratio (> 5) = Stable interface, expensive to change
 - Low incoming deps (< 3) = Good refactoring candidate
@@ -633,6 +659,7 @@ Find potentially unused symbols (zero references).
 **Performance:** Uses denormalized `reference_count` field for instant results.
 
 Query:
+
 ```sql
 SELECT s.name, s.kind, f.path, s.start_line, s.end_line
 FROM symbols s
@@ -653,14 +680,11 @@ Show most referenced files and files with most dependencies.
 **Performance:** Uses denormalized `dependent_count` and `dependency_count` fields.
 
 Output:
+
 ```json
 {
-  "most_referenced": [
-    {"file": "src/types.ts", "count": 52}
-  ],
-  "most_dependencies": [
-    {"file": "src/app.tsx", "count": 27}
-  ]
+  "most_referenced": [{ "file": "src/types.ts", "count": 52 }],
+  "most_dependencies": [{ "file": "src/app.tsx", "count": 27 }]
 }
 ```
 
@@ -705,6 +729,7 @@ Show the complete database schema including tables, columns, types, and indexes.
 **Purpose:** Provides the schema needed for AI agents to write custom SQL queries using `dora query`.
 
 Output:
+
 ```json
 {
   "tables": [
@@ -724,15 +749,14 @@ Output:
           "primary_key": false
         }
       ],
-      "indexes": [
-        "CREATE INDEX idx_files_path ON files(path)"
-      ]
+      "indexes": ["CREATE INDEX idx_files_path ON files(path)"]
     }
   ]
 }
 ```
 
 **Key Tables:**
+
 - `files` - File metadata (path, language, mtime, symbol_count, dependency_count, dependent_count)
 - `symbols` - Symbol definitions (name, kind, file_id, location, is_local, reference_count)
 - `dependencies` - File-to-file dependencies (from_file_id, to_file_id, symbol_count, symbols)
@@ -751,6 +775,7 @@ Execute arbitrary SQL queries against the database (read-only).
 **Safety:** Only SELECT queries are allowed. INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, TRUNCATE, and REPLACE operations are blocked.
 
 **Usage:**
+
 ```bash
 # Find files with most symbols
 dora query "SELECT path, symbol_count FROM files ORDER BY symbol_count DESC LIMIT 10"
@@ -766,12 +791,13 @@ dora query "SELECT f.path, COUNT(s.id) as symbols, AVG(s.reference_count) as avg
 ```
 
 Output:
+
 ```json
 {
   "query": "SELECT path, symbol_count FROM files ORDER BY symbol_count DESC LIMIT 5",
   "rows": [
-    {"path": "src/converter/scip_pb.ts", "symbol_count": 1640},
-    {"path": "src/proto/scip.proto", "symbol_count": 86}
+    { "path": "src/converter/scip_pb.ts", "symbol_count": 1640 },
+    { "path": "src/proto/scip.proto", "symbol_count": 86 }
   ],
   "row_count": 2,
   "columns": ["path", "symbol_count"]
@@ -779,6 +805,7 @@ Output:
 ```
 
 **Tips for AI Agents:**
+
 - Use `dora schema` first to understand the database structure
 - Filter local symbols with `WHERE is_local = 0` for cleaner results
 - Use denormalized fields (`reference_count`, `dependent_count`, `dependency_count`) for fast queries
@@ -795,7 +822,8 @@ import { Command } from "commander";
 
 const program = new Command();
 
-program.name("ctx")
+program
+  .name("dora")
   .description("Code Context CLI for AI Agents")
   .version("1.0.0");
 
@@ -868,7 +896,9 @@ Available namespaces:
 The doraCLI uses several optimization strategies for fast queries on large codebases:
 
 ### 1. Denormalized Fields
+
 Pre-computed aggregates stored in the database for instant lookups:
+
 - `files.symbol_count` - Number of symbols per file
 - `files.dependency_count` - Outgoing dependencies
 - `files.dependent_count` - Incoming dependencies (fan-in)
@@ -877,24 +907,30 @@ Pre-computed aggregates stored in the database for instant lookups:
 **Impact:** 10-50x faster queries. No expensive COUNT() aggregations at query time.
 
 ### 2. Symbol Kind Extraction
+
 Since scip-typescript doesn't populate the `kind` field, we extract symbol kinds from documentation strings:
+
 - Pattern matching on documentation like `"interface Logger"`, `"(property) name: string"`
 - Supports: class, interface, type, function, method, property, parameter, variable, enum, etc.
 - Stored in indexed `symbols.kind` column for fast filtering
 
 ### 3. Local Symbol Filtering
+
 Local symbols (function parameters, closure variables) are flagged with `is_local = 1`:
+
 - Reduces noise in symbol searches
 - Indexed boolean column for fast filtering
 - ~15-20% of symbols are local and filtered by default
 
 ### 4. Optimized Queries
+
 - Symbol references: Single JOIN query with GROUP_CONCAT (no N+1 queries)
 - Unused symbols: Index lookup on `reference_count = 0`
 - Hotspots: Direct lookup on denormalized counts
 - Cycles: Recursive CTE with visit tracking
 
 ### 5. Incremental Indexing
+
 - Only reindex files that changed (based on mtime)
 - Full reindex only when forced or on first run
 - Denormalized fields updated after each indexing operation

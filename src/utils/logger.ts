@@ -1,8 +1,8 @@
 // Logging utility using the debug library
 // Control via DEBUG environment variable, e.g.:
-//   DEBUG=dora:* ctx index
-//   DEBUG=dora:converter ctx index
-//   DEBUG=dora:index,dora:converter ctx index
+//   DEBUG=dora:* dora index
+//   DEBUG=dora:converter dora index
+//   DEBUG=dora:index,dora:converter dora index
 
 import createDebug from "debug";
 

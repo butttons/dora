@@ -102,27 +102,27 @@ DEBUG=dora:converter dora index
 DEBUG=dora:index dora index
 
 # Show multiple namespaces
-DEBUG=dora:index,ctx:converter dora index
+DEBUG=dora:index,dora:converter dora index
 ```
 
 **Available namespaces:**
 
-- `ctx:index` - Index command progress and timing
-- `ctx:converter` - SCIP parsing and database conversion details
-- `ctx:db` - Database operations and queries
-- `ctx:config` - Configuration loading and validation
+- `dora:index` - Index command progress and timing
+- `dora:converter` - SCIP parsing and database conversion details
+- `dora:db` - Database operations and queries
+- `dora:config` - Configuration loading and validation
 
 **Example output:**
 
 ```bash
 $ DEBUG=dora:* dora index
-  ctx:index Loading configuration... +0ms
-  ctx:index Config loaded: root=/path/to/project +2ms
-  ctx:index Running SCIP indexer... +0ms
-  ctx:converter Parsing SCIP file... +28s
-  ctx:converter Parsed SCIP file: 412 documents +310ms
-  ctx:converter Converting 412 files to database... +0ms
-  ctx:converter Processing files: 412/412 (100%) +265ms
+  dora:index Loading configuration... +0ms
+  dora:index Config loaded: root=/path/to/project +2ms
+  dora:index Running SCIP indexer... +0ms
+  dora:converter Parsing SCIP file... +28s
+  dora:converter Parsed SCIP file: 412 documents +310ms
+  dora:converter Converting 412 files to database... +0ms
+  dora:converter Processing files: 412/412 (100%) +265ms
 ```
 
 ## Code Style
