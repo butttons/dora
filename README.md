@@ -1,15 +1,14 @@
 # dora - Code Context CLI for AI Agents
 
-A language-agnostic CLI tool that helps AI agents understand large codebases by querying SCIP (Source Code Intelligence Protocol) indexes stored in SQLite.
+A language-agnostic CLI tool that helps AI agents understand codebases by querying SCIP (Source Code Intelligence Protocol) indexes stored in SQLite.
 
 ## Features
 
 - **Language-Agnostic SCIP Support** - Works with any SCIP-compatible indexer (TypeScript, Java, Rust, Python, etc.)
-- **Blazing Fast Performance** - 10-50x faster queries with denormalized database optimization
+- **Fast Queries** - Uses denormalized database with pre-computed aggregates for common operations
 - **Architecture Analysis** - Detect circular dependencies, coupling, and complexity hotspots
-- **Dependency Intelligence** - Track dependencies at any depth with symbol-level granularity
-- **AI-Optimized JSON Output** - Clean, structured data designed for AI agent consumption
-- **Incremental Indexing** - Only reindexes changed files for fast updates
+- **Dependency Tracking** - Track dependencies at any depth with symbol-level granularity
+- **JSON Output** - Structured data for AI agent consumption
 
 ## System Requirements
 
@@ -21,9 +20,9 @@ A language-agnostic CLI tool that helps AI agents understand large codebases by 
 
 ## Claude Code Integration
 
-dora integrates seamlessly with Claude Code for AI-powered code navigation.
+dora integrates with Claude Code for code navigation.
 
-**Quick Setup (3 minutes):**
+**Setup:**
 
 1. **Add to your project's CLAUDE.md:**
    - Copy the contents of [`.dora/docs/SNIPPET.md`](.dora/docs/SNIPPET.md) from this repo
@@ -39,13 +38,11 @@ dora integrates seamlessly with Claude Code for AI-powered code navigation.
    dora index
    ```
 
-That's it! Claude Code now uses dora for all code exploration.
+**Configuration:**
 
-**What's Included:**
-
-- **Checkpoint-based indexing** - Runs `dora index` automatically in background when Claude finishes each turn
-- **Auto-approved permissions** - All dora query commands pre-approved (no prompts during workflow)
-- **Automatic steering** - Claude prefers dora over Grep/Glob for code exploration
+- **Background indexing** - Runs `dora index` in background after each turn
+- **Pre-approved permissions** - dora query commands don't require permission prompts
+- **Auto-selection** - Claude uses dora for code exploration instead of Grep/Glob
 
 **Configuration Files:**
 
@@ -56,7 +53,7 @@ That's it! Claude Code now uses dora for all code exploration.
 
 - **Index not updating?** Check `/tmp/dora-index.log` for errors
 - **dora not found?** Ensure dora is in PATH: `which dora`
-- **Stale results?** Run `dora index --full` to force full rebuild
+- **Stale results?** Run `dora index` to rebuild
 
 ## Installation
 
@@ -198,10 +195,9 @@ dora cycles
 
 ```bash
 dora init                    # Initialize in repo
-dora index                   # Index codebase (incremental)
-dora index --full            # Force full reindex
+dora index                   # Index codebase
 dora status                  # Show index health
-dora map                # High-level statistics
+dora map                     # High-level statistics
 ```
 
 ### Code Navigation
@@ -243,12 +239,12 @@ Quick reference for all commands with common flags:
 
 ### Setup Commands
 
-| Command       | Description                      | Common Flags |
-| ------------- | -------------------------------- | ------------ |
-| `dora init`   | Initialize dora in repository    | -            |
-| `dora index`  | Build/update index (incremental) | `--full`     |
-| `dora status` | Check index status               | -            |
-| `dora map`    | High-level statistics            | -            |
+| Command       | Description                   | Common Flags |
+| ------------- | ----------------------------- | ------------ |
+| `dora init`   | Initialize dora in repository | -            |
+| `dora index`  | Build/update index            | -            |
+| `dora status` | Check index status            | -            |
+| `dora map`    | High-level statistics         | -            |
 
 ### Code Navigation
 
@@ -310,8 +306,8 @@ For debug logging, testing, building, and development instructions, see [CONTRIB
 | Issue                      | Solution                                                     |
 | -------------------------- | ------------------------------------------------------------ |
 | **Database not found**     | Run `dora index` to create the database                      |
-| **File not in index**      | Check if file is in .gitignore, run `dora index --full`      |
-| **Stale results**          | Run `dora index --full` to force full rebuild                |
+| **File not in index**      | Check if file is in .gitignore, run `dora index`             |
+| **Stale results**          | Run `dora index` to rebuild                                  |
 | **Slow queries**           | Use `--depth 1` when possible, reduce `--limit`              |
 | **Symbol not found**       | Ensure index is up to date: `dora status`, then `dora index` |
 | **dora command not found** | Ensure dora is in PATH: `which dora`, reinstall if needed    |
@@ -341,8 +337,7 @@ For debug logging, testing, building, and development instructions, see [CONTRIB
 
 **Index takes too long:**
 
-- Use incremental indexing (default) - only reindexes changed files
-- Run SCIP indexer separately with caching
+- Run SCIP indexer separately if it supports caching
 - Use background indexing mode in Claude Code integration
 - Check if your SCIP indexer can be optimized
 
@@ -351,7 +346,7 @@ For debug logging, testing, building, and development instructions, see [CONTRIB
 - Use `--depth 1` instead of deep traversals
 - Reduce `--limit` for large result sets
 - Ensure database indexes are created (automatic)
-- Run `dora index --full` if database is corrupted
+- Run `dora index` if database is corrupted
 
 ## Contributing
 
