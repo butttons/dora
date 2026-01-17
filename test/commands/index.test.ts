@@ -4,7 +4,7 @@ import { describe, expect, test } from "bun:test";
 import { Database } from "bun:sqlite";
 import { existsSync } from "fs";
 import { join } from "path";
-import { convertToDatabase } from "../converter/convert.ts";
+import { convertToDatabase } from "../../src/converter/convert.ts";
 
 describe("index command - database conversion", () => {
 	const projectRoot = process.cwd();

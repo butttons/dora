@@ -9,7 +9,7 @@ import {
 	getFileSymbols,
 	getLeafNodes,
 	searchSymbols,
-} from "../db/queries.ts";
+} from "../../src/db/queries.ts";
 
 describe("Output Format Optimization", () => {
 	let db: Database;

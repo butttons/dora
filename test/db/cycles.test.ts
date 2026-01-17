@@ -2,7 +2,7 @@
 
 import { Database } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
-import { getCycles } from "./queries.ts";
+import { getCycles } from "../../src/db/queries.ts";
 
 describe("getCycles - Circular Dependency Detection", () => {
 	let db: Database;

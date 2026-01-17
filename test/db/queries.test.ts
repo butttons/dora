@@ -9,7 +9,7 @@ import {
 	getFileSymbols,
 	getReverseDependencies,
 	searchSymbols,
-} from "./queries.ts";
+} from "../../src/db/queries.ts";
 
 describe("Database Queries", () => {
 	let db: Database;

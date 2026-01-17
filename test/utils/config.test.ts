@@ -1,8 +1,8 @@
 // Tests for configuration management
 
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
-import { createDefaultConfig, validateConfig } from "./config.ts";
-import { CtxError } from "./errors.ts";
+import { createDefaultConfig, validateConfig } from "../../src/utils/config.ts";
+import { CtxError } from "../../src/utils/errors.ts";
 
 describe("Config Management", () => {
 	describe("validateConfig", () => {

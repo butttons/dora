@@ -18,7 +18,7 @@
     "build:macos-arm": "bun build src/index.ts --compile --target=bun-darwin-arm64 --outfile dist/dora-darwin-arm64",
     "build:windows": "bun build src/index.ts --compile --target=bun-windows-x64 --outfile dist/dora-windows-x64.exe",
     "build:all": "bun run build:linux && bun run build:macos && bun run build:macos-arm && bun run build:windows",
-    "test": "cd src && bun test"
+    "test": "bun test ./test/"
   },
   "dependencies": {
     "@bufbuild/protobuf": "^2.10.2",

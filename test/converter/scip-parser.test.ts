@@ -13,10 +13,10 @@ import {
 	parseScipFile,
 	type ParsedDocument,
 	type ScipData,
-} from "./scip-parser.ts";
+} from "../../src/converter/scip-parser.ts";
 
 describe("SCIP Parser", () => {
-	const exampleScipPath = join(process.cwd(), "example", "index.scip");
+	const exampleScipPath = join(process.cwd(), "test", "fixtures", "index.scip");
 	const skipTests = !existsSync(exampleScipPath);
 
 	test("should parse SCIP file successfully", async () => {

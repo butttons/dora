@@ -4,7 +4,7 @@ import { Database } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { mkdirSync, rmSync, writeFileSync } from "fs";
 import { join } from "path";
-import { query } from "./query.ts";
+import { query } from "../../src/commands/query.ts";
 
 describe("Query Command - Read-Only Enforcement", () => {
 	const testDir = "/tmp/ctx-query-test-" + Date.now();

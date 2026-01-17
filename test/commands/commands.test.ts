@@ -3,8 +3,8 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { existsSync, mkdirSync, rmSync, writeFileSync } from "fs";
 import { join } from "path";
-import { init } from "./init.ts";
-import { status } from "./status.ts";
+import { init } from "../../src/commands/init.ts";
+import { status } from "../../src/commands/status.ts";
 
 // Mock console.log to capture output
 let capturedOutput: any = null;
@@ -134,7 +134,7 @@ describe("Query Commands - Integration Tests", () => {
 			return;
 		}
 
-		const { map } = await import("./map.ts");
+		const { map } = await import("../../src/commands/map.ts");
 
 		captureOutput();
 		await map();
@@ -152,7 +152,7 @@ describe("Query Commands - Integration Tests", () => {
 			return;
 		}
 
-		const { symbol } = await import("./symbol.ts");
+		const { symbol } = await import("../../src/commands/symbol.ts");
 
 		captureOutput();
 		await symbol("index", {});
@@ -177,7 +177,7 @@ describe("Query Commands - Integration Tests", () => {
 			return;
 		}
 
-		const { file } = await import("./file.ts");
+		const { file } = await import("../../src/commands/file.ts");
 
 		// Use a file we know exists in the project
 		const testFile = "src/index.ts";
@@ -201,7 +201,7 @@ describe("Query Commands - Integration Tests", () => {
 			return;
 		}
 
-		const { deps } = await import("./deps.ts");
+		const { deps } = await import("../../src/commands/deps.ts");
 
 		// Use a file we know exists
 		const testFile = "src/index.ts";
@@ -229,7 +229,7 @@ describe("Query Commands - Integration Tests", () => {
 			return;
 		}
 
-		const { rdeps } = await import("./rdeps.ts");
+		const { rdeps } = await import("../../src/commands/rdeps.ts");
 
 		// Use a commonly imported file
 		const testFile = "src/utils/config.ts";
@@ -253,7 +253,7 @@ describe("Query Commands - Integration Tests", () => {
 			return;
 		}
 
-		const { cycles } = await import("./cycles.ts");
+		const { cycles } = await import("../../src/commands/cycles.ts");
 
 		captureOutput();
 		await cycles({ limit: 10 });
@@ -277,7 +277,7 @@ describe("Query Commands - Integration Tests", () => {
 			return;
 		}
 
-		const { treasure } = await import("./treasure.ts");
+		const { treasure } = await import("../../src/commands/treasure.ts");
 
 		captureOutput();
 		await treasure({ limit: 5 });
@@ -302,7 +302,7 @@ describe("Query Commands - Integration Tests", () => {
 			return;
 		}
 
-		const { lost } = await import("./lost.ts");
+		const { lost } = await import("../../src/commands/lost.ts");
 
 		captureOutput();
 		await lost({ limit: 10 });
