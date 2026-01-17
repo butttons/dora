@@ -33,7 +33,7 @@ dora integrates seamlessly with Claude Code for AI-powered code navigation.
    - Copy [`.claude/settings.json`](.claude/settings.json) from this repo to your project
    - This enables automatic indexing and permissions
 
-3. **Initialize ctx:**
+3. **Initialize dora:**
    ```bash
    dora init
    dora index
@@ -54,7 +54,7 @@ That's it! Claude Code now uses dora for all code exploration.
 
 **Troubleshooting:**
 
-- **Index not updating?** Check `/tmp/ctx-index.log` for errors
+- **Index not updating?** Check `/tmp/dora-index.log` for errors
 - **dora not found?** Ensure dora is in PATH: `which dora`
 - **Stale results?** Run `dora index --full` to force full rebuild
 
@@ -67,21 +67,21 @@ Download the latest binary for your platform from the [releases page](https://gi
 ```bash
 # macOS (ARM64)
 curl -L https://github.com/butttons/dora/releases/latest/download/dora-darwin-arm64 -o dora
-chmod +x ctx
+chmod +x dora
 sudo mv dora /usr/local/bin/
 
 # macOS (Intel)
 curl -L https://github.com/butttons/dora/releases/latest/download/dora-darwin-x64 -o dora
-chmod +x ctx
+chmod +x dora
 sudo mv dora /usr/local/bin/
 
 # Linux
 curl -L https://github.com/butttons/dora/releases/latest/download/dora-linux-x64 -o dora
-chmod +x ctx
+chmod +x dora
 sudo mv dora /usr/local/bin/
 
 # Windows
-# Download ctx-windows-x64.exe and add to PATH
+# Download dora-windows-x64.exe and add to PATH
 ```
 
 ### Option 2: Build from Source
@@ -92,7 +92,7 @@ curl -fsSL https://bun.sh/install | bash
 
 # Clone the repository
 git clone https://github.com/butttons/dora.git
-cd ctx-cli
+cd dora
 
 # Install dependencies
 bun install
@@ -100,7 +100,7 @@ bun install
 # Build the binary
 bun run build
 
-# The binary will be at dist/ctx
+# The binary will be at dist/dora
 # Move it to your PATH
 sudo mv dist/dora/usr/local/bin/
 ```
@@ -320,7 +320,7 @@ For debug logging, testing, building, and development instructions, see [CONTRIB
 
 **Claude Code index not updating:**
 
-- Check `/tmp/ctx-index.log` for errors
+- Check `/tmp/dora-index.log` for errors
 - Verify dora is in PATH: `which dora`
 - Test manually: `dora index`
 - Ensure `dora index` is in the `allow` permissions list in `.claude/settings.json`
