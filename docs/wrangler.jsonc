@@ -9,4 +9,8 @@
   "observability": {
     "enabled": true,
   },
+  "route": {
+    "pattern": "dora-cli.dev",
+    "custom_domain": true,
+  },
 }

@@ -12,10 +12,7 @@ const {
     description = "Code context CLI for AI agents. Fast, local, and built for speed.",
 } = Astro.props;
 const currentPath = Astro.url.pathname;
-const canonicalURL = new URL(
-    currentPath,
-    "https://dora-docs.butttons.workers.dev",
-).href;
+const canonicalURL = new URL(currentPath, "https://dora-cli.dev").href;
 ---
 
 <!doctype html>
@@ -42,7 +39,7 @@ const canonicalURL = new URL(
         <meta property="og:url" content={canonicalURL} />
         <meta
             property="og:image"
-            content="https://dora-docs.butttons.workers.dev/og-image.webp"
+            content="https://dora-cli.dev/og-image.webp"
         />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
@@ -53,7 +50,7 @@ const canonicalURL = new URL(
         <meta name="twitter:description" content={description} />
         <meta
             name="twitter:image"
-            content="https://dora-docs.butttons.workers.dev/og-image.webp"
+            content="https://dora-cli.dev/og-image.webp"
         />
     </head>
     <body class="bg-zinc-950 text-zinc-100 min-h-screen">
