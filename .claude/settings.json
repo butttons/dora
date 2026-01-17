@@ -1,0 +1,52 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dora status:*)",
+      "Bash(dora overview:*)",
+      "Bash(dora file:*)",
+      "Bash(dora symbol:*)",
+      "Bash(dora refs:*)",
+      "Bash(dora deps:*)",
+      "Bash(dora rdeps:*)",
+      "Bash(dora path:*)",
+      "Bash(dora leaves:*)",
+      "Bash(dora exports:*)",
+      "Bash(dora imports:*)",
+      "Bash(dora unused:*)",
+      "Bash(dora hotspots:*)",
+      "Bash(dora changes:*)",
+      "Bash(dora graph:*)",
+      "Bash(dora cycles:*)",
+      "Bash(dora coupling:*)",
+      "Bash(dora complexity:*)",
+      "Bash(dora schema:*)",
+      "Bash(dora query:*)",
+      "Bash(dora ls:*)",
+      "Bash(dora index:*)",
+      "Skill(dora)"
+    ],
+    "ask": ["Bash(dora init:*)"]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "dora status 2>/dev/null || echo 'dora not initialized. Run: dora init && dora index'"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "(dora index > /tmp/dora-index.log 2>&1 &) || true"
+          }
+        ]
+      }
+    ]
+  }
+}
