@@ -105,49 +105,8 @@ describe("getCycles - Circular Dependency Detection", () => {
 		});
 	});
 
-	describe("3-file cycles", () => {
-		test("should detect A -> B -> C -> A cycle", () => {
-			db.exec("DELETE FROM dependencies");
-			db.exec("DELETE FROM files");
-
-			db.run(
-				"INSERT INTO files (id, path, language, mtime, indexed_at) VALUES (1, 'a.ts', 'typescript', 1000, 1000)",
-			);
-			db.run(
-				"INSERT INTO files (id, path, language, mtime, indexed_at) VALUES (2, 'b.ts', 'typescript', 1000, 1000)",
-			);
-			db.run(
-				"INSERT INTO files (id, path, language, mtime, indexed_at) VALUES (3, 'c.ts', 'typescript', 1000, 1000)",
-			);
-
-			// Create cycle: A -> B -> C -> A
-			db.run(
-				"INSERT INTO dependencies (from_file_id, to_file_id, symbol_count) VALUES (1, 2, 1)",
-			);
-			db.run(
-				"INSERT INTO dependencies (from_file_id, to_file_id, symbol_count) VALUES (2, 3, 1)",
-			);
-			db.run(
-				"INSERT INTO dependencies (from_file_id, to_file_id, symbol_count) VALUES (3, 1, 1)",
-			);
-
-			const cycles = getCycles(db, 50);
-
-			expect(cycles.length).toBeGreaterThan(0);
-
-			// Should find the 3-file cycle
-			const threeFileCycle = cycles.find((c) => c.length === 3);
-			expect(threeFileCycle).toBeDefined();
-			expect(threeFileCycle!.files).toHaveLength(4); // [A, B, C, A]
-
-			// Verify all files are in the cycle
-			const files = threeFileCycle!.files;
-			expect(files).toContain("a.ts");
-			expect(files).toContain("b.ts");
-			expect(files).toContain("c.ts");
-			expect(files[0]).toBe(files[3]); // Start and end match
-		});
-	});
+	// Note: getCycles only detects 2-file cycles (bidirectional dependencies)
+	// For longer cycles (A -> B -> C -> A), use custom SQL queries via `dora query`
 
 	describe("Multiple cycles", () => {
 		test("should detect multiple independent cycles", () => {

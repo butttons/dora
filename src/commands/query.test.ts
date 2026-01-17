@@ -8,7 +8,7 @@ import { query } from "./query.ts";
 
 describe("Query Command - Read-Only Enforcement", () => {
 	const testDir = "/tmp/ctx-query-test-" + Date.now();
-	const dbPath = join(testDir, ".ctx", "dora.db");
+	const dbPath = join(testDir, ".dora", "dora.db");
 	let writeDb: Database;
 	let originalCwd: string;
 
@@ -19,8 +19,8 @@ describe("Query Command - Read-Only Enforcement", () => {
 		// Create test directory
 		mkdirSync(testDir, { recursive: true });
 
-		// Create .ctx directory
-		mkdirSync(join(testDir, ".ctx"), { recursive: true });
+		// Create .dora directory
+		mkdirSync(join(testDir, ".dora"), { recursive: true });
 
 		// Create package.json to mark as repo root
 		writeFileSync(
@@ -44,7 +44,7 @@ describe("Query Command - Read-Only Enforcement", () => {
 
 		// Create config pointing to test database
 		writeFileSync(
-			join(testDir, ".ctx", "config.json"),
+			join(testDir, ".dora", "config.json"),
 			JSON.stringify({
 				root: testDir,
 				db: ".dora/dora.db",

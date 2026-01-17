@@ -1,12 +1,13 @@
 // ctx status command
 
+import { getDb } from "../db/connection.ts";
 import { getFileCount, getSymbolCount } from "../db/queries.ts";
 import type { StatusResult } from "../types.ts";
-import { isIndexed } from "../utils/config.ts";
-import { outputJson, setupCommand } from "./shared.ts";
+import { isIndexed, loadConfig } from "../utils/config.ts";
+import { outputJson } from "./shared.ts";
 
 export async function status(): Promise<void> {
-	const { config, db } = await setupCommand();
+	const config = await loadConfig();
 
 	// Check if indexed
 	const indexed = await isIndexed(config);
@@ -19,6 +20,7 @@ export async function status(): Promise<void> {
 	// If indexed, get stats
 	if (indexed) {
 		try {
+			const db = getDb(config);
 			result.file_count = getFileCount(db);
 			result.symbol_count = getSymbolCount(db);
 			result.last_indexed = config.lastIndexed;
