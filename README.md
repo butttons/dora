@@ -18,9 +18,26 @@ A language-agnostic CLI tool that helps AI agents understand codebases by queryi
 - **Supported OS**: macOS, Linux, Windows
 - **Disk space**: ~5-50MB for index (varies by codebase size)
 
+## AI Agent Integration
+
+**→ See [AGENTS.md](AGENTS.md) for complete integration guides** for:
+- **Claude Code** - Skills, hooks, auto-indexing
+- **Cursor** - Rules and terminal integration
+- **Aider** - CLI pair programming workflow
+- **Cline / Continue** - VSCode/JetBrains extensions
+- **Windsurf** - Cascade agent integration
+- **Other AI agents** - Generic integration patterns
+
+Quick start for any agent:
+```bash
+dora init && dora index    # Initialize and index your codebase
+dora status                # Verify index is ready
+dora map                   # See codebase overview
+```
+
 ## Claude Code Integration
 
-dora integrates with Claude Code for code navigation.
+dora integrates deeply with Claude Code via skills, hooks, and pre-approved permissions. See [AGENTS.md](AGENTS.md#claude-code-integration) for full setup instructions.
 
 **Setup:**
 
@@ -392,6 +409,7 @@ MIT
 
 ## Links
 
+- **AI Agent Integration**: [AGENTS.md](./AGENTS.md) - Integration guides for Claude Code, Cursor, Aider, Cline, Continue, Windsurf
 - **GitHub**: [https://github.com/butttons/dora](https://github.com/butttons/dora)
 - **SCIP Protocol**: [https://github.com/sourcegraph/scip](https://github.com/sourcegraph/scip)
 - **Claude Code**: [https://claude.ai/code](https://claude.ai/code)
