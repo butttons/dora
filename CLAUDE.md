@@ -18,6 +18,17 @@ Build a CLI tool called `dora` using Bun and SQLite. It helps AI agents understa
 - Protobuf: @bufbuild/protobuf
 - Indexer: scip-typescript (external dependency)
 
+## Documentation Website
+
+The `docs/` directory contains the documentation website for dora, built with Astro and deployed to https://dora-cli.dev.
+
+- **Tech Stack:** Astro 5.x, Tailwind CSS 4.x, Cloudflare Workers
+- **Pages:** Landing page (with platform/language detection), full documentation, command reference, architecture guide
+- **Features:** Dynamic installation instructions for 9+ languages, AI agent integration examples, responsive design
+- **Deployment:** Cloudflare Workers via wrangler (`bun run deploy` in docs directory)
+
+See `docs/CLAUDE.md` for detailed documentation-specific guidance on maintaining and updating the website.
+
 ## Directory Structure
 
 Note: Example scip files in `example` folder
