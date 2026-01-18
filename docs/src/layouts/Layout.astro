@@ -1,6 +1,6 @@
 ---
 import "../styles/global.css";
-import { Terminal } from "lucide-astro";
+import { Terminal, Home, BookOpen, FileCode, Github } from "lucide-astro";
 
 interface Props {
     title: string;
@@ -72,46 +72,46 @@ const canonicalURL = new URL(currentPath, "https://dora-cli.dev").href;
                         <a
                             href="/"
                             class:list={[
-                                "hover:text-blue-500 transition-colors",
+                                "hover:text-blue-500 transition-colors flex items-center gap-1.5",
                                 currentPath === "/"
                                     ? "text-blue-500"
                                     : "text-zinc-400",
                             ]}
                         >
-                            Home
+                            <Home class="w-4 h-4 sm:hidden" />
+                            <span class="hidden sm:inline">Home</span>
                         </a>
                         <a
                             href="/docs"
                             class:list={[
-                                "hover:text-blue-500 transition-colors",
+                                "hover:text-blue-500 transition-colors flex items-center gap-1.5",
                                 currentPath === "/docs"
                                     ? "text-blue-500"
                                     : "text-zinc-400",
                             ]}
                         >
-                            Docs
+                            <BookOpen class="w-4 h-4 sm:hidden" />
+                            <span class="hidden sm:inline">Docs</span>
                         </a>
                         <a
                             href="/commands"
                             class:list={[
-                                "hover:text-blue-500 transition-colors",
+                                "hover:text-blue-500 transition-colors flex items-center gap-1.5",
                                 currentPath === "/commands"
                                     ? "text-blue-500"
                                     : "text-zinc-400",
                             ]}
                         >
-                            Commands
+                            <FileCode class="w-4 h-4 sm:hidden" />
+                            <span class="hidden sm:inline">Commands</span>
                         </a>
                         <a
-                            href="/architecture"
-                            class:list={[
-                                "hover:text-blue-500 transition-colors hidden sm:inline",
-                                currentPath === "/architecture"
-                                    ? "text-blue-500"
-                                    : "text-zinc-400",
-                            ]}
+                            href="https://github.com/butttons/dora"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="text-zinc-400 hover:text-blue-500 transition-colors"
                         >
-                            Architecture
+                            <Github class="w-4 h-4" />
                         </a>
                     </div>
                 </div>
@@ -137,8 +137,11 @@ const canonicalURL = new URL(currentPath, "https://dora-cli.dev").href;
                         href="https://github.com/butttons/dora"
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="text-blue-500 hover:underline">GitHub</a
+                        class="text-blue-500 hover:text-blue-400 transition-colors flex items-center gap-1.5"
                     >
+                        <Github class="w-4 h-4" />
+                        <span class="hidden sm:inline">GitHub</span>
+                    </a>
                 </div>
             </div>
         </footer>

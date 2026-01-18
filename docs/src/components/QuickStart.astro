@@ -1,0 +1,248 @@
+---
+const platformConfigs = {
+    "macos-arm": {
+        install: `curl -L https://github.com/butttons/dora/releases/latest/download/dora-darwin-arm64 -o dora
+chmod +x dora
+sudo mv dora /usr/local/bin/`,
+    },
+    "macos-intel": {
+        install: `curl -L https://github.com/butttons/dora/releases/latest/download/dora-darwin-x64 -o dora
+chmod +x dora
+sudo mv dora /usr/local/bin/`,
+    },
+    linux: {
+        install: `curl -L https://github.com/butttons/dora/releases/latest/download/dora-linux-x64 -o dora
+chmod +x dora
+sudo mv dora /usr/local/bin/`,
+    },
+    windows: {
+        install: `# Download from releases page
+curl -L https://github.com/butttons/dora/releases/latest/download/dora-windows-x64.exe -o dora.exe
+# Add to PATH or move to a directory in PATH`,
+    },
+};
+
+const languageConfigs = {
+    typescript: {
+        name: "TypeScript / JavaScript",
+        install: "npm install -g @sourcegraph/scip-typescript",
+    },
+    python: {
+        name: "Python",
+        install: "npm install -g @sourcegraph/scip-python",
+    },
+    java: {
+        name: "Java / Scala / Kotlin",
+        install: `# Download coursier
+curl -fLo coursier https://git.io/coursier-cli
+chmod +x coursier
+./coursier bootstrap --standalone -o scip-java com.sourcegraph:scip-java_2.13:0.11.2`,
+    },
+    rust: {
+        name: "Rust",
+        install: `# Install rust-analyzer (if not already installed)
+rustup component add rust-analyzer
+# Generate SCIP index
+rust-analyzer scip .`,
+    },
+    csharp: {
+        name: "C# / Visual Basic",
+        install: "dotnet tool install --global scip-dotnet",
+    },
+    cpp: {
+        name: "C / C++",
+        install: `# Download binary from releases
+curl -L https://github.com/sourcegraph/scip-clang/releases/latest/download/scip-clang-linux -o scip-clang
+chmod +x scip-clang
+sudo mv scip-clang /usr/local/bin/`,
+    },
+    ruby: {
+        name: "Ruby",
+        install: `# Add to Gemfile
+gem 'scip-ruby', require: false, group: :development
+# Then run
+bundle install`,
+    },
+    dart: {
+        name: "Dart",
+        install: "dart pub global activate scip_dart",
+    },
+    php: {
+        name: "PHP",
+        install: "composer require --dev davidrjenni/scip-php",
+    },
+};
+---
+
+<div id="quick-start" class="mb-20">
+    <h2 class="text-3xl font-bold mb-8 text-center">Quick Start</h2>
+
+    <div class="max-w-4xl mx-auto">
+        <!-- Selectors Row -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6 max-w-2xl mx-auto">
+            <div>
+                <label
+                    for="language-select"
+                    class="block text-xs font-medium text-zinc-500 mb-1.5"
+                >
+                    Language
+                </label>
+                <select
+                    id="language-select"
+                    class="w-full bg-zinc-900 border border-zinc-800 text-zinc-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors"
+                >
+                    <option value="typescript">TypeScript / JavaScript</option>
+                    <option value="python">Python</option>
+                    <option value="java">Java / Scala / Kotlin</option>
+                    <option value="rust">Rust</option>
+                    <option value="csharp">C# / Visual Basic</option>
+                    <option value="cpp">C / C++</option>
+                    <option value="ruby">Ruby</option>
+                    <option value="dart">Dart</option>
+                    <option value="php">PHP</option>
+                </select>
+            </div>
+            <div>
+                <label
+                    for="platform-select"
+                    class="block text-xs font-medium text-zinc-500 mb-1.5"
+                >
+                    Platform
+                </label>
+                <select
+                    id="platform-select"
+                    class="w-full bg-zinc-900 border border-zinc-800 text-zinc-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors"
+                >
+                    <option value="macos-arm">macOS (ARM)</option>
+                    <option value="macos-intel">macOS (Intel)</option>
+                    <option value="linux">Linux x64</option>
+                    <option value="windows">Windows x64</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Installation Steps (Single Template) -->
+        <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
+            <div class="font-mono text-sm space-y-4">
+                <!-- Step 1: Install dora -->
+                <div>
+                    <div class="text-zinc-400 text-xs mb-2">
+                        1. Install dora
+                    </div>
+                    <pre
+                        id="install-dora-cmd"
+                        class="bg-zinc-950 rounded p-3 overflow-x-auto text-zinc-300 text-sm"
+                    ><code /></pre>
+                </div>
+
+                <!-- Step 2: Install SCIP indexer -->
+                <div>
+                    <div id="install-scip-title" class="text-zinc-400 text-xs mb-2">
+                        2. Install SCIP indexer
+                    </div>
+                    <pre
+                        id="install-scip-cmd"
+                        class="bg-zinc-950 rounded p-3 overflow-x-auto text-zinc-300 text-sm"
+                    ><code /></pre>
+                </div>
+
+                <!-- Step 3: Initialize and index -->
+                <div>
+                    <div class="text-zinc-400 text-xs mb-2">
+                        3. Initialize and index your codebase
+                    </div>
+                    <pre
+                        id="init-index-cmd"
+                        class="bg-zinc-950 rounded p-3 overflow-x-auto text-zinc-300 text-sm"
+                    ><code>dora init && dora index</code></pre>
+                </div>
+
+                <div class="text-zinc-500 text-xs mt-4 pt-4 border-t border-zinc-800">
+                    Your codebase is now indexed. Try <span class="text-blue-300"
+                        >dora ls</span
+                    > to see an overview.
+                </div>
+            </div>
+        </div>
+
+        <p class="text-center text-zinc-500 mt-4 text-sm">
+            For more installation options, see the <a
+                href="/docs"
+                class="text-blue-400 hover:underline">documentation</a
+            >.
+        </p>
+    </div>
+</div>
+
+<script define:vars={{ platformConfigs, languageConfigs }}>
+    function detectPlatform() {
+        const platform = navigator.platform.toLowerCase();
+        const userAgent = navigator.userAgent.toLowerCase();
+
+        if (platform.includes("mac")) {
+            if (
+                userAgent.includes("arm") ||
+                navigator.userAgent.includes("ARM")
+            ) {
+                return "macos-arm";
+            }
+            return "macos-intel";
+        } else if (platform.includes("linux")) {
+            return "linux";
+        } else if (platform.includes("win")) {
+            return "windows";
+        }
+
+        return "macos-arm";
+    }
+
+    function updateInstallCommands() {
+        const platformSelect = document.getElementById("platform-select");
+        const languageSelect = document.getElementById("language-select");
+
+        if (!platformSelect || !languageSelect) return;
+
+        const platform = platformSelect.value;
+        const language = languageSelect.value;
+
+        const platformConfig = platformConfigs[platform];
+        const languageConfig = languageConfigs[language];
+
+        if (!platformConfig || !languageConfig) return;
+
+        // Update Step 1: Install dora
+        const installDoraCmd = document.getElementById("install-dora-cmd");
+        if (installDoraCmd) {
+            installDoraCmd.querySelector("code").textContent =
+                platformConfig.install;
+        }
+
+        // Update Step 2: Install SCIP indexer
+        const installScipTitle = document.getElementById("install-scip-title");
+        const installScipCmd = document.getElementById("install-scip-cmd");
+
+        if (installScipTitle) {
+            installScipTitle.textContent = `2. Install SCIP indexer for ${languageConfig.name}`;
+        }
+        if (installScipCmd) {
+            installScipCmd.querySelector("code").textContent =
+                languageConfig.install;
+        }
+    }
+
+    const detectedPlatform = detectPlatform();
+    const platformSelect = document.getElementById("platform-select");
+    const languageSelect = document.getElementById("language-select");
+
+    if (platformSelect) {
+        platformSelect.value = detectedPlatform;
+        platformSelect.addEventListener("change", updateInstallCommands);
+    }
+
+    if (languageSelect) {
+        languageSelect.addEventListener("change", updateInstallCommands);
+    }
+
+    // Initialize with detected platform and default language
+    updateInstallCommands();
+</script>

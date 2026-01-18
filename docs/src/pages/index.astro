@@ -1,5 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import TerminalCarousel from "../components/TerminalCarousel.astro";
+import QuickStart from "../components/QuickStart.astro";
 import {
     Terminal,
     Zap,
@@ -33,9 +35,7 @@ import {
             <p class="text-2xl text-zinc-400 mb-8">
                 the explorer for your codebase
             </p>
-            <p class="text-lg text-zinc-300 max-w-2xl mx-auto mb-10">
-                Stop grepping. Start querying.
-            </p>
+            <TerminalCarousel />
             <div class="flex gap-4 justify-center">
                 <a
                     href="#quick-start"
@@ -88,119 +88,141 @@ import {
 
                 <!-- Example pairs -->
                 <div class="space-y-6 md:space-y-3 text-sm font-mono">
-                    <!-- Example 1 -->
+                    <!-- Example 1: Directory Structure -->
                     <div class="grid md:grid-cols-2 gap-3">
                         <div
                             class="bg-zinc-900 border border-zinc-800 rounded p-3"
                         >
                             <div class="text-zinc-500 mb-1">
-                                # Find where a class is defined
+                                # Explore directory structure
                             </div>
                             <div class="text-zinc-300">
-                                grep -rn "class Logger" src/
+                                tree -L 2 src -I 'node_modules'
                             </div>
                         </div>
                         <div
                             class="bg-zinc-900 border border-blue-900/50 rounded p-3"
                         >
                             <div class="text-zinc-500 mb-1">
-                                # Find where a class is defined
-                            </div>
-                            <div class="text-blue-300">dora symbol Logger</div>
-                        </div>
-                    </div>
-
-                    <!-- Example 2 -->
-                    <div class="grid md:grid-cols-2 gap-3">
-                        <div
-                            class="bg-zinc-900 border border-zinc-800 rounded p-3"
-                        >
-                            <div class="text-zinc-500 mb-1">
-                                # Find files that import auth
-                            </div>
-                            <div class="text-zinc-300">
-                                grep -rn "from.*auth" src/*.ts
-                            </div>
-                        </div>
-                        <div
-                            class="bg-zinc-900 border border-blue-900/50 rounded p-3"
-                        >
-                            <div class="text-zinc-500 mb-1">
-                                # Find files that import auth
+                                # Explore directory structure
                             </div>
                             <div class="text-blue-300">
-                                dora rdeps src/auth/index.ts
+                                dora ls src --sort symbols
                             </div>
                         </div>
                     </div>
 
-                    <!-- Example 3 -->
+                    <!-- Example 2: Finding Exports -->
                     <div class="grid md:grid-cols-2 gap-3">
                         <div
                             class="bg-zinc-900 border border-zinc-800 rounded p-3"
                         >
                             <div class="text-zinc-500 mb-1">
-                                # Find where ApiClient is used
+                                # Find what a file exports
                             </div>
                             <div class="text-zinc-300">
-                                grep -rn "ApiClient" src/ | wc -l
+                                grep "^export function" src/db/queries.ts
                             </div>
                         </div>
                         <div
                             class="bg-zinc-900 border border-blue-900/50 rounded p-3"
                         >
                             <div class="text-zinc-500 mb-1">
-                                # Find where ApiClient is used
-                            </div>
-                            <div class="text-blue-300">dora refs ApiClient</div>
-                        </div>
-                    </div>
-
-                    <!-- Example 4 -->
-                    <div class="grid md:grid-cols-2 gap-3">
-                        <div
-                            class="bg-zinc-900 border border-zinc-800 rounded p-3"
-                        >
-                            <div class="text-zinc-500 mb-1">
-                                # Find all TypeScript files in components
-                            </div>
-                            <div class="text-zinc-300">
-                                find src/components -name "*.ts"
-                            </div>
-                        </div>
-                        <div
-                            class="bg-zinc-900 border border-blue-900/50 rounded p-3"
-                        >
-                            <div class="text-zinc-500 mb-1">
-                                # Find all TypeScript files in components
+                                # Find what a file exports
                             </div>
                             <div class="text-blue-300">
-                                dora ls src/components
+                                dora exports src/db/queries.ts
                             </div>
                         </div>
                     </div>
 
-                    <!-- Example 5 -->
+                    <!-- Example 3: Counting Files -->
                     <div class="grid md:grid-cols-2 gap-3">
                         <div
                             class="bg-zinc-900 border border-zinc-800 rounded p-3"
                         >
                             <div class="text-zinc-500 mb-1">
-                                # Check what a file imports
+                                # Count TypeScript files
                             </div>
                             <div class="text-zinc-300">
-                                grep "^import" src/app.ts
+                                find src -type f -name "*.ts" | wc -l
                             </div>
                         </div>
                         <div
                             class="bg-zinc-900 border border-blue-900/50 rounded p-3"
                         >
                             <div class="text-zinc-500 mb-1">
-                                # Check what a file imports
+                                # Count TypeScript files
+                            </div>
+                            <div class="text-blue-300">dora ls src</div>
+                        </div>
+                    </div>
+
+                    <!-- Example 4: Code Search -->
+                    <div class="grid md:grid-cols-2 gap-3">
+                        <div
+                            class="bg-zinc-900 border border-zinc-800 rounded p-3"
+                        >
+                            <div class="text-zinc-500 mb-1">
+                                # Search for symbol definitions
+                            </div>
+                            <div class="text-zinc-300">
+                                grep -r "language" src/converter/ | head -5
+                            </div>
+                        </div>
+                        <div
+                            class="bg-zinc-900 border border-blue-900/50 rounded p-3"
+                        >
+                            <div class="text-zinc-500 mb-1">
+                                # Search for symbol definitions
+                            </div>
+                            <div class="text-blue-300">dora symbol language</div>
+                        </div>
+                    </div>
+
+                    <!-- Example 5: Understanding Dependencies -->
+                    <div class="grid md:grid-cols-2 gap-3">
+                        <div
+                            class="bg-zinc-900 border border-zinc-800 rounded p-3"
+                        >
+                            <div class="text-zinc-500 mb-1">
+                                # Understand file dependencies
+                            </div>
+                            <div class="text-zinc-300">
+                                grep -A 10 '"dependencies"' package.json
+                            </div>
+                        </div>
+                        <div
+                            class="bg-zinc-900 border border-blue-900/50 rounded p-3"
+                        >
+                            <div class="text-zinc-500 mb-1">
+                                # Understand file dependencies
                             </div>
                             <div class="text-blue-300">
-                                dora file src/app.ts
+                                dora file src/converter/convert.ts
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Example 6: Database Status -->
+                    <div class="grid md:grid-cols-2 gap-3">
+                        <div
+                            class="bg-zinc-900 border border-zinc-800 rounded p-3"
+                        >
+                            <div class="text-zinc-500 mb-1">
+                                # Check index status
+                            </div>
+                            <div class="text-zinc-300">
+                                ls -lh .dora/dora.db
+                            </div>
+                        </div>
+                        <div
+                            class="bg-zinc-900 border border-blue-900/50 rounded p-3"
+                        >
+                            <div class="text-zinc-500 mb-1">
+                                # Check index status
+                            </div>
+                            <div class="text-blue-300">dora status</div>
                         </div>
                     </div>
                 </div>
@@ -212,111 +234,7 @@ import {
         </div>
 
         <!-- Quick Start -->
-        <div id="quick-start" class="mb-20">
-            <h2 class="text-3xl font-bold mb-8 text-center">Quick Start</h2>
-
-            <div class="max-w-4xl mx-auto">
-                <!-- Selectors Row -->
-                <div
-                    class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6 max-w-2xl mx-auto"
-                >
-                    <div>
-                        <label
-                            for="language-select"
-                            class="block text-xs font-medium text-zinc-500 mb-1.5"
-                        >
-                            Language
-                        </label>
-                        <select
-                            id="language-select"
-                            class="w-full bg-zinc-900 border border-zinc-800 text-zinc-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors"
-                        >
-                            <option value="typescript"
-                                >TypeScript / JavaScript</option
-                            >
-                            <option value="python">Python</option>
-                            <option value="java">Java / Scala / Kotlin</option>
-                            <option value="rust">Rust</option>
-                            <option value="csharp">C# / Visual Basic</option>
-                            <option value="cpp">C / C++</option>
-                            <option value="ruby">Ruby</option>
-                            <option value="dart">Dart</option>
-                            <option value="php">PHP</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label
-                            for="platform-select"
-                            class="block text-xs font-medium text-zinc-500 mb-1.5"
-                        >
-                            Platform
-                        </label>
-                        <select
-                            id="platform-select"
-                            class="w-full bg-zinc-900 border border-zinc-800 text-zinc-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors"
-                        >
-                            <option value="macos-arm">macOS (ARM)</option>
-                            <option value="macos-intel">macOS (Intel)</option>
-                            <option value="linux">Linux x64</option>
-                            <option value="windows">Windows x64</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Installation Steps (Single Template) -->
-                <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
-                    <div class="font-mono text-sm space-y-4">
-                        <!-- Step 1: Install dora -->
-                        <div>
-                            <div class="text-zinc-400 text-xs mb-2">
-                                1. Install dora
-                            </div>
-                            <pre
-                                id="install-dora-cmd"
-                                class="bg-zinc-950 rounded p-3 overflow-x-auto text-zinc-300 text-sm"><code /></pre>
-                        </div>
-
-                        <!-- Step 2: Install SCIP indexer -->
-                        <div>
-                            <div
-                                id="install-scip-title"
-                                class="text-zinc-400 text-xs mb-2"
-                            >
-                                2. Install SCIP indexer
-                            </div>
-                            <pre
-                                id="install-scip-cmd"
-                                class="bg-zinc-950 rounded p-3 overflow-x-auto text-zinc-300 text-sm"><code /></pre>
-                        </div>
-
-                        <!-- Step 3: Initialize and index -->
-                        <div>
-                            <div class="text-zinc-400 text-xs mb-2">
-                                3. Initialize and index your codebase
-                            </div>
-                            <pre
-                                id="init-index-cmd"
-                                class="bg-zinc-950 rounded p-3 overflow-x-auto text-zinc-300 text-sm"><code>dora init && dora index</code></pre>
-                        </div>
-
-                        <div
-                            class="text-zinc-500 text-xs mt-4 pt-4 border-t border-zinc-800"
-                        >
-                            Your codebase is now indexed. Try <span
-                                class="text-blue-300">dora ls</span
-                            > to see an overview.
-                        </div>
-                    </div>
-                </div>
-
-                <p class="text-center text-zinc-500 mt-4 text-sm">
-                    For more installation options, see the <a
-                        href="/docs"
-                        class="text-blue-400 hover:underline">documentation</a
-                    >.
-                </p>
-            </div>
-        </div>
+        <QuickStart />
 
         <!-- What it does -->
         <div class="mb-20">
@@ -411,294 +329,98 @@ import {
 
     <!-- How It Works -->
     <div class="mb-20 px-8">
-        <h2 class="text-3xl font-bold mb-12 text-center">How it works</h2>
-        <div class="max-w-5xl mx-auto">
-            <!-- Desktop: Horizontal Flow -->
-            <div class="hidden md:flex items-center justify-between gap-4">
-                <!-- Step 1 -->
-                <div class="flex-1 text-center">
-                    <div
-                        class="bg-zinc-900 border border-zinc-800 rounded-lg p-8"
-                    >
+        <h2 class="text-3xl font-bold mb-16 text-center">How it works</h2>
+        <div class="max-w-4xl mx-auto">
+            <div class="relative">
+                <!-- Connecting line (desktop only) -->
+                <div
+                    class="hidden md:block absolute top-8 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-500/20 via-blue-500/40 to-blue-500/20"
+                ></div>
+
+                <!-- Steps -->
+                <div class="grid md:grid-cols-3 gap-12 md:gap-8 relative">
+                    <!-- Step 1 -->
+                    <div class="flex flex-col items-center text-center">
                         <div
-                            class="w-16 h-16 rounded-full bg-blue-500/10 flex items-center justify-center mx-auto mb-4"
+                            class="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center mb-6 relative z-10"
                         >
-                            <FileCode class="w-8 h-8 text-blue-400" />
+                            <span class="text-2xl font-bold text-zinc-950">1</span>
                         </div>
-                        <h3 class="text-xl font-semibold mb-3">1. Index</h3>
-                        <p class="text-zinc-400 text-sm">
-                            Run a SCIP indexer on your codebase to extract
-                            symbols, definitions, and relationships
+                        <h3 class="text-xl font-semibold mb-3">Index</h3>
+                        <p class="text-zinc-400 text-sm leading-relaxed">
+                            SCIP indexer extracts symbols, definitions, and
+                            relationships from your code
                         </p>
                     </div>
-                </div>
 
-                <!-- Arrow -->
-                <ArrowRight class="w-8 h-8 text-blue-500 flex-shrink-0" />
-
-                <!-- Step 2 -->
-                <div class="flex-1 text-center">
-                    <div
-                        class="bg-zinc-900 border border-zinc-800 rounded-lg p-8"
-                    >
+                    <!-- Step 2 -->
+                    <div class="flex flex-col items-center text-center">
                         <div
-                            class="w-16 h-16 rounded-full bg-blue-500/10 flex items-center justify-center mx-auto mb-4"
+                            class="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center mb-6 relative z-10"
                         >
-                            <Database class="w-8 h-8 text-blue-400" />
+                            <span class="text-2xl font-bold text-zinc-950">2</span>
                         </div>
-                        <h3 class="text-xl font-semibold mb-3">2. Store</h3>
-                        <p class="text-zinc-400 text-sm">
-                            dora converts the index into an optimized SQLite
-                            database with pre-computed aggregates
+                        <h3 class="text-xl font-semibold mb-3">Store</h3>
+                        <p class="text-zinc-400 text-sm leading-relaxed">
+                            dora converts to SQLite with pre-computed aggregates
+                            for instant queries
                         </p>
                     </div>
-                </div>
 
-                <!-- Arrow -->
-                <ArrowRight class="w-8 h-8 text-blue-500 flex-shrink-0" />
-
-                <!-- Step 3 -->
-                <div class="flex-1 text-center">
-                    <div
-                        class="bg-zinc-900 border border-zinc-800 rounded-lg p-8"
-                    >
+                    <!-- Step 3 -->
+                    <div class="flex flex-col items-center text-center">
                         <div
-                            class="w-16 h-16 rounded-full bg-blue-500/10 flex items-center justify-center mx-auto mb-4"
+                            class="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center mb-6 relative z-10"
                         >
-                            <Zap class="w-8 h-8 text-blue-400" />
+                            <span class="text-2xl font-bold text-zinc-950">3</span>
                         </div>
-                        <h3 class="text-xl font-semibold mb-3">3. Query</h3>
-                        <p class="text-zinc-400 text-sm">
-                            AI agents query the database instantly: no file
-                            reads, no token waste, just structured answers
+                        <h3 class="text-xl font-semibold mb-3">Query</h3>
+                        <p class="text-zinc-400 text-sm leading-relaxed">
+                            AI agents get structured answers without reading
+                            files or wasting tokens
                         </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Mobile: Vertical Stack -->
-            <div class="md:hidden space-y-6">
-                <!-- Step 1 -->
-                <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
-                    <div class="flex items-start gap-4">
-                        <div
-                            class="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center flex-shrink-0"
-                        >
-                            <FileCode class="w-6 h-6 text-blue-400" />
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-semibold mb-2">1. Index</h3>
-                            <p class="text-zinc-400 text-sm">
-                                Run a SCIP indexer on your codebase to extract
-                                symbols, definitions, and relationships
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Arrow -->
-                <div class="flex justify-center">
-                    <ArrowRight class="w-6 h-6 text-blue-500 rotate-90" />
-                </div>
-
-                <!-- Step 2 -->
-                <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
-                    <div class="flex items-start gap-4">
-                        <div
-                            class="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center flex-shrink-0"
-                        >
-                            <Database class="w-6 h-6 text-blue-400" />
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-semibold mb-2">2. Store</h3>
-                            <p class="text-zinc-400 text-sm">
-                                dora converts the index into an optimized SQLite
-                                database with pre-computed aggregates
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Arrow -->
-                <div class="flex justify-center">
-                    <ArrowRight class="w-6 h-6 text-blue-500 rotate-90" />
-                </div>
-
-                <!-- Step 3 -->
-                <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
-                    <div class="flex items-start gap-4">
-                        <div
-                            class="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center flex-shrink-0"
-                        >
-                            <Zap class="w-6 h-6 text-blue-400" />
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-semibold mb-2">3. Query</h3>
-                            <p class="text-zinc-400 text-sm">
-                                AI agents query the database instantly: no file
-                                reads, no token waste, just structured answers
-                            </p>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- CTA Section -->
+        <div class="border-t border-zinc-800 mt-20">
+            <div class="max-w-4xl mx-auto px-6 py-16 text-center">
+                <h3 class="text-2xl font-bold mb-4">Ready to get started?</h3>
+                <p class="text-zinc-400 mb-8">
+                    Install dora and start exploring your codebase with structured queries.
+                </p>
+                <div class="flex flex-wrap gap-4 justify-center mb-10">
+                    <a
+                        href="#quick-start"
+                        class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
+                    >
+                        <Zap class="w-5 h-5" />
+                        Get Started
+                    </a>
+                    <a
+                        href="https://github.com/butttons/dora"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="border-2 border-blue-500 hover:bg-blue-500/10 text-blue-400 px-6 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
+                    >
+                        <Github class="w-5 h-5" />
+                        View on GitHub
+                    </a>
+                </div>
+                <div class="text-zinc-500 text-sm">
+                    Powered by{" "}
+                    <a
+                        href="https://github.com/sourcegraph/scip"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="text-blue-400 hover:text-blue-300 transition-colors font-semibold"
+                    >
+                        SCIP ↗
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
-    <script>
-        // Platform configurations
-        const platformConfigs = {
-            "macos-arm": {
-                install: `curl -L https://github.com/butttons/dora/releases/latest/download/dora-darwin-arm64 -o dora
-chmod +x dora
-sudo mv dora /usr/local/bin/`,
-            },
-            "macos-intel": {
-                install: `curl -L https://github.com/butttons/dora/releases/latest/download/dora-darwin-x64 -o dora
-chmod +x dora
-sudo mv dora /usr/local/bin/`,
-            },
-            linux: {
-                install: `curl -L https://github.com/butttons/dora/releases/latest/download/dora-linux-x64 -o dora
-chmod +x dora
-sudo mv dora /usr/local/bin/`,
-            },
-            windows: {
-                install: `# Download from releases page
-curl -L https://github.com/butttons/dora/releases/latest/download/dora-windows-x64.exe -o dora.exe
-# Add to PATH or move to a directory in PATH`,
-            },
-        };
-
-        // Language configurations
-        const languageConfigs = {
-            typescript: {
-                name: "TypeScript / JavaScript",
-                install: "npm install -g @sourcegraph/scip-typescript",
-            },
-            python: {
-                name: "Python",
-                install: "npm install -g @sourcegraph/scip-python",
-            },
-            java: {
-                name: "Java / Scala / Kotlin",
-                install: `# Download coursier
-curl -fLo coursier https://git.io/coursier-cli
-chmod +x coursier
-./coursier bootstrap --standalone -o scip-java com.sourcegraph:scip-java_2.13:0.11.2`,
-            },
-            rust: {
-                name: "Rust",
-                install: `# Install rust-analyzer (if not already installed)
-rustup component add rust-analyzer
-# Generate SCIP index
-rust-analyzer scip .`,
-            },
-            csharp: {
-                name: "C# / Visual Basic",
-                install: "dotnet tool install --global scip-dotnet",
-            },
-            cpp: {
-                name: "C / C++",
-                install: `# Download binary from releases
-curl -L https://github.com/sourcegraph/scip-clang/releases/latest/download/scip-clang-linux -o scip-clang
-chmod +x scip-clang
-sudo mv scip-clang /usr/local/bin/`,
-            },
-            ruby: {
-                name: "Ruby",
-                install: `# Add to Gemfile
-gem 'scip-ruby', require: false, group: :development
-# Then run
-bundle install`,
-            },
-            dart: {
-                name: "Dart",
-                install: "dart pub global activate scip_dart",
-            },
-            php: {
-                name: "PHP",
-                install: "composer require --dev davidrjenni/scip-php",
-            },
-        };
-
-        function detectPlatform() {
-            const platform = navigator.platform.toLowerCase();
-            const userAgent = navigator.userAgent.toLowerCase();
-
-            if (platform.includes("mac")) {
-                if (
-                    userAgent.includes("arm") ||
-                    navigator.userAgent.includes("ARM")
-                ) {
-                    return "macos-arm";
-                }
-                return "macos-intel";
-            } else if (platform.includes("linux")) {
-                return "linux";
-            } else if (platform.includes("win")) {
-                return "windows";
-            }
-
-            return "macos-arm";
-        }
-
-        function updateInstallCommands() {
-            const platformSelect = document.getElementById("platform-select");
-            const languageSelect = document.getElementById("language-select");
-
-            if (!platformSelect || !languageSelect) return;
-
-            const platform = platformSelect.value;
-            const language = languageSelect.value;
-
-            const platformConfig = platformConfigs[platform];
-            const languageConfig = languageConfigs[language];
-
-            if (!platformConfig || !languageConfig) return;
-
-            // Update Step 1: Install dora
-            const installDoraCmd = document.getElementById("install-dora-cmd");
-            if (installDoraCmd) {
-                installDoraCmd.querySelector("code").textContent =
-                    platformConfig.install;
-            }
-
-            // Update Step 2: Install SCIP indexer
-            const installScipTitle =
-                document.getElementById("install-scip-title");
-            const installScipCmd = document.getElementById("install-scip-cmd");
-
-            if (installScipTitle) {
-                installScipTitle.textContent = `2. Install SCIP indexer for ${languageConfig.name}`;
-            }
-            if (installScipCmd) {
-                installScipCmd.querySelector("code").textContent =
-                    languageConfig.install;
-            }
-        }
-
-        document.addEventListener("DOMContentLoaded", () => {
-            const detectedPlatform = detectPlatform();
-            const platformSelect = document.getElementById("platform-select");
-            const languageSelect = document.getElementById("language-select");
-
-            if (platformSelect) {
-                platformSelect.value = detectedPlatform;
-                platformSelect.addEventListener(
-                    "change",
-                    updateInstallCommands,
-                );
-            }
-
-            if (languageSelect) {
-                languageSelect.addEventListener(
-                    "change",
-                    updateInstallCommands,
-                );
-            }
-
-            // Initialize with detected platform and default language
-            updateInstallCommands();
-        });
-    </script>
 </Layout>

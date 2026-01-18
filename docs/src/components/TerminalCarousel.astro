@@ -1,0 +1,153 @@
+---
+const examples = [
+    {
+        title: "List files with metadata",
+        traditional: `$ find src -type f -name "*.ts" | wc -l`,
+        dora: `$ dora ls src`,
+    },
+    {
+        title: "Find exported symbols",
+        traditional: `$ grep "^export function" src/db/queries.ts`,
+        dora: `$ dora exports src/db/queries.ts`,
+    },
+    {
+        title: "Count files and show details",
+        traditional: `$ ls src/commands/*.ts | wc -l`,
+        dora: `$ dora ls src/commands --sort symbols`,
+    },
+    {
+        title: "Analyze file dependencies",
+        traditional: `$ cat src/converter/convert.ts | grep "^export"`,
+        dora: `$ dora file src/converter/convert.ts`,
+    },
+];
+---
+
+<div class="max-w-4xl mx-auto mb-10">
+    <!-- Comparison Container -->
+    <div class="grid md:grid-cols-2 gap-4 mb-6">
+        <!-- Left: Traditional -->
+        <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
+            <pre
+                id="traditional-cmd"
+                class="font-mono text-sm leading-relaxed overflow-x-auto text-zinc-300"><code>{examples[0].traditional}</code></pre>
+        </div>
+
+        <!-- Right: With dora -->
+        <div class="bg-zinc-900 border border-blue-900/50 rounded-lg p-4">
+            <pre
+                id="dora-cmd"
+                class="font-mono text-sm leading-relaxed overflow-x-auto text-blue-300"><code>{examples[0].dora}</code></pre>
+        </div>
+    </div>
+    <!-- Navigation Arrows -->
+    <div class="flex justify-between items-center mb-4">
+        <button
+            id="prev-btn"
+            class="text-zinc-500 hover:text-blue-400 transition-colors px-4 py-2 rounded-lg hover:bg-zinc-900/50 flex items-center gap-2"
+        >
+            <span class="text-sm">←</span>
+            <span class="text-sm font-medium hidden sm:inline">Previous</span>
+        </button>
+
+        <!-- Example Title -->
+        <h3
+            id="example-title"
+            class="text-sm md:text-base font-medium text-zinc-400 text-center"
+        >
+            {examples[0].title}
+        </h3>
+
+        <button
+            id="next-btn"
+            class="text-zinc-500 hover:text-blue-400 transition-colors px-4 py-2 rounded-lg hover:bg-zinc-900/50 flex items-center gap-2"
+        >
+            <span class="text-sm font-medium hidden sm:inline">Next</span>
+            <span class="text-sm">→</span>
+        </button>
+    </div>
+    <!-- Dot Navigation -->
+    <div class="flex justify-center gap-3">
+        {
+            examples.map((_, index) => (
+                <button
+                    class="dot w-2 h-2 rounded-full transition-colors"
+                    class:list={[index === 0 ? "bg-blue-400" : "bg-zinc-600"]}
+                    data-index={index}
+                />
+            ))
+        }
+    </div>
+</div>
+
+<script define:vars={{ examples }}>
+    let currentIndex = 0;
+
+    function updateExample() {
+        const traditionalPre = document.getElementById("traditional-cmd");
+        const doraPre = document.getElementById("dora-cmd");
+        const titleElement = document.getElementById("example-title");
+
+        if (traditionalPre && doraPre) {
+            const traditionalCode = traditionalPre.querySelector("code");
+            const doraCode = doraPre.querySelector("code");
+
+            if (traditionalCode && doraCode) {
+                traditionalCode.textContent =
+                    examples[currentIndex].traditional;
+                doraCode.textContent = examples[currentIndex].dora;
+            }
+        }
+
+        if (titleElement) {
+            titleElement.textContent = examples[currentIndex].title;
+        }
+
+        updateDots();
+    }
+
+    function updateDots() {
+        const dots = document.querySelectorAll(".dot");
+        dots.forEach((dot, index) => {
+            if (index === currentIndex) {
+                dot.classList.remove("bg-zinc-600");
+                dot.classList.add("bg-blue-400");
+            } else {
+                dot.classList.remove("bg-blue-400");
+                dot.classList.add("bg-zinc-600");
+            }
+        });
+    }
+
+    function nextExample() {
+        currentIndex = (currentIndex + 1) % examples.length;
+        updateExample();
+    }
+
+    function prevExample() {
+        currentIndex = (currentIndex - 1 + examples.length) % examples.length;
+        updateExample();
+    }
+
+    function goToExample(index) {
+        currentIndex = index;
+        updateExample();
+    }
+
+    // Event listeners
+    const prevBtn = document.getElementById("prev-btn");
+    const nextBtn = document.getElementById("next-btn");
+    const dots = document.querySelectorAll(".dot");
+
+    if (prevBtn) {
+        prevBtn.addEventListener("click", prevExample);
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener("click", nextExample);
+    }
+
+    dots.forEach((dot, index) => {
+        dot.addEventListener("click", () => goToExample(index));
+    });
+</script>
