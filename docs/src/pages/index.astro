@@ -25,30 +25,36 @@ import {
 >
     <div class="max-w-6xl mx-auto px-6 py-20">
         <!-- Hero -->
-        <div class="text-center mb-20">
+        <div class="text-center mb-16 md:mb-20">
+            <div class="text-xs md:text-sm text-zinc-500 mb-8 px-3 py-1">
+                CLI made for AI agents
+            </div>
             <h1
-                class="text-6xl font-bold mb-6 text-blue-500 flex items-center justify-center gap-4"
+                class="text-5xl md:text-6xl font-bold mb-4 md:mb-6 text-blue-500 flex items-center justify-center gap-3 md:gap-4"
             >
-                <Terminal class="w-16 h-16" />
+                <Terminal class="w-12 h-12 md:w-16 md:h-16" />
                 <span>dora</span>
             </h1>
-            <p class="text-2xl text-zinc-400 mb-8">
+            <div
+                class="text-sm md:text-base text-zinc-400 px-3 py-1 mb-6 md:mb-8 border-t border-zinc-800 inline-block"
+            >
                 the explorer for your codebase
-            </p>
+            </div>
+
             <TerminalCarousel />
-            <div class="flex gap-4 justify-center">
+            <div class="flex gap-3 justify-center flex-wrap">
                 <a
                     href="#quick-start"
-                    class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
+                    class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 md:px-6 md:py-3 rounded-lg font-semibold transition-colors flex items-center gap-2 text-sm md:text-base"
                 >
-                    <Zap class="w-5 h-5" />
+                    <Zap class="w-4 h-4 md:w-5 md:h-5" />
                     Quick Start
                 </a>
                 <a
                     href="/docs"
-                    class="border-2 border-blue-500 hover:bg-blue-500/10 text-blue-400 px-6 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
+                    class="border-2 border-blue-500 hover:bg-blue-500/10 text-blue-400 px-4 py-2 md:px-6 md:py-3 rounded-lg font-semibold transition-colors flex items-center gap-2 text-sm md:text-base"
                 >
-                    <BookOpen class="w-5 h-5" />
+                    <BookOpen class="w-4 h-4 md:w-5 md:h-5" />
                     Documentation
                 </a>
             </div>
@@ -176,7 +182,9 @@ import {
                             <div class="text-zinc-500 mb-1">
                                 # Search for symbol definitions
                             </div>
-                            <div class="text-blue-300">dora symbol language</div>
+                            <div class="text-blue-300">
+                                dora symbol language
+                            </div>
                         </div>
                     </div>
 
@@ -335,7 +343,8 @@ import {
                 <!-- Connecting line (desktop only) -->
                 <div
                     class="hidden md:block absolute top-8 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-500/20 via-blue-500/40 to-blue-500/20"
-                ></div>
+                >
+                </div>
 
                 <!-- Steps -->
                 <div class="grid md:grid-cols-3 gap-12 md:gap-8 relative">
@@ -344,7 +353,9 @@ import {
                         <div
                             class="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center mb-6 relative z-10"
                         >
-                            <span class="text-2xl font-bold text-zinc-950">1</span>
+                            <span class="text-2xl font-bold text-zinc-950"
+                                >1</span
+                            >
                         </div>
                         <h3 class="text-xl font-semibold mb-3">Index</h3>
                         <p class="text-zinc-400 text-sm leading-relaxed">
@@ -358,7 +369,9 @@ import {
                         <div
                             class="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center mb-6 relative z-10"
                         >
-                            <span class="text-2xl font-bold text-zinc-950">2</span>
+                            <span class="text-2xl font-bold text-zinc-950"
+                                >2</span
+                            >
                         </div>
                         <h3 class="text-xl font-semibold mb-3">Store</h3>
                         <p class="text-zinc-400 text-sm leading-relaxed">
@@ -372,7 +385,9 @@ import {
                         <div
                             class="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center mb-6 relative z-10"
                         >
-                            <span class="text-2xl font-bold text-zinc-950">3</span>
+                            <span class="text-2xl font-bold text-zinc-950"
+                                >3</span
+                            >
                         </div>
                         <h3 class="text-xl font-semibold mb-3">Query</h3>
                         <p class="text-zinc-400 text-sm leading-relaxed">
@@ -389,7 +404,8 @@ import {
             <div class="max-w-4xl mx-auto px-6 py-16 text-center">
                 <h3 class="text-2xl font-bold mb-4">Ready to get started?</h3>
                 <p class="text-zinc-400 mb-8">
-                    Install dora and start exploring your codebase with structured queries.
+                    Install dora and start exploring your codebase with
+                    structured queries.
                 </p>
                 <div class="flex flex-wrap gap-4 justify-center mb-10">
                     <a

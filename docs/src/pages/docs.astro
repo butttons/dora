@@ -17,7 +17,7 @@ import {
     <div class="max-w-6xl mx-auto px-6 py-20">
         <!-- Header -->
         <div class="mb-12">
-            <h1 class="text-5xl font-bold mb-4">Documentation</h1>
+            <h1 class="text-3xl font-bold mb-4">Documentation</h1>
             <p class="text-xl text-zinc-400">
                 Complete guide to using dora - Code Context CLI for AI Agents
             </p>
@@ -262,19 +262,20 @@ import {
                     <span class="text-zinc-500">$</span>
                     <span class="text-zinc-300">dora init && dora index</span
                     ><span class="text-zinc-500 ml-2"
-                        ># Initialize and index your codebase</span>
+                        ># Initialize and index your codebase</span
+                    >
                 </div>
                 <div>
                     <span class="text-zinc-500">$</span>
                     <span class="text-zinc-300">dora status</span><span
-                        class="text-zinc-500 ml-2"
-                        ># Verify index is ready</span>
+                        class="text-zinc-500 ml-2"># Verify index is ready</span
+                    >
                 </div>
                 <div>
                     <span class="text-zinc-500">$</span>
                     <span class="text-zinc-300">dora map</span><span
-                        class="text-zinc-500 ml-2"
-                        ># See codebase overview</span>
+                        class="text-zinc-500 ml-2"># See codebase overview</span
+                    >
                 </div>
             </div>
 
@@ -342,8 +343,7 @@ import {
                         >, create a symlink:
                     </p>
                     <pre
-                        class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm"
-                    ><code class="text-zinc-300">mkdir -p .claude/skills/dora
+                        class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm"><code class="text-zinc-300">mkdir -p .claude/skills/dora
 ln -s ../../../.dora/docs/SKILL.md .claude/skills/dora/SKILL.md</code></pre>
                     <p class="text-zinc-400 text-sm mt-2">
                         This enables the <code
@@ -364,8 +364,7 @@ ln -s ../../../.dora/docs/SKILL.md .claude/skills/dora/SKILL.md</code></pre>
                         3. Initialize dora
                     </h4>
                     <pre
-                        class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm"
-                    ><code class="text-zinc-300">dora init
+                        class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm"><code class="text-zinc-300">dora init
 dora index</code></pre>
                 </div>
 
@@ -373,8 +372,8 @@ dora index</code></pre>
                     class="bg-blue-950/20 border border-blue-900/50 rounded-lg p-4"
                 >
                     <p class="text-zinc-300 text-sm">
-                        <strong>What you get:</strong> Auto-indexing after each
-                        turn, pre-approved permissions, session startup checks
+                        <strong>What you get:</strong> Auto-indexing after each turn,
+                        pre-approved permissions, session startup checks
                     </p>
                 </div>
             </div>
@@ -515,22 +514,26 @@ dora index</code></pre>
                         <div>
                             <span class="text-blue-300">dora init</span><span
                                 class="text-zinc-500 ml-8"
-                                ># Initialize in repo</span>
+                                ># Initialize in repo</span
+                            >
                         </div>
                         <div>
                             <span class="text-blue-300">dora index</span><span
                                 class="text-zinc-500 ml-7"
-                                ># Index codebase</span>
+                                ># Index codebase</span
+                            >
                         </div>
                         <div>
                             <span class="text-blue-300">dora status</span><span
                                 class="text-zinc-500 ml-6"
-                                ># Show index health</span>
+                                ># Show index health</span
+                            >
                         </div>
                         <div>
                             <span class="text-blue-300">dora map</span><span
                                 class="text-zinc-500 ml-9"
-                                ># High-level statistics</span>
+                                ># High-level statistics</span
+                            >
                         </div>
                     </div>
                 </div>
@@ -546,43 +549,50 @@ dora index</code></pre>
                             <span class="text-blue-300"
                                 >dora ls [directory]</span
                             ><span class="text-zinc-500 ml-4"
-                                ># List files in directory with metadata</span>
+                                ># List files in directory with metadata</span
+                            >
                         </div>
                         <div>
                             <span class="text-blue-300"
                                 >dora symbol &lt;query&gt;</span
                             ><span class="text-zinc-500 ml-4"
-                                ># Find symbols by name</span>
+                                ># Find symbols by name</span
+                            >
                         </div>
                         <div>
                             <span class="text-blue-300"
                                 >dora file &lt;path&gt;</span
                             ><span class="text-zinc-500 ml-6"
-                                ># File info with dependencies</span>
+                                ># File info with dependencies</span
+                            >
                         </div>
                         <div>
                             <span class="text-blue-300"
                                 >dora refs &lt;symbol&gt;</span
                             ><span class="text-zinc-500 ml-4"
-                                ># Find all references</span>
+                                ># Find all references</span
+                            >
                         </div>
                         <div>
                             <span class="text-blue-300"
                                 >dora deps &lt;path&gt; --depth 2</span
                             ><span class="text-zinc-500 ml-2"
-                                ># Show dependencies</span>
+                                ># Show dependencies</span
+                            >
                         </div>
                         <div>
                             <span class="text-blue-300"
                                 >dora rdeps &lt;path&gt; --depth 2</span
                             ><span class="text-zinc-500 ml-1"
-                                ># Show dependents</span>
+                                ># Show dependents</span
+                            >
                         </div>
                         <div>
                             <span class="text-blue-300"
                                 >dora adventure &lt;from&gt; &lt;to&gt;</span
                             ><span class="text-zinc-500 ml-1"
-                                ># Find shortest path</span>
+                                ># Find shortest path</span
+                            >
                         </div>
                     </div>
                 </div>
@@ -597,37 +607,42 @@ dora index</code></pre>
                         <div>
                             <span class="text-blue-300">dora cycles</span><span
                                 class="text-zinc-500 ml-16"
-                                ># Find bidirectional dependencies</span>
+                                ># Find bidirectional dependencies</span
+                            >
                         </div>
                         <div>
                             <span class="text-blue-300"
                                 >dora coupling --threshold 5</span
                             ><span class="text-zinc-500 ml-2"
-                                ># Find tightly coupled files</span>
+                                ># Find tightly coupled files</span
+                            >
                         </div>
                         <div>
                             <span class="text-blue-300"
                                 >dora complexity --sort complexity</span
                             ><span class="text-zinc-500 ml-1"
-                                ># High-impact files</span>
+                                ># High-impact files</span
+                            >
                         </div>
                         <div>
                             <span class="text-blue-300"
                                 >dora treasure --limit 20</span
                             ><span class="text-zinc-500 ml-4"
-                                ># Most referenced files</span>
+                                ># Most referenced files</span
+                            >
                         </div>
                         <div>
                             <span class="text-blue-300"
                                 >dora lost --limit 50</span
                             ><span class="text-zinc-500 ml-7"
-                                ># Potentially dead code</span>
+                                ># Potentially dead code</span
+                            >
                         </div>
                         <div>
                             <span class="text-blue-300"
                                 >dora leaves --max-dependents 3</span
-                            ><span class="text-zinc-500 ml-1"
-                                ># Leaf nodes</span>
+                            ><span class="text-zinc-500 ml-1"># Leaf nodes</span
+                            >
                         </div>
                     </div>
                 </div>
@@ -642,37 +657,43 @@ dora index</code></pre>
                         <div>
                             <span class="text-blue-300">dora schema</span><span
                                 class="text-zinc-500 ml-16"
-                                ># Show database schema</span>
+                                ># Show database schema</span
+                            >
                         </div>
                         <div>
                             <span class="text-blue-300"
                                 >dora query "&lt;sql&gt;"</span
                             ><span class="text-zinc-500 ml-9"
-                                ># Execute raw SQL (read-only)</span>
+                                ># Execute raw SQL (read-only)</span
+                            >
                         </div>
                         <div>
                             <span class="text-blue-300"
                                 >dora changes &lt;ref&gt;</span
                             ><span class="text-zinc-500 ml-10"
-                                ># Changed/impacted files</span>
+                                ># Changed/impacted files</span
+                            >
                         </div>
                         <div>
                             <span class="text-blue-300"
                                 >dora exports &lt;path|package&gt;</span
                             ><span class="text-zinc-500 ml-3"
-                                ># List exports</span>
+                                ># List exports</span
+                            >
                         </div>
                         <div>
                             <span class="text-blue-300"
                                 >dora imports &lt;path&gt;</span
                             ><span class="text-zinc-500 ml-10"
-                                ># Show imports</span>
+                                ># Show imports</span
+                            >
                         </div>
                         <div>
                             <span class="text-blue-300"
                                 >dora graph &lt;path&gt;</span
                             ><span class="text-zinc-500 ml-11"
-                                ># Dependency graph</span>
+                                ># Dependency graph</span
+                            >
                         </div>
                     </div>
                 </div>
@@ -921,12 +942,14 @@ dora index</code></pre>
                     <li>
                         • Verify dora is in PATH: <code
                             class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded"
-                            >which dora</code>
+                            >which dora</code
+                        >
                     </li>
                     <li>
                         • Test manually: <code
                             class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded"
-                            >dora index</code>
+                            >dora index</code
+                        >
                     </li>
                     <li>
                         • Ensure <code
@@ -934,7 +957,8 @@ dora index</code></pre>
                             >dora index</code
                         > is in the allow permissions list in <code
                             class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded"
-                            >.claude/settings.json</code>
+                            >.claude/settings.json</code
+                        >
                     </li>
                 </ul>
             </div>

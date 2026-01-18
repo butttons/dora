@@ -62,25 +62,18 @@ const canonicalURL = new URL(currentPath, "https://dora-cli.dev").href;
                     <a
                         href="/"
                         class="flex items-center gap-2 text-lg sm:text-xl font-bold text-blue-500"
+                        class:list={[
+                            "hover:text-blue-500 transition-colors flex items-center gap-1.5",
+                            currentPath === "/"
+                                ? "text-blue-500"
+                                : "text-zinc-400",
+                        ]}
                     >
                         <Terminal class="w-5 h-5 sm:w-6 sm:h-6" />
-                        <span>dora</span>
                     </a>
                     <div
                         class="flex items-center gap-3 sm:gap-6 text-sm sm:text-base"
                     >
-                        <a
-                            href="/"
-                            class:list={[
-                                "hover:text-blue-500 transition-colors flex items-center gap-1.5",
-                                currentPath === "/"
-                                    ? "text-blue-500"
-                                    : "text-zinc-400",
-                            ]}
-                        >
-                            <Home class="w-4 h-4 sm:hidden" />
-                            <span class="hidden sm:inline">Home</span>
-                        </a>
                         <a
                             href="/docs"
                             class:list={[

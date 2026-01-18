@@ -1,149 +1,279 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import { Terminal } from 'lucide-astro';
+import Layout from "../layouts/Layout.astro";
+import { Terminal } from "lucide-astro";
 
 const commands = [
-  {
-    category: "Setup",
-    items: [
-      { name: "dora init", desc: "Initialize dora in your project" },
-      { name: "dora index", desc: "Index the codebase (supports --full, --skip-scip)" },
-      { name: "dora status", desc: "Check index health and statistics" },
-    ]
-  },
-  {
-    category: "Code Exploration",
-    items: [
-      { name: "dora map", desc: "High-level overview: packages, files, symbols" },
-      { name: "dora ls [dir]", desc: "List files with metadata (supports --limit, --sort)" },
-      { name: "dora symbol <query>", desc: "Search for symbols (supports --kind, --limit)" },
-      { name: "dora file <path>", desc: "Analyze a specific file's symbols and dependencies" },
-      { name: "dora refs <symbol>", desc: "Find all references to a symbol" },
-    ]
-  },
-  {
-    category: "Dependencies",
-    items: [
-      { name: "dora deps <path>", desc: "Show dependencies (supports --depth)" },
-      { name: "dora rdeps <path>", desc: "Show reverse dependencies (supports --depth)" },
-      { name: "dora adventure <from> <to>", desc: "Find shortest path between files" },
-      { name: "dora exports <path>", desc: "List exported symbols" },
-      { name: "dora imports <path>", desc: "Show file imports" },
-    ]
-  },
-  {
-    category: "Architecture Analysis",
-    items: [
-      { name: "dora cycles", desc: "Find circular dependencies (supports --limit)" },
-      { name: "dora coupling", desc: "Find tightly coupled files (supports --threshold)" },
-      { name: "dora complexity", desc: "Show complexity metrics (supports --sort)" },
-      { name: "dora treasure", desc: "Find most referenced files and hub files" },
-      { name: "dora lost", desc: "Find potentially unused symbols (supports --limit)" },
-      { name: "dora leaves", desc: "Find leaf nodes (supports --max-dependents)" },
-    ]
-  },
-  {
-    category: "Advanced",
-    items: [
-      { name: "dora schema", desc: "Show database schema for custom queries" },
-      { name: 'dora query "<sql>"', desc: "Execute custom SQL queries (read-only)" },
-      { name: "dora changes [ref]", desc: "Show changed files and impact" },
-      { name: "dora graph <path>", desc: "Generate dependency graph data" },
-    ]
-  },
+    {
+        category: "Setup",
+        items: [
+            { name: "dora init", desc: "Initialize dora in your project" },
+            {
+                name: "dora index",
+                desc: "Index the codebase (supports --full, --skip-scip)",
+            },
+            { name: "dora status", desc: "Check index health and statistics" },
+        ],
+    },
+    {
+        category: "Code Exploration",
+        items: [
+            {
+                name: "dora map",
+                desc: "High-level overview: packages, files, symbols",
+            },
+            {
+                name: "dora ls [dir]",
+                desc: "List files with metadata (supports --limit, --sort)",
+            },
+            {
+                name: "dora symbol <query>",
+                desc: "Search for symbols (supports --kind, --limit)",
+            },
+            {
+                name: "dora file <path>",
+                desc: "Analyze a specific file's symbols and dependencies",
+            },
+            {
+                name: "dora refs <symbol>",
+                desc: "Find all references to a symbol",
+            },
+        ],
+    },
+    {
+        category: "Dependencies",
+        items: [
+            {
+                name: "dora deps <path>",
+                desc: "Show dependencies (supports --depth)",
+            },
+            {
+                name: "dora rdeps <path>",
+                desc: "Show reverse dependencies (supports --depth)",
+            },
+            {
+                name: "dora adventure <from> <to>",
+                desc: "Find shortest path between files",
+            },
+            { name: "dora exports <path>", desc: "List exported symbols" },
+            { name: "dora imports <path>", desc: "Show file imports" },
+        ],
+    },
+    {
+        category: "Architecture Analysis",
+        items: [
+            {
+                name: "dora cycles",
+                desc: "Find circular dependencies (supports --limit)",
+            },
+            {
+                name: "dora coupling",
+                desc: "Find tightly coupled files (supports --threshold)",
+            },
+            {
+                name: "dora complexity",
+                desc: "Show complexity metrics (supports --sort)",
+            },
+            {
+                name: "dora treasure",
+                desc: "Find most referenced files and hub files",
+            },
+            {
+                name: "dora lost",
+                desc: "Find potentially unused symbols (supports --limit)",
+            },
+            {
+                name: "dora leaves",
+                desc: "Find leaf nodes (supports --max-dependents)",
+            },
+        ],
+    },
+    {
+        category: "Advanced",
+        items: [
+            {
+                name: "dora schema",
+                desc: "Show database schema for custom queries",
+            },
+            {
+                name: 'dora query "<sql>"',
+                desc: "Execute custom SQL queries (read-only)",
+            },
+            {
+                name: "dora changes [ref]",
+                desc: "Show changed files and impact",
+            },
+            {
+                name: "dora graph <path>",
+                desc: "Generate dependency graph data",
+            },
+        ],
+    },
 ];
 ---
 
 <Layout
-  title="Command Reference - dora"
-  description="Complete guide to all dora commands: setup, code exploration, dependencies, architecture analysis, and custom queries."
+    title="Command Reference - dora"
+    description="Complete guide to all dora commands: setup, code exploration, dependencies, architecture analysis, and custom queries."
 >
-  <div class="max-w-6xl mx-auto px-6 py-20">
-    <div class="mb-12">
-      <h1 class="text-5xl font-bold mb-4">Command Reference</h1>
-      <p class="text-xl text-zinc-400">
-        Complete guide to all dora commands
-      </p>
-    </div>
+    <div class="max-w-6xl mx-auto px-6 py-20">
+        <div class="mb-12">
+            <h1 class="text-3xl font-bold mb-4">Command Reference</h1>
+            <p class="text-xl text-zinc-400">
+                Complete guide to all dora commands
+            </p>
+        </div>
 
-    <div class="space-y-12">
-      {commands.map(({ category, items }) => (
-        <div>
-          <h2 class="text-2xl font-bold mb-6 text-blue-400">{category}</h2>
-          <div class="space-y-4">
-            {items.map(({ name, desc }) => (
-              <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-5 hover:border-blue-500/50 transition-colors">
-                <div class="flex items-start gap-4">
-                  <div class="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center flex-shrink-0 mt-1">
-                    <Terminal class="w-4 h-4 text-blue-400" />
-                  </div>
-                  <div class="flex-1">
-                    <code class="text-blue-300 font-mono text-lg font-semibold">{name}</code>
-                    <p class="text-zinc-400 mt-2">{desc}</p>
-                  </div>
+        <div class="space-y-12">
+            {
+                commands.map(({ category, items }) => (
+                    <div>
+                        <h2 class="text-2xl font-bold mb-6 text-blue-400">
+                            {category}
+                        </h2>
+                        <div class="space-y-4">
+                            {items.map(({ name, desc }) => (
+                                <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-5 hover:border-blue-500/50 transition-colors">
+                                    <div class="flex items-start gap-4">
+                                        <div class="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center flex-shrink-0 mt-1">
+                                            <Terminal class="w-4 h-4 text-blue-400" />
+                                        </div>
+                                        <div class="flex-1">
+                                            <code class="text-blue-300 font-mono text-lg font-semibold">
+                                                {name}
+                                            </code>
+                                            <p class="text-zinc-400 mt-2">
+                                                {desc}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                ))
+            }
+        </div>
+
+        <!-- Examples -->
+        <div
+            class="mt-16 bg-blue-950/20 border border-blue-900/50 rounded-lg p-8"
+        >
+            <h2 class="text-2xl font-bold mb-6">Common Workflows</h2>
+
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-lg font-semibold mb-3 text-blue-300">
+                        Initial Setup
+                    </h3>
+                    <div
+                        class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm space-y-2"
+                    >
+                        <div>
+                            <span class="text-zinc-500">$</span>
+                            <span class="text-zinc-300">dora init</span>
+                        </div>
+                        <div>
+                            <span class="text-zinc-500">$</span>
+                            <span class="text-zinc-300">dora index</span>
+                        </div>
+                    </div>
                 </div>
-              </div>
-            ))}
-          </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold mb-3 text-blue-300">
+                        Find and Understand Code
+                    </h3>
+                    <div
+                        class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm space-y-2"
+                    >
+                        <div>
+                            <span class="text-zinc-500">$</span>
+                            <span class="text-zinc-300"
+                                >dora symbol Config</span>
+                        </div>
+                        <div>
+                            <span class="text-zinc-500">$</span>
+                            <span class="text-zinc-300"
+                                >dora file src/converter/convert.ts</span>
+                        </div>
+                        <div>
+                            <span class="text-zinc-500">$</span>
+                            <span class="text-zinc-300"
+                                >dora refs IndexResult</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold mb-3 text-blue-300">
+                        Impact Analysis
+                    </h3>
+                    <div
+                        class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm space-y-2"
+                    >
+                        <div>
+                            <span class="text-zinc-500">$</span>
+                            <span class="text-zinc-300"
+                                >dora rdeps src/db/queries.ts --depth 2</span>
+                        </div>
+                        <div>
+                            <span class="text-zinc-500">$</span>
+                            <span class="text-zinc-300"
+                                >dora lost --limit 50</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold mb-3 text-blue-300">
+                        Architecture Health
+                    </h3>
+                    <div
+                        class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm space-y-2"
+                    >
+                        <div>
+                            <span class="text-zinc-500">$</span>
+                            <span class="text-zinc-300">dora cycles</span>
+                        </div>
+                        <div>
+                            <span class="text-zinc-500">$</span>
+                            <span class="text-zinc-300"
+                                >dora coupling --threshold 10</span>
+                        </div>
+                        <div>
+                            <span class="text-zinc-500">$</span>
+                            <span class="text-zinc-300"
+                                >dora complexity --sort complexity</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold mb-3 text-blue-300">
+                        Custom Analysis
+                    </h3>
+                    <div
+                        class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm"
+                    >
+                        <div>
+                            <span class="text-zinc-500">$</span>
+                            <span class="text-zinc-300"
+                                >dora query "SELECT kind, COUNT(*) FROM symbols
+                                GROUP BY kind"</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      ))}
+
+        <!-- JSON Output -->
+        <div class="mt-8 border border-zinc-800 rounded-lg p-6">
+            <h3 class="text-lg font-semibold mb-3">JSON Output</h3>
+            <p class="text-zinc-400">
+                All commands output valid JSON to stdout. Errors are sent to
+                stderr. This makes dora easy to integrate with AI agents and
+                scripts.
+            </p>
+        </div>
     </div>
-
-    <!-- Examples -->
-    <div class="mt-16 bg-blue-950/20 border border-blue-900/50 rounded-lg p-8">
-      <h2 class="text-2xl font-bold mb-6">Common Workflows</h2>
-
-      <div class="space-y-6">
-        <div>
-          <h3 class="text-lg font-semibold mb-3 text-blue-300">Initial Setup</h3>
-          <div class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm space-y-2">
-            <div><span class="text-zinc-500">$</span> <span class="text-zinc-300">dora init</span></div>
-            <div><span class="text-zinc-500">$</span> <span class="text-zinc-300">dora index</span></div>
-          </div>
-        </div>
-
-        <div>
-          <h3 class="text-lg font-semibold mb-3 text-blue-300">Find and Understand Code</h3>
-          <div class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm space-y-2">
-            <div><span class="text-zinc-500">$</span> <span class="text-zinc-300">dora symbol Config</span></div>
-            <div><span class="text-zinc-500">$</span> <span class="text-zinc-300">dora file src/converter/convert.ts</span></div>
-            <div><span class="text-zinc-500">$</span> <span class="text-zinc-300">dora refs IndexResult</span></div>
-          </div>
-        </div>
-
-        <div>
-          <h3 class="text-lg font-semibold mb-3 text-blue-300">Impact Analysis</h3>
-          <div class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm space-y-2">
-            <div><span class="text-zinc-500">$</span> <span class="text-zinc-300">dora rdeps src/db/queries.ts --depth 2</span></div>
-            <div><span class="text-zinc-500">$</span> <span class="text-zinc-300">dora lost --limit 50</span></div>
-          </div>
-        </div>
-
-        <div>
-          <h3 class="text-lg font-semibold mb-3 text-blue-300">Architecture Health</h3>
-          <div class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm space-y-2">
-            <div><span class="text-zinc-500">$</span> <span class="text-zinc-300">dora cycles</span></div>
-            <div><span class="text-zinc-500">$</span> <span class="text-zinc-300">dora coupling --threshold 10</span></div>
-            <div><span class="text-zinc-500">$</span> <span class="text-zinc-300">dora complexity --sort complexity</span></div>
-          </div>
-        </div>
-
-        <div>
-          <h3 class="text-lg font-semibold mb-3 text-blue-300">Custom Analysis</h3>
-          <div class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm">
-            <div><span class="text-zinc-500">$</span> <span class="text-zinc-300">dora query "SELECT kind, COUNT(*) FROM symbols GROUP BY kind"</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- JSON Output -->
-    <div class="mt-8 border border-zinc-800 rounded-lg p-6">
-      <h3 class="text-lg font-semibold mb-3">JSON Output</h3>
-      <p class="text-zinc-400">
-        All commands output valid JSON to stdout. Errors are sent to stderr.
-        This makes dora easy to integrate with AI agents and scripts.
-      </p>
-    </div>
-  </div>
 </Layout>
