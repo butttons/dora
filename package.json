@@ -4,6 +4,7 @@
   "module": "src/index.ts",
   "type": "module",
   "private": true,
+  "description": "Fast code intelligence for AI agents. Query symbols, dependencies, and references without reading files.",
   "bin": {
     "dora": "./src/index.ts"
   },

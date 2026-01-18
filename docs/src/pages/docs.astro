@@ -12,7 +12,7 @@ import {
 
 <Layout
     title="Documentation - dora"
-    description="Complete documentation for dora - Code Context CLI for AI Agents. Learn installation, setup, commands, and integration with AI agents."
+    description="Fast code intelligence for AI agents. Query symbols, dependencies, and architecture without wasting tokens on file reads."
 >
     <div class="max-w-6xl mx-auto px-6 py-20">
         <!-- Header -->
@@ -90,189 +90,6 @@ import {
                         codebase size)
                     </li>
                 </ul>
-            </div>
-        </div>
-
-        <!-- AI Agent Integration -->
-        <div class="mb-16">
-            <h2 class="text-2xl font-bold mb-6 text-blue-400">
-                AI Agent Integration
-            </h2>
-            <div
-                class="bg-blue-950/20 border border-blue-900/50 rounded-lg p-6 mb-6"
-            >
-                <p class="text-zinc-300 mb-4">
-                    <strong
-                        >→ See <a
-                            href="https://github.com/butttons/dora/blob/main/AGENTS.md"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="text-blue-400 hover:underline">AGENTS.md</a
-                        > for complete integration guides</strong
-                    > for:
-                </p>
-                <ul class="space-y-2 text-zinc-300 ml-4">
-                    <li>
-                        • <strong>Claude Code</strong> - Skills, hooks, auto-indexing
-                    </li>
-                    <li>
-                        • <strong>Cursor</strong> - Rules and terminal integration
-                    </li>
-                    <li>
-                        • <strong>Aider</strong> - CLI pair programming workflow
-                    </li>
-                    <li>
-                        • <strong>Cline / Continue</strong> - VSCode/JetBrains extensions
-                    </li>
-                    <li>
-                        • <strong>Windsurf</strong> - Cascade agent integration
-                    </li>
-                    <li>
-                        • <strong>Other AI agents</strong> - Generic integration patterns
-                    </li>
-                </ul>
-            </div>
-
-            <h3 class="text-xl font-semibold mb-4 text-blue-300">
-                Quick start for any agent
-            </h3>
-            <div
-                class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm space-y-2 mb-8"
-            >
-                <div>
-                    <span class="text-zinc-500">$</span>
-                    <span class="text-zinc-300">dora init && dora index</span
-                    ><span class="text-zinc-500 ml-2"
-                        ># Initialize and index your codebase</span>
-                </div>
-                <div>
-                    <span class="text-zinc-500">$</span>
-                    <span class="text-zinc-300">dora status</span><span
-                        class="text-zinc-500 ml-2"
-                        ># Verify index is ready</span>
-                </div>
-                <div>
-                    <span class="text-zinc-500">$</span>
-                    <span class="text-zinc-300">dora map</span><span
-                        class="text-zinc-500 ml-2"
-                        ># See codebase overview</span>
-                </div>
-            </div>
-
-            <!-- Claude Code Integration -->
-            <h3 class="text-xl font-semibold mb-4 text-blue-300">
-                Claude Code Integration
-            </h3>
-            <p class="text-zinc-300 mb-4">
-                dora integrates deeply with Claude Code via skills, hooks, and
-                pre-approved permissions. See <a
-                    href="https://github.com/butttons/dora/blob/main/AGENTS.md#claude-code-integration"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="text-blue-400 hover:underline">AGENTS.md</a
-                > for full setup instructions.
-            </p>
-
-            <div class="space-y-4">
-                <div>
-                    <h4 class="font-semibold text-zinc-200 mb-2">
-                        1. Add to your project's CLAUDE.md:
-                    </h4>
-                    <ul class="text-zinc-300 ml-6 space-y-1">
-                        <li>
-                            • Copy the contents of <code
-                                class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded"
-                                >.dora/docs/SNIPPET.md</code
-                            > from this repo
-                        </li>
-                        <li>• Paste it into your project's CLAUDE.md file</li>
-                    </ul>
-                </div>
-
-                <div>
-                    <h4 class="font-semibold text-zinc-200 mb-2">
-                        2. Add settings configuration:
-                    </h4>
-                    <ul class="text-zinc-300 ml-6 space-y-1">
-                        <li>
-                            • Copy <code
-                                class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded"
-                                >.claude/settings.json</code
-                            > from this repo to your project
-                        </li>
-                        <li>
-                            • This enables automatic indexing and permissions
-                        </li>
-                    </ul>
-                </div>
-
-                <div>
-                    <h4 class="font-semibold text-zinc-200 mb-2">
-                        3. Add the dora skill (optional):
-                    </h4>
-                    <p class="text-zinc-300 mb-2 ml-6">
-                        For project-specific skill (recommended - symlink after <code
-                            class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded"
-                            >dora init</code
-                        >):
-                    </p>
-                    <div
-                        class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm ml-6 mb-2"
-                    >
-                        <div class="text-zinc-300">
-                            mkdir -p .claude/skills/dora
-                        </div>
-                        <div class="text-zinc-300">
-                            ln -s ../../../.dora/docs/SKILL.md
-                            .claude/skills/dora/SKILL.md
-                        </div>
-                    </div>
-                    <p class="text-zinc-300 mb-2 ml-6">
-                        For global skill (available in all projects):
-                    </p>
-                    <div
-                        class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm ml-6"
-                    >
-                        <div class="text-zinc-500 mb-2">
-                            # Clone the dora repo if you haven't already
-                        </div>
-                        <div class="text-zinc-300 mb-2">
-                            git clone https://github.com/butttons/dora.git
-                            /tmp/dora
-                        </div>
-                        <div class="text-zinc-500 mb-2"># macOS/Linux</div>
-                        <div class="text-zinc-300 mb-1">
-                            mkdir -p ~/.claude/skills/dora
-                        </div>
-                        <div class="text-zinc-300 mb-2">
-                            cp /tmp/dora/.claude/skills/dora/SKILL.md
-                            ~/.claude/skills/dora/SKILL.md
-                        </div>
-                        <div class="text-zinc-500 mb-2">
-                            # Windows (PowerShell)
-                        </div>
-                        <div class="text-zinc-300 mb-1">
-                            New-Item -ItemType Directory -Force -Path
-                            "$env:USERPROFILE\.claude\skills\dora"
-                        </div>
-                        <div class="text-zinc-300">
-                            Copy-Item "C:\tmp\dora\.claude\skills\dora\SKILL.md"
-                            "$env:USERPROFILE\.claude\skills\dora\SKILL.md"
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-                    <h4 class="font-semibold text-zinc-200 mb-2">
-                        4. Initialize dora:
-                    </h4>
-                    <div
-                        class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm ml-6"
-                    >
-                        <div class="text-zinc-300">dora init</div>
-                        <div class="text-zinc-300">dora index</div>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -393,6 +210,174 @@ import {
                     class="text-blue-400 hover:underline">SCIP Indexers</a
                 > section below.
             </p>
+        </div>
+
+        <!-- AI Agent Integration -->
+        <div class="mb-16">
+            <h2 class="text-2xl font-bold mb-6 text-blue-400">
+                AI Agent Integration
+            </h2>
+            <div
+                class="bg-blue-950/20 border border-blue-900/50 rounded-lg p-6 mb-6"
+            >
+                <p class="text-zinc-300 mb-4">
+                    <strong
+                        >→ See <a
+                            href="https://github.com/butttons/dora/blob/main/AGENTS.md"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="text-blue-400 hover:underline">AGENTS.md</a
+                        > for complete integration guides</strong
+                    > for:
+                </p>
+                <ul class="space-y-2 text-zinc-300 ml-4">
+                    <li>
+                        • <strong>Claude Code</strong> - Skills, hooks, auto-indexing
+                    </li>
+                    <li>
+                        • <strong>Cursor</strong> - Rules and terminal integration
+                    </li>
+                    <li>
+                        • <strong>Aider</strong> - CLI pair programming workflow
+                    </li>
+                    <li>
+                        • <strong>Cline / Continue</strong> - VSCode/JetBrains extensions
+                    </li>
+                    <li>
+                        • <strong>Windsurf</strong> - Cascade agent integration
+                    </li>
+                    <li>
+                        • <strong>Other AI agents</strong> - Generic integration patterns
+                    </li>
+                </ul>
+            </div>
+
+            <h3 class="text-xl font-semibold mb-4 text-blue-300">
+                Quick start for any agent
+            </h3>
+            <div
+                class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm space-y-2 mb-8"
+            >
+                <div>
+                    <span class="text-zinc-500">$</span>
+                    <span class="text-zinc-300">dora init && dora index</span
+                    ><span class="text-zinc-500 ml-2"
+                        ># Initialize and index your codebase</span>
+                </div>
+                <div>
+                    <span class="text-zinc-500">$</span>
+                    <span class="text-zinc-300">dora status</span><span
+                        class="text-zinc-500 ml-2"
+                        ># Verify index is ready</span>
+                </div>
+                <div>
+                    <span class="text-zinc-500">$</span>
+                    <span class="text-zinc-300">dora map</span><span
+                        class="text-zinc-500 ml-2"
+                        ># See codebase overview</span>
+                </div>
+            </div>
+
+            <!-- Claude Code Integration -->
+            <h3 class="text-xl font-semibold mb-4 text-blue-300">
+                Claude Code Integration
+            </h3>
+            <p class="text-zinc-300 mb-4">
+                Add these files to your project to enable auto-indexing and
+                pre-approved permissions:
+            </p>
+
+            <div class="space-y-6">
+                <div>
+                    <h4 class="font-semibold text-zinc-200 mb-3">
+                        1. Create <code
+                            class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded text-sm"
+                            >.claude/settings.json</code
+                        >
+                    </h4>
+                    <pre
+                        class="bg-zinc-900/50 rounded-lg p-4 font-mono text-xs overflow-x-auto"><code class="text-zinc-300">{`{
+  "permissions": {
+    "allow": [
+      "Bash(dora:*)",
+      "Skill(dora)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "dora status 2>/dev/null && (dora index > /tmp/dora-index.log 2>&1 &) || echo 'dora not initialized. Run: dora init && dora index'"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "(dora index > /tmp/dora-index.log 2>&1 &) || true"
+          }
+        ]
+      }
+    ]
+  }
+}`}</code></pre>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold text-zinc-200 mb-3">
+                        2. (Optional) Add skill at <code
+                            class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded text-sm"
+                            >.claude/skills/dora/SKILL.md</code
+                        >
+                    </h4>
+                    <p class="text-zinc-300 mb-3">
+                        After running <code
+                            class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded"
+                            >dora init</code
+                        >, create a symlink:
+                    </p>
+                    <pre
+                        class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm"
+                    ><code class="text-zinc-300">mkdir -p .claude/skills/dora
+ln -s ../../../.dora/docs/SKILL.md .claude/skills/dora/SKILL.md</code></pre>
+                    <p class="text-zinc-400 text-sm mt-2">
+                        This enables the <code
+                            class="text-blue-300 bg-zinc-900/50 px-1 rounded"
+                            >/dora</code
+                        > command in Claude Code. <a
+                            href="https://github.com/butttons/dora/blob/main/src/templates/docs/SKILL.md"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="text-blue-400 hover:underline"
+                            >View the skill file</a
+                        >.
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold text-zinc-200 mb-3">
+                        3. Initialize dora
+                    </h4>
+                    <pre
+                        class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm"
+                    ><code class="text-zinc-300">dora init
+dora index</code></pre>
+                </div>
+
+                <div
+                    class="bg-blue-950/20 border border-blue-900/50 rounded-lg p-4"
+                >
+                    <p class="text-zinc-300 text-sm">
+                        <strong>What you get:</strong> Auto-indexing after each
+                        turn, pre-approved permissions, session startup checks
+                    </p>
+                </div>
+            </div>
         </div>
 
         <!-- Quick Start -->

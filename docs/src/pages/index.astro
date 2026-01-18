@@ -12,6 +12,8 @@ import {
     Apple,
     Monitor,
     Box,
+    FileCode,
+    ArrowRight,
 } from "lucide-astro";
 ---
 
@@ -31,9 +33,8 @@ import {
             <p class="text-2xl text-zinc-400 mb-8">
                 the explorer for your codebase
             </p>
-            <p class="text-lg text-zinc-500 max-w-2xl mx-auto mb-10">
-                Query symbols, dependencies, and references without reading
-                files. Built for AI agents, useful for humans too.
+            <p class="text-lg text-zinc-300 max-w-2xl mx-auto mb-10">
+                Stop grepping. Start querying.
             </p>
             <div class="flex gap-4 justify-center">
                 <a
@@ -50,6 +51,22 @@ import {
                     <BookOpen class="w-5 h-5" />
                     Documentation
                 </a>
+            </div>
+        </div>
+
+        <!-- Problem Statement -->
+        <div class="mb-20">
+            <div
+                class="bg-blue-950/20 border border-blue-900/50 rounded-lg p-8 max-w-4xl mx-auto"
+            >
+                <h2 class="text-2xl font-bold mb-4 text-blue-300">Why dora?</h2>
+                <p class="text-zinc-300 text-lg leading-relaxed">
+                    AI coding assistants waste tokens on grep/find/glob to
+                    understand code structure. Text-based search gives false
+                    positives and misses relationships. dora indexes your
+                    codebase so agents can query symbols, dependencies, and
+                    references instantly, without reading files.
+                </p>
             </div>
         </div>
 
@@ -189,7 +206,7 @@ import {
                 </div>
             </div>
             <p class="text-center text-zinc-500 mt-8 text-sm">
-                grep and find work on text patterns. dora understands your code
+                grep/find/glob work on text patterns. dora understands your code
                 structure.
             </p>
         </div>
@@ -304,7 +321,7 @@ import {
         <!-- What it does -->
         <div class="mb-20">
             <h2 class="text-3xl font-bold mb-12 text-center">
-                What you can do
+                What your AI agent can do
             </h2>
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
@@ -315,8 +332,8 @@ import {
                     </div>
                     <h3 class="text-xl font-semibold mb-2">Find symbols</h3>
                     <p class="text-zinc-400">
-                        Search for functions, classes, or types by name. See
-                        where they're defined.
+                        Locate definitions instantly without reading files or
+                        parsing false positives from text search.
                     </p>
                 </div>
 
@@ -330,8 +347,8 @@ import {
                         Track dependencies
                     </h3>
                     <p class="text-zinc-400">
-                        See what a file imports and what imports it. Understand
-                        the dependency graph.
+                        Understand impact before making changes. Know exactly
+                        what depends on each file without reading imports.
                     </p>
                 </div>
 
@@ -343,7 +360,8 @@ import {
                     </div>
                     <h3 class="text-xl font-semibold mb-2">Find references</h3>
                     <p class="text-zinc-400">
-                        See where a symbol is used across your entire codebase.
+                        See usage across the entire codebase in milliseconds. No
+                        more grepping through thousands of files.
                     </p>
                 </div>
 
@@ -355,7 +373,8 @@ import {
                     </div>
                     <h3 class="text-xl font-semibold mb-2">Detect cycles</h3>
                     <p class="text-zinc-400">
-                        Find circular dependencies and tightly coupled files.
+                        Identify circular dependencies and architectural issues
+                        instantly with pre-computed relationship data.
                     </p>
                 </div>
 
@@ -367,7 +386,8 @@ import {
                     </div>
                     <h3 class="text-xl font-semibold mb-2">Find unused code</h3>
                     <p class="text-zinc-400">
-                        Identify symbols with zero references and dead code.
+                        Spot dead code instantly. See which symbols have zero
+                        references without scanning every file.
                     </p>
                 </div>
 
@@ -381,24 +401,149 @@ import {
                         Write custom queries
                     </h3>
                     <p class="text-zinc-400">
-                        Query the SQLite database directly for any analysis you
-                        need.
+                        Answer complex questions about code structure with SQL.
+                        No limitations, just structured data.
                     </p>
                 </div>
             </div>
         </div>
-
-        <!-- Use Cases -->
-        <div class="bg-blue-950/20 border border-blue-900/50 rounded-lg p-8">
-            <h2 class="text-2xl font-bold mb-4">For AI agents</h2>
-            <p class="text-zinc-300 mb-4">
-                AI coding assistants can query dora instead of grepping your
-                codebase. They get structured answers about what exists and
-                where, without reading every file.
-            </p>
-        </div>
     </div>
 
+    <!-- How It Works -->
+    <div class="mb-20 px-8">
+        <h2 class="text-3xl font-bold mb-12 text-center">How it works</h2>
+        <div class="max-w-5xl mx-auto">
+            <!-- Desktop: Horizontal Flow -->
+            <div class="hidden md:flex items-center justify-between gap-4">
+                <!-- Step 1 -->
+                <div class="flex-1 text-center">
+                    <div
+                        class="bg-zinc-900 border border-zinc-800 rounded-lg p-8"
+                    >
+                        <div
+                            class="w-16 h-16 rounded-full bg-blue-500/10 flex items-center justify-center mx-auto mb-4"
+                        >
+                            <FileCode class="w-8 h-8 text-blue-400" />
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">1. Index</h3>
+                        <p class="text-zinc-400 text-sm">
+                            Run a SCIP indexer on your codebase to extract
+                            symbols, definitions, and relationships
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Arrow -->
+                <ArrowRight class="w-8 h-8 text-blue-500 flex-shrink-0" />
+
+                <!-- Step 2 -->
+                <div class="flex-1 text-center">
+                    <div
+                        class="bg-zinc-900 border border-zinc-800 rounded-lg p-8"
+                    >
+                        <div
+                            class="w-16 h-16 rounded-full bg-blue-500/10 flex items-center justify-center mx-auto mb-4"
+                        >
+                            <Database class="w-8 h-8 text-blue-400" />
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">2. Store</h3>
+                        <p class="text-zinc-400 text-sm">
+                            dora converts the index into an optimized SQLite
+                            database with pre-computed aggregates
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Arrow -->
+                <ArrowRight class="w-8 h-8 text-blue-500 flex-shrink-0" />
+
+                <!-- Step 3 -->
+                <div class="flex-1 text-center">
+                    <div
+                        class="bg-zinc-900 border border-zinc-800 rounded-lg p-8"
+                    >
+                        <div
+                            class="w-16 h-16 rounded-full bg-blue-500/10 flex items-center justify-center mx-auto mb-4"
+                        >
+                            <Zap class="w-8 h-8 text-blue-400" />
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">3. Query</h3>
+                        <p class="text-zinc-400 text-sm">
+                            AI agents query the database instantly: no file
+                            reads, no token waste, just structured answers
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile: Vertical Stack -->
+            <div class="md:hidden space-y-6">
+                <!-- Step 1 -->
+                <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center flex-shrink-0"
+                        >
+                            <FileCode class="w-6 h-6 text-blue-400" />
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold mb-2">1. Index</h3>
+                            <p class="text-zinc-400 text-sm">
+                                Run a SCIP indexer on your codebase to extract
+                                symbols, definitions, and relationships
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Arrow -->
+                <div class="flex justify-center">
+                    <ArrowRight class="w-6 h-6 text-blue-500 rotate-90" />
+                </div>
+
+                <!-- Step 2 -->
+                <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center flex-shrink-0"
+                        >
+                            <Database class="w-6 h-6 text-blue-400" />
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold mb-2">2. Store</h3>
+                            <p class="text-zinc-400 text-sm">
+                                dora converts the index into an optimized SQLite
+                                database with pre-computed aggregates
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Arrow -->
+                <div class="flex justify-center">
+                    <ArrowRight class="w-6 h-6 text-blue-500 rotate-90" />
+                </div>
+
+                <!-- Step 3 -->
+                <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center flex-shrink-0"
+                        >
+                            <Zap class="w-6 h-6 text-blue-400" />
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold mb-2">3. Query</h3>
+                            <p class="text-zinc-400 text-sm">
+                                AI agents query the database instantly: no file
+                                reads, no token waste, just structured answers
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <script>
         // Platform configurations
         const platformConfigs = {

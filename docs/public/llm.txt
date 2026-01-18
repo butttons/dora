@@ -1,6 +1,6 @@
 # dora - Code Context CLI for AI Agents
 
-> Fast, local code intelligence for AI coding assistants
+> Stop grepping. Query code structure instantly.
 
 ## Overview
 
@@ -22,6 +22,58 @@ dora init
 dora index
 dora symbol Logger
 ```
+
+## Claude Code Integration
+
+Add these files to enable auto-indexing and pre-approved permissions:
+
+**1. Create `.claude/settings.json`:**
+
+```json
+{
+  "permissions": {
+    "allow": [
+      "Bash(dora:*)",
+      "Skill(dora)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "dora status 2>/dev/null && (dora index > /tmp/dora-index.log 2>&1 &) || echo 'dora not initialized. Run: dora init && dora index'"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "(dora index > /tmp/dora-index.log 2>&1 &) || true"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+**2. (Optional) Add skill at `.claude/skills/dora/SKILL.md`:**
+
+After running `dora init`, create a symlink:
+
+```bash
+mkdir -p .claude/skills/dora
+ln -s ../../../.dora/docs/SKILL.md .claude/skills/dora/SKILL.md
+```
+
+This enables the `/dora` command. View the skill file: https://github.com/butttons/dora/blob/main/src/templates/docs/SKILL.md
+
+**What you get:** Auto-indexing after each turn, pre-approved permissions, session startup checks.
 
 ## Commands
 
@@ -70,7 +122,7 @@ Traditional approaches like vector search or AST parsing are either imprecise or
 
 dora builds a queryable index of your codebase using SCIP (SCIP Code Intelligence Protocol). SCIP is a language-agnostic format for code navigation data, developed at Sourcegraph.
 
-Instead of grepping files or parsing syntax trees, dora converts SCIP indexes into an optimized SQLite database. This gives AI agents instant access to:
+Instead of using grep/find/glob or parsing syntax trees, dora converts SCIP indexes into an optimized SQLite database. This gives AI agents instant access to:
 
 - Symbol definitions and their locations
 - File dependencies and reverse dependencies

@@ -5,7 +5,7 @@ description: Query codebase using `dora` CLI for code intelligence, symbol defin
 
 ## Philosophy
 
-**CRITICAL: Use dora FIRST for ALL code exploration tasks.**
+**IMPORTANT: Use dora FIRST for ALL code exploration tasks.**
 
 dora understands code structure, dependencies, symbols, and architectural relationships through its indexed database. It provides instant answers about:
 

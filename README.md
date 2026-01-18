@@ -1,14 +1,14 @@
 # dora - Code Context CLI for AI Agents
 
-A language-agnostic CLI tool that helps AI agents understand codebases by querying SCIP (Source Code Intelligence Protocol) indexes stored in SQLite.
+Stop wasting tokens on grep/find/glob. Give your AI agent fast, structured code intelligence.
 
 ## Features
 
-- **Language-Agnostic SCIP Support** - Works with any SCIP-compatible indexer (TypeScript, Java, Rust, Python, etc.)
-- **Fast Queries** - Uses denormalized database with pre-computed aggregates for common operations
-- **Architecture Analysis** - Detect circular dependencies, coupling, and complexity hotspots
-- **Dependency Tracking** - Track dependencies at any depth with symbol-level granularity
-- **JSON Output** - Structured data for AI agent consumption
+- **Instant answers** - Pre-computed aggregates mean no waiting for grep/find/glob to finish or tokens wasted on file reads
+- **Understand relationships** - See what depends on what without reading import statements or parsing code
+- **Find issues fast** - Detect circular dependencies, coupling, and complexity hotspots with pre-indexed data
+- **Track usage** - Know where every symbol is used across your codebase in milliseconds, not minutes
+- **Language-agnostic** - Works with any SCIP-compatible indexer (TypeScript, Java, Rust, Python, etc.)
 
 ## System Requirements
 
@@ -17,83 +17,6 @@ A language-agnostic CLI tool that helps AI agents understand codebases by queryi
 - **SCIP indexer**: Language-specific (e.g., scip-typescript for TS/JS)
 - **Supported OS**: macOS, Linux, Windows
 - **Disk space**: ~5-50MB for index (varies by codebase size)
-
-## AI Agent Integration
-
-**→ See [AGENTS.md](AGENTS.md) for complete integration guides** for:
-- **Claude Code** - Skills, hooks, auto-indexing
-- **Cursor** - Rules and terminal integration
-- **Aider** - CLI pair programming workflow
-- **Cline / Continue** - VSCode/JetBrains extensions
-- **Windsurf** - Cascade agent integration
-- **Other AI agents** - Generic integration patterns
-
-Quick start for any agent:
-```bash
-dora init && dora index    # Initialize and index your codebase
-dora status                # Verify index is ready
-dora map                   # See codebase overview
-```
-
-## Claude Code Integration
-
-dora integrates deeply with Claude Code via skills, hooks, and pre-approved permissions. See [AGENTS.md](AGENTS.md#claude-code-integration) for full setup instructions.
-
-**Setup:**
-
-1. **Add to your project's CLAUDE.md:**
-   - Copy the contents of [`.dora/docs/SNIPPET.md`](.dora/docs/SNIPPET.md) from this repo
-   - Paste it into your project's CLAUDE.md file
-
-2. **Add settings configuration:**
-   - Copy [`.claude/settings.json`](.claude/settings.json) from this repo to your project
-   - This enables automatic indexing and permissions
-
-3. **Add the dora skill (optional):**
-
-   For project-specific skill (recommended - symlink after `dora init`):
-   ```bash
-   mkdir -p .claude/skills/dora
-   ln -s ../../../.dora/docs/SKILL.md .claude/skills/dora/SKILL.md
-   ```
-
-   For global skill (available in all projects):
-   ```bash
-   # Clone the dora repo if you haven't already
-   git clone https://github.com/butttons/dora.git /tmp/dora
-
-   # macOS/Linux
-   mkdir -p ~/.claude/skills/dora
-   cp /tmp/dora/.claude/skills/dora/SKILL.md ~/.claude/skills/dora/SKILL.md
-
-   # Windows (PowerShell)
-   New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.claude\skills\dora"
-   Copy-Item "C:\tmp\dora\.claude\skills\dora\SKILL.md" "$env:USERPROFILE\.claude\skills\dora\SKILL.md"
-   ```
-
-4. **Initialize dora:**
-   ```bash
-   dora init
-   dora index
-   ```
-
-**Configuration:**
-
-- **Background indexing** - Runs `dora index` in background after each turn
-- **Pre-approved permissions** - dora query commands don't require permission prompts
-- **Auto-selection** - Claude uses dora for code exploration instead of Grep/Glob
-
-**Configuration Files:**
-
-- `.dora/docs/SNIPPET.md` - Documentation to paste into your CLAUDE.md
-- `.claude/settings.json` - Example settings with hooks and permissions
-- `.claude/skills/dora/SKILL.md` - Skill definition for Claude Code (optional, enables `/dora` command)
-
-**Troubleshooting:**
-
-- **Index not updating?** Check `/tmp/dora-index.log` for errors
-- **dora not found?** Ensure dora is in PATH: `which dora`
-- **Stale results?** Run `dora index` to rebuild
 
 ## Installation
 
@@ -155,6 +78,87 @@ scip-typescript --help
 ```
 
 For other languages, see [SCIP Indexers](#scip-indexers).
+
+## AI Agent Integration
+
+**→ See [AGENTS.md](AGENTS.md) for complete integration guides** for:
+- **Claude Code** - Skills, hooks, auto-indexing
+- **Cursor** - Rules and terminal integration
+- **Aider** - CLI pair programming workflow
+- **Cline / Continue** - VSCode/JetBrains extensions
+- **Windsurf** - Cascade agent integration
+- **Other AI agents** - Generic integration patterns
+
+Quick start for any agent:
+```bash
+dora init && dora index    # Initialize and index your codebase
+dora status                # Verify index is ready
+dora map                   # See codebase overview
+```
+
+## Claude Code Integration
+
+dora integrates with Claude Code via settings and optional skill configuration. Just add these files to your project:
+
+**1. Add to `.claude/settings.json`** (enables auto-indexing and permissions):
+
+```json
+{
+  "permissions": {
+    "allow": [
+      "Bash(dora:*)",
+      "Skill(dora)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "dora status 2>/dev/null && (dora index > /tmp/dora-index.log 2>&1 &) || echo 'dora not initialized. Run: dora init && dora index'"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "(dora index > /tmp/dora-index.log 2>&1 &) || true"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+**2. (Optional) Add the dora skill** at `.claude/skills/dora/SKILL.md`:
+
+After running `dora init`, create a symlink:
+```bash
+mkdir -p .claude/skills/dora
+ln -s ../../../.dora/docs/SKILL.md .claude/skills/dora/SKILL.md
+```
+
+This enables the `/dora` command in Claude Code. [View the skill file](https://github.com/butttons/dora/blob/main/src/templates/docs/SKILL.md).
+
+**3. Initialize dora:**
+```bash
+dora init
+dora index
+```
+
+**What this gives you:**
+- Auto-indexing after each Claude turn
+- Pre-approved permissions (no prompts for dora commands)
+- Session startup checks
+
+**Troubleshooting:**
+- **Index not updating?** Check `/tmp/dora-index.log` for errors
+- **dora not found?** Ensure dora is in PATH: `which dora`
 
 ## Quick Start
 
