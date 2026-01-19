@@ -155,7 +155,15 @@ ln -s ../../../.dora/docs/SKILL.md .claude/skills/dora/SKILL.md
 
 This enables the `/dora` command in Claude Code. [View the skill file](https://github.com/butttons/dora/blob/main/src/templates/docs/SKILL.md).
 
-**3. Initialize dora:**
+**3. Add to CLAUDE.md** (after running `dora init`):
+
+```bash
+cat .dora/docs/SNIPPET.md >> CLAUDE.md
+```
+
+This gives Claude quick access to dora commands and guidance on when to use dora for code exploration. The snippet includes command reference and best practices.
+
+**4. Initialize dora:**
 
 ```bash
 dora init
@@ -167,6 +175,7 @@ dora index
 - Auto-indexing after each Claude turn
 - Pre-approved permissions (no prompts for dora commands)
 - Session startup checks
+- CLAUDE.md context for better code exploration
 
 **Troubleshooting:**
 

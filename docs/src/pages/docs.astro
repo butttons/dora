@@ -361,7 +361,27 @@ ln -s ../../../.dora/docs/SKILL.md .claude/skills/dora/SKILL.md</code></pre>
 
                 <div>
                     <h4 class="font-semibold text-zinc-200 mb-3">
-                        3. Initialize dora
+                        3. Add to <code
+                            class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded text-sm"
+                            >CLAUDE.md</code
+                        >
+                    </h4>
+                    <p class="text-zinc-300 mb-3">
+                        After running <code
+                            class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded"
+                            >dora init</code
+                        >, add the command reference to your CLAUDE.md:
+                    </p>
+                    <pre
+                        class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm overflow-x-auto"><code class="text-zinc-300">cat .dora/docs/SNIPPET.md >> CLAUDE.md</code></pre>
+                    <p class="text-zinc-400 text-sm mt-2">
+                        This gives Claude quick access to dora commands and guidance on when to use dora for code exploration.
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold text-zinc-200 mb-3">
+                        4. Initialize dora
                     </h4>
                     <pre
                         class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm overflow-x-auto"><code class="text-zinc-300">dora init
@@ -373,7 +393,7 @@ dora index</code></pre>
                 >
                     <p class="text-zinc-300 text-sm">
                         <strong>What you get:</strong> Auto-indexing after each turn,
-                        pre-approved permissions, session startup checks
+                        pre-approved permissions, session startup checks, and CLAUDE.md context
                     </p>
                 </div>
             </div>

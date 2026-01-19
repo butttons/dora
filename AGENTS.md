@@ -29,16 +29,38 @@ dora integrates deeply with Claude Code via skills, hooks, and pre-approved perm
 
 ### Setup
 
-1. **Add to CLAUDE.md:**
+1. **Configure settings:**
 
-   ```bash
-   cat .dora/docs/SNIPPET.md >> CLAUDE.md
-   ```
+   Create `.claude/settings.json`:
 
-2. **Configure settings:**
-
-   ```bash
-   cp .claude/settings.json .claude/settings.json
+   ```json
+   {
+     "permissions": {
+       "allow": ["Bash(dora:*)", "Skill(dora)"]
+     },
+     "hooks": {
+       "SessionStart": [
+         {
+           "hooks": [
+             {
+               "type": "command",
+               "command": "dora status 2>/dev/null && (dora index > /tmp/dora-index.log 2>&1 &) || echo 'dora not initialized. Run: dora init && dora index'"
+             }
+           ]
+         }
+       ],
+       "Stop": [
+         {
+           "hooks": [
+             {
+               "type": "command",
+               "command": "(dora index > /tmp/dora-index.log 2>&1 &) || true"
+             }
+           ]
+         }
+       ]
+     }
+   }
    ```
 
    This enables:
@@ -46,10 +68,30 @@ dora integrates deeply with Claude Code via skills, hooks, and pre-approved perm
    - **Pre-approved permissions**: dora commands don't require permission prompts
    - **Automatic usage**: Claude prefers dora over Grep/Glob for code exploration
 
-3. **Add dora skill (optional, enables `/dora` command):**
+2. **Add dora skill (optional, enables `/dora` command):**
+
+   After running `dora init`, create a symlink:
+
    ```bash
    mkdir -p .claude/skills/dora
    ln -s ../../../.dora/docs/SKILL.md .claude/skills/dora/SKILL.md
+   ```
+
+3. **Add to CLAUDE.md:**
+
+   After running `dora init`, add the command reference:
+
+   ```bash
+   cat .dora/docs/SNIPPET.md >> CLAUDE.md
+   ```
+
+   This gives Claude quick access to dora commands and guidance on when to use dora for code exploration.
+
+4. **Initialize dora:**
+
+   ```bash
+   dora init
+   dora index
    ```
 
 ### Claude Code Usage
