@@ -75,15 +75,35 @@ import {
                 </p>
             </div>
         </div>
+    </div>
 
-        <!-- AI Agent Examples -->
-        <div class="mb-20">
-            <h2 class="text-3xl font-bold mb-8 text-center">
-                Steer your AI agent with better alternatives
-            </h2>
-            <div class="max-w-5xl mx-auto">
+    <!-- AI Agent Examples -->
+    <div class="mb-20">
+        <h2 class="text-3xl font-bold mb-8 text-center px-6">
+            Steer your AI agent with better alternatives
+        </h2>
+        <!-- Visual Demo Comparison -->
+        <div class="grid md:grid-cols-2 gap-8 mb-12 px-6">
+                    <h3 class="text-sm font-semibold text-zinc-400 mb-4">
+                        Typical AI Agent Workflow
+                    </h3>
+                    <h3 class="text-sm font-semibold text-blue-400 mb-4">
+                        With dora
+                    </h3>
+                    <img
+                        src="/baseline-cli.gif"
+                        alt="Typical grep and find workflow without dora"
+                        class="rounded border border-zinc-700 w-full h-auto"
+                    />
+                    <img
+                        src="/dora-cli.gif"
+                        alt="Fast structured queries with dora CLI"
+                        class="rounded border border-blue-800/50 w-full h-auto"
+                    />
+                </div>
+
                 <!-- Headers (desktop only) -->
-                <div class="hidden md:grid md:grid-cols-2 gap-8 mb-4">
+                <div class="hidden md:grid md:grid-cols-2 gap-8 mb-4 max-w-screen-2xl mx-auto">
                     <h3 class="text-lg font-semibold text-zinc-300">
                         Typical AI agent workflow
                     </h3>
@@ -93,7 +113,7 @@ import {
                 </div>
 
                 <!-- Example pairs -->
-                <div class="space-y-6 md:space-y-3 text-sm font-mono">
+                <div class="space-y-6 md:space-y-3 text-sm font-mono max-w-screen-2xl mx-auto">
                     <!-- Example 1: Directory Structure -->
                     <div class="grid md:grid-cols-2 gap-3">
                         <div
@@ -235,12 +255,13 @@ import {
                     </div>
                 </div>
             </div>
-            <p class="text-center text-zinc-500 mt-8 text-sm">
+            <p class="text-center text-zinc-500 mt-8 text-sm px-6">
                 grep/find/glob work on text patterns. dora understands your code
                 structure.
             </p>
-        </div>
+    </div>
 
+    <div class="max-w-6xl mx-auto px-6 py-20">
         <!-- Quick Start -->
         <QuickStart />
 
@@ -433,7 +454,7 @@ import {
                         rel="noopener noreferrer"
                         class="text-blue-400 hover:text-blue-300 transition-colors font-semibold"
                     >
-                        SCIP ↗
+                        SCIP
                     </a>
                 </div>
             </div>

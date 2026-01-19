@@ -10,6 +10,16 @@ Stop wasting tokens on grep/find/glob. Give your AI agent fast, structured code 
 - **Track usage** - Know where every symbol is used across your codebase in milliseconds, not minutes
 - **Language-agnostic** - Works with any SCIP-compatible indexer (TypeScript, Java, Rust, Python, etc.)
 
+## See It In Action
+
+### Typical Workflow Without dora
+
+![Baseline CLI workflow showing grep/find approach](docs/public/baseline-cli.gif)
+
+### With dora CLI
+
+![dora CLI workflow showing fast structured queries](docs/public/dora-cli.gif)
+
 ## System Requirements
 
 - **Binary users**: No dependencies - standalone executable
@@ -82,6 +92,7 @@ For other languages, see [SCIP Indexers](#scip-indexers).
 ## AI Agent Integration
 
 **→ See [AGENTS.md](AGENTS.md) for complete integration guides** for:
+
 - **Claude Code** - Skills, hooks, auto-indexing
 - **Cursor** - Rules and terminal integration
 - **Aider** - CLI pair programming workflow
@@ -90,6 +101,7 @@ For other languages, see [SCIP Indexers](#scip-indexers).
 - **Other AI agents** - Generic integration patterns
 
 Quick start for any agent:
+
 ```bash
 dora init && dora index    # Initialize and index your codebase
 dora status                # Verify index is ready
@@ -105,10 +117,7 @@ dora integrates with Claude Code via settings and optional skill configuration. 
 ```json
 {
   "permissions": {
-    "allow": [
-      "Bash(dora:*)",
-      "Skill(dora)"
-    ]
+    "allow": ["Bash(dora:*)", "Skill(dora)"]
   },
   "hooks": {
     "SessionStart": [
@@ -138,6 +147,7 @@ dora integrates with Claude Code via settings and optional skill configuration. 
 **2. (Optional) Add the dora skill** at `.claude/skills/dora/SKILL.md`:
 
 After running `dora init`, create a symlink:
+
 ```bash
 mkdir -p .claude/skills/dora
 ln -s ../../../.dora/docs/SKILL.md .claude/skills/dora/SKILL.md
@@ -146,17 +156,20 @@ ln -s ../../../.dora/docs/SKILL.md .claude/skills/dora/SKILL.md
 This enables the `/dora` command in Claude Code. [View the skill file](https://github.com/butttons/dora/blob/main/src/templates/docs/SKILL.md).
 
 **3. Initialize dora:**
+
 ```bash
 dora init
 dora index
 ```
 
 **What this gives you:**
+
 - Auto-indexing after each Claude turn
 - Pre-approved permissions (no prompts for dora commands)
 - Session startup checks
 
 **Troubleshooting:**
+
 - **Index not updating?** Check `/tmp/dora-index.log` for errors
 - **dora not found?** Ensure dora is in PATH: `which dora`
 
@@ -293,15 +306,15 @@ Quick reference for all commands with common flags:
 
 ### Code Navigation
 
-| Command                      | Description                       | Common Flags                           |
-| ---------------------------- | --------------------------------- | -------------------------------------- |
-| `dora ls [directory]`        | List files in directory           | `--limit N`, `--sort <field>`          |
-| `dora file <path>`           | Analyze file with dependencies    | -                                      |
-| `dora symbol <query>`        | Search for symbols                | `--kind <type>`, `--limit N`           |
-| `dora refs <symbol>`         | Find all references               | -                                      |
-| `dora deps <path>`           | Show dependencies                 | `--depth N` (default: 1)               |
-| `dora rdeps <path>`          | Show reverse dependencies         | `--depth N` (default: 1)               |
-| `dora adventure <from> <to>` | Find dependency path              | -                                      |
+| Command                      | Description                    | Common Flags                  |
+| ---------------------------- | ------------------------------ | ----------------------------- |
+| `dora ls [directory]`        | List files in directory        | `--limit N`, `--sort <field>` |
+| `dora file <path>`           | Analyze file with dependencies | -                             |
+| `dora symbol <query>`        | Search for symbols             | `--kind <type>`, `--limit N`  |
+| `dora refs <symbol>`         | Find all references            | -                             |
+| `dora deps <path>`           | Show dependencies              | `--depth N` (default: 1)      |
+| `dora rdeps <path>`          | Show reverse dependencies      | `--depth N` (default: 1)      |
+| `dora adventure <from> <to>` | Find dependency path           | -                             |
 
 ### Architecture Analysis
 
