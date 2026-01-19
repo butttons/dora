@@ -267,7 +267,7 @@ describe("Query Commands - Integration Tests", () => {
 			const cycle = capturedOutput.cycles[0];
 			expect(cycle).toHaveProperty("files");
 			expect(Array.isArray(cycle.files)).toBe(true);
-			expect(cycle.files.length).toBe(2); // 2-node cycles only
+			expect(cycle.length).toBe(2); // 2-node cycles only
 		}
 	});
 
