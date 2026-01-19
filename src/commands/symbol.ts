@@ -20,10 +20,54 @@ export async function symbol(
 
 	const results = searchSymbols(ctx.db, query, { kind, limit });
 
-  const output: SymbolSearchResult = {
-    query,
-    results,
-  };
+	// Enhance results with related documentation
+	const enhancedResults = results.map((result) => {
+		// Get symbol ID
+		const symbolIdQuery = `
+      SELECT s.id
+      FROM symbols s
+      JOIN files f ON f.id = s.file_id
+      WHERE s.name = ? AND f.path = ? AND s.start_line = ?
+      LIMIT 1
+    `;
 
-  outputJson(output);
+		const symbolRow = ctx.db
+			.query(symbolIdQuery)
+			.get(result.name, result.path, result.lines?.[0]) as
+			| { id: number }
+			| null;
+
+		if (!symbolRow) {
+			return result;
+		}
+
+		// Get documents referencing this symbol
+		const docsQuery = `
+      SELECT d.path
+      FROM documents d
+      JOIN document_symbol_refs dsr ON dsr.document_id = d.id
+      WHERE dsr.symbol_id = ?
+      ORDER BY d.path
+    `;
+
+		const docs = ctx.db.query(docsQuery).all(symbolRow.id) as Array<{
+			path: string;
+		}>;
+
+		if (docs.length > 0) {
+			return {
+				...result,
+				documented_in: docs.map((d) => d.path),
+			};
+		}
+
+		return result;
+	});
+
+	const output: SymbolSearchResult = {
+		query,
+		results: enhancedResults,
+	};
+
+	outputJson(output);
 }

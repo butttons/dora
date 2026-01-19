@@ -15,6 +15,8 @@ export interface StatusResult {
   file_count?: number;
   symbol_count?: number;
   last_indexed?: string | null;
+  document_count?: number;
+  documents_by_type?: Array<{ type: string; count: number }>;
 }
 
 export interface OverviewResult {
@@ -254,3 +256,56 @@ export interface ComplexityResult {
 
 // Symbol kind conversion is handled in converter/helpers.ts
 // which has the correct SCIP protobuf symbol kind mappings
+
+// Document-related types
+
+export interface Document {
+  path: string;
+  type: string;
+}
+
+export interface GlobalSymbol {
+  name: string;
+  kind: string;
+  path: string;
+  start_line: number;
+}
+
+export interface DocumentSymbolRef extends GlobalSymbol {
+  lines: number[]; // Line numbers where this symbol is mentioned in the document
+}
+
+export interface DocumentFileRef {
+  path: string;
+  lines: number[]; // Line numbers where this file is mentioned in the document
+}
+
+export interface DocumentReferences {
+  symbols: DocumentSymbolRef[];
+  files: DocumentFileRef[];
+}
+
+export interface DocResult {
+  path: string;
+  type: string;
+  symbol_refs: DocumentSymbolRef[];
+  file_refs: DocumentFileRef[];
+  content?: string;
+}
+
+export interface DocsResult {
+  query: string;
+  type: "symbol" | "file";
+  documents: Array<{
+    path: string;
+    type: string;
+    symbol_refs?: number;
+    file_refs?: number;
+  }>;
+}
+
+export interface DefnEnclosingRange {
+  path: string;
+  start_line: number;
+  end_line: number;
+}

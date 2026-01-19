@@ -11,6 +11,8 @@ export const debugIndex = createDebug("dora:index");
 export const debugConverter = createDebug("dora:converter");
 export const debugDb = createDebug("dora:db");
 export const debugConfig = createDebug("dora:config");
+export const debugScanner = createDebug("dora:scanner");
+export const debugDocs = createDebug("dora:documents");
 
 // For backwards compatibility, export common debug functions
 export const debug = debugConverter;

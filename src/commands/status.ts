@@ -1,7 +1,12 @@
 // dora status command
 
 import { getDb } from "../db/connection.ts";
-import { getFileCount, getSymbolCount } from "../db/queries.ts";
+import {
+  getFileCount,
+  getSymbolCount,
+  getDocumentCount,
+  getDocumentCountsByType,
+} from "../db/queries.ts";
 import type { StatusResult } from "../types.ts";
 import { isIndexed, loadConfig } from "../utils/config.ts";
 import { outputJson } from "./shared.ts";
@@ -24,6 +29,13 @@ export async function status(): Promise<void> {
       result.file_count = getFileCount(db);
       result.symbol_count = getSymbolCount(db);
       result.last_indexed = config.lastIndexed;
+
+      // Add document statistics
+      const documentCount = getDocumentCount(db);
+      if (documentCount > 0) {
+        result.document_count = documentCount;
+        result.documents_by_type = getDocumentCountsByType(db);
+      }
     } catch (error) {
       // Database might be corrupt, but we can still report it exists
       result.indexed = false;

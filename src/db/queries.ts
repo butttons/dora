@@ -709,3 +709,187 @@ export function getComplexityMetrics(
 
 	return db.query(query).all() as ComplexityMetric[];
 }
+
+// ===== Document Queries =====
+
+/**
+ * Get documents referencing a symbol
+ */
+export function getDocumentsForSymbol(
+	db: Database,
+	symbolId: number,
+): Document[] {
+	const query = `
+    SELECT d.path, d.type
+    FROM documents d
+    JOIN document_symbol_refs dsr ON dsr.document_id = d.id
+    WHERE dsr.symbol_id = ?
+    ORDER BY d.path
+  `;
+
+	return db.query(query).all(symbolId) as Document[];
+}
+
+/**
+ * Get documents referencing a file
+ */
+export function getDocumentsForFile(db: Database, fileId: number): Document[] {
+	const query = `
+    SELECT d.path, d.type
+    FROM documents d
+    JOIN document_file_refs dfr ON dfr.document_id = d.id
+    WHERE dfr.file_id = ?
+    ORDER BY d.path
+  `;
+
+	return db.query(query).all(fileId) as Document[];
+}
+
+/**
+ * Get symbols and files referenced by a document with line numbers
+ */
+export function getDocumentReferences(db: Database, docPath: string): {
+	symbols: import("../types.ts").DocumentSymbolRef[];
+	files: import("../types.ts").DocumentFileRef[];
+} {
+	// Get symbols with aggregated line numbers
+	const symbolQuery = `
+    SELECT
+      s.name,
+      s.kind,
+      f.path,
+      s.start_line,
+      GROUP_CONCAT(dsr.line) as lines
+    FROM symbols s
+    JOIN files f ON f.id = s.file_id
+    JOIN document_symbol_refs dsr ON dsr.symbol_id = s.id
+    JOIN documents d ON d.id = dsr.document_id
+    WHERE d.path = ?
+    GROUP BY s.id, s.name, s.kind, f.path, s.start_line
+    ORDER BY s.name
+  `;
+
+	// Get files with aggregated line numbers
+	const fileQuery = `
+    SELECT
+      f.path,
+      GROUP_CONCAT(dfr.line) as lines
+    FROM files f
+    JOIN document_file_refs dfr ON dfr.file_id = f.id
+    JOIN documents d ON d.id = dfr.document_id
+    WHERE d.path = ?
+    GROUP BY f.id, f.path
+    ORDER BY f.path
+  `;
+
+	const symbolRows = db.query(symbolQuery).all(docPath) as Array<{
+		name: string;
+		kind: string;
+		path: string;
+		start_line: number;
+		lines: string;
+	}>;
+
+	const fileRows = db.query(fileQuery).all(docPath) as Array<{
+		path: string;
+		lines: string;
+	}>;
+
+	const symbols = symbolRows.map((row) => ({
+		name: row.name,
+		kind: row.kind,
+		path: row.path,
+		start_line: row.start_line,
+		lines: row.lines.split(",").map((l) => parseInt(l, 10)),
+	}));
+
+	const files = fileRows.map((row) => ({
+		path: row.path,
+		lines: row.lines.split(",").map((l) => parseInt(l, 10)),
+	}));
+
+	return { symbols, files };
+}
+
+/**
+ * Get document content and metadata
+ */
+export function getDocumentContent(
+	db: Database,
+	docPath: string,
+): {
+	path: string;
+	type: string;
+	content: string;
+	symbol_count: number;
+	file_count: number;
+} | null {
+	const query = `
+    SELECT path, type, content, symbol_count, file_count
+    FROM documents
+    WHERE path = ?
+  `;
+
+	return db.query(query).get(docPath) as {
+		path: string;
+		type: string;
+		content: string;
+		symbol_count: number;
+		file_count: number;
+	} | null;
+}
+
+/**
+ * Get document count
+ */
+export function getDocumentCount(db: Database): number {
+	const result = db.query("SELECT COUNT(*) as count FROM documents").get() as {
+		count: number;
+	};
+	return result.count;
+}
+
+/**
+ * Get document counts by type
+ */
+export function getDocumentCountsByType(
+	db: Database,
+): Array<{ type: string; count: number }> {
+	const query = `
+    SELECT type, COUNT(*) as count
+    FROM documents
+    GROUP BY type
+    ORDER BY count DESC
+  `;
+
+	return db.query(query).all() as Array<{ type: string; count: number }>;
+}
+
+/**
+ * Search documents by content (case-insensitive LIKE search)
+ */
+export function searchDocumentContent(
+	db: Database,
+	searchQuery: string,
+	limit: number = 20,
+): Array<{
+	path: string;
+	type: string;
+	symbol_count: number;
+	file_count: number;
+}> {
+	const query = `
+    SELECT path, type, symbol_count, file_count
+    FROM documents
+    WHERE content LIKE ?
+    ORDER BY symbol_count DESC, file_count DESC
+    LIMIT ?
+  `;
+
+	return db.query(query).all(`%${searchQuery}%`, limit) as Array<{
+		path: string;
+		type: string;
+		symbol_count: number;
+		file_count: number;
+	}>;
+}

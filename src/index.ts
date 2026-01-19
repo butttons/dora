@@ -26,6 +26,7 @@ import { schema } from "./commands/schema.ts";
 import { status } from "./commands/status.ts";
 import { symbol } from "./commands/symbol.ts";
 import { treasure } from "./commands/treasure.ts";
+import { registerDocsCommand } from "./commands/docs.ts";
 import { wrapCommand } from "./utils/errors.ts";
 
 const program = new Command();
@@ -203,6 +204,9 @@ program
 	.description("Execute raw SQL query (read-only)")
 	.argument("<sql>", "SQL query to execute")
 	.action(wrapCommand(query));
+
+// Documentation commands
+registerDocsCommand(program);
 
 // Parse and execute
 program.parse();

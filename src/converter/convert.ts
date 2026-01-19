@@ -108,7 +108,51 @@ CREATE INDEX IF NOT EXISTS idx_packages_name ON packages(name);
 CREATE TABLE IF NOT EXISTS metadata (
   key TEXT PRIMARY KEY,
   value TEXT NOT NULL
-);`;
+);
+
+-- Documents table for indexing documentation files
+CREATE TABLE IF NOT EXISTS documents (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  path TEXT UNIQUE NOT NULL,
+  type TEXT NOT NULL,
+  content TEXT NOT NULL,
+  mtime INTEGER NOT NULL,
+  indexed_at INTEGER NOT NULL,
+  symbol_count INTEGER DEFAULT 0,
+  file_count INTEGER DEFAULT 0
+);
+
+CREATE INDEX IF NOT EXISTS idx_documents_path ON documents(path);
+CREATE INDEX IF NOT EXISTS idx_documents_type ON documents(type);
+CREATE INDEX IF NOT EXISTS idx_documents_mtime ON documents(mtime);
+
+-- Document-to-symbol references
+CREATE TABLE IF NOT EXISTS document_symbol_refs (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  document_id INTEGER NOT NULL,
+  symbol_id INTEGER NOT NULL,
+  line INTEGER NOT NULL,
+  FOREIGN KEY (document_id) REFERENCES documents(id) ON DELETE CASCADE,
+  FOREIGN KEY (symbol_id) REFERENCES symbols(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_document_symbol_refs_document ON document_symbol_refs(document_id);
+CREATE INDEX IF NOT EXISTS idx_document_symbol_refs_symbol ON document_symbol_refs(symbol_id);
+CREATE INDEX IF NOT EXISTS idx_document_symbol_refs_line ON document_symbol_refs(document_id, line);
+
+-- Document-to-file references
+CREATE TABLE IF NOT EXISTS document_file_refs (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  document_id INTEGER NOT NULL,
+  file_id INTEGER NOT NULL,
+  line INTEGER NOT NULL,
+  FOREIGN KEY (document_id) REFERENCES documents(id) ON DELETE CASCADE,
+  FOREIGN KEY (file_id) REFERENCES files(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_document_file_refs_document ON document_file_refs(document_id);
+CREATE INDEX IF NOT EXISTS idx_document_file_refs_file ON document_file_refs(file_id);
+CREATE INDEX IF NOT EXISTS idx_document_file_refs_line ON document_file_refs(document_id, line);`;
 
 export interface ConversionOptions {
   force?: boolean; // Force full rebuild
@@ -121,6 +165,8 @@ export interface ConversionStats {
   changed_files: number;
   deleted_files: number;
   time_ms: number;
+  total_documents?: number;
+  processed_documents?: number;
 }
 
 interface ChangedFile {
@@ -261,6 +307,14 @@ export async function convertToDatabase(
   updateDenormalizedFields(db);
   debugConverter("Denormalized fields updated");
 
+  // Process documentation files
+  debugConverter("Processing documentation files...");
+  const { processDocuments } = await import("./documents.js");
+  const docStats = await processDocuments(db, repoRoot, mode);
+  debugConverter(
+    `Documentation processing complete: ${docStats.processed} processed, ${docStats.skipped} skipped`,
+  );
+
   // Update metadata and get stats
   debugConverter("Updating metadata...");
   const stats = updateMetadata(
@@ -282,6 +336,8 @@ export async function convertToDatabase(
   return {
     ...stats,
     time_ms: timeMs,
+    total_documents: docStats.total,
+    processed_documents: docStats.processed,
   };
 }
 
@@ -431,16 +487,23 @@ async function processBatches(
  * Initialize database schema
  */
 function initializeSchema(db: Database): void {
-  // Check if schema already exists (quick optimization)
+  // Check if all tables exist (including new ones like documents)
+  // We always run the schema if any table is missing
   try {
-    const tableCheck = db
+    const filesCheck = db
       .query(
         "SELECT name FROM sqlite_master WHERE type='table' AND name='files'",
       )
       .get();
 
-    if (tableCheck) {
-      // Schema exists, skip initialization
+    const documentsCheck = db
+      .query(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='documents'",
+      )
+      .get();
+
+    if (filesCheck && documentsCheck) {
+      // All tables exist, skip initialization
       return;
     }
   } catch {
