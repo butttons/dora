@@ -118,4 +118,123 @@ describe("Config Management", () => {
 			expect(config.root).toBe(root);
 		});
 	});
+
+	describe("JavaScript/TypeScript detection", () => {
+		let tempDir: string;
+
+		beforeEach(async () => {
+			// Create temporary test directory
+			tempDir = `/tmp/dora-test-${Date.now()}`;
+			await Bun.write(`${tempDir}/.keep`, "");
+		});
+
+		afterEach(async () => {
+			// Clean up temporary directory
+			try {
+				await Bun.$`rm -rf ${tempDir}`;
+			} catch {
+				// Ignore cleanup errors
+			}
+		});
+
+		test("should add --infer-tsconfig for JavaScript-only project", async () => {
+			// Create package.json only (no tsconfig.json)
+			await Bun.write(`${tempDir}/package.json`, JSON.stringify({ name: "test" }));
+
+			const config = createDefaultConfig(tempDir);
+
+			expect(config.commands?.index).toBe(
+				"scip-typescript index --infer-tsconfig --output .dora/index.scip",
+			);
+		});
+
+		test("should NOT add --infer-tsconfig for TypeScript project", async () => {
+			// Create both package.json and tsconfig.json
+			await Bun.write(`${tempDir}/package.json`, JSON.stringify({ name: "test" }));
+			await Bun.write(
+				`${tempDir}/tsconfig.json`,
+				JSON.stringify({ compilerOptions: {} }),
+			);
+
+			const config = createDefaultConfig(tempDir);
+
+			expect(config.commands?.index).toBe(
+				"scip-typescript index --output .dora/index.scip",
+			);
+		});
+
+		test("should add --infer-tsconfig for JavaScript + pnpm workspace", async () => {
+			// Create package.json and pnpm-workspace.yaml (no tsconfig.json)
+			await Bun.write(`${tempDir}/package.json`, JSON.stringify({ name: "test" }));
+			await Bun.write(`${tempDir}/pnpm-workspace.yaml`, "packages:\n  - packages/*");
+
+			const config = createDefaultConfig(tempDir);
+
+			expect(config.commands?.index).toBe(
+				"scip-typescript index --infer-tsconfig --pnpm-workspaces --output .dora/index.scip",
+			);
+		});
+
+		test("should NOT add --infer-tsconfig for TypeScript + pnpm workspace", async () => {
+			// Create package.json, tsconfig.json, and pnpm-workspace.yaml
+			await Bun.write(`${tempDir}/package.json`, JSON.stringify({ name: "test" }));
+			await Bun.write(
+				`${tempDir}/tsconfig.json`,
+				JSON.stringify({ compilerOptions: {} }),
+			);
+			await Bun.write(`${tempDir}/pnpm-workspace.yaml`, "packages:\n  - packages/*");
+
+			const config = createDefaultConfig(tempDir);
+
+			expect(config.commands?.index).toBe(
+				"scip-typescript index --pnpm-workspaces --output .dora/index.scip",
+			);
+		});
+
+		test("should add --infer-tsconfig for JavaScript + yarn workspace", async () => {
+			// Create package.json with workspaces (no tsconfig.json)
+			await Bun.write(
+				`${tempDir}/package.json`,
+				JSON.stringify({ name: "test", workspaces: ["packages/*"] }),
+			);
+
+			const config = createDefaultConfig(tempDir);
+
+			expect(config.commands?.index).toBe(
+				"scip-typescript index --infer-tsconfig --yarn-workspaces --output .dora/index.scip",
+			);
+		});
+
+		test("should NOT add --infer-tsconfig for TypeScript + yarn workspace", async () => {
+			// Create package.json with workspaces and tsconfig.json
+			await Bun.write(
+				`${tempDir}/package.json`,
+				JSON.stringify({ name: "test", workspaces: ["packages/*"] }),
+			);
+			await Bun.write(
+				`${tempDir}/tsconfig.json`,
+				JSON.stringify({ compilerOptions: {} }),
+			);
+
+			const config = createDefaultConfig(tempDir);
+
+			expect(config.commands?.index).toBe(
+				"scip-typescript index --yarn-workspaces --output .dora/index.scip",
+			);
+		});
+
+		test("should handle tsconfig.json only (no package.json)", async () => {
+			// Create tsconfig.json only
+			await Bun.write(
+				`${tempDir}/tsconfig.json`,
+				JSON.stringify({ compilerOptions: {} }),
+			);
+
+			const config = createDefaultConfig(tempDir);
+
+			expect(config.commands?.index).toBe(
+				"scip-typescript index --output .dora/index.scip",
+			);
+		});
+	});
 });

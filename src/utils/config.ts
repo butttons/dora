@@ -125,24 +125,30 @@ function detectWorkspaceType(root: string): "pnpm" | "yarn" | null {
  * Detect project type and return appropriate SCIP indexer command
  */
 function detectIndexerCommand(root: string): string {
-  // TypeScript/JavaScript - check for package.json or tsconfig.json
-  if (
-    existsSync(join(root, "package.json")) ||
-    existsSync(join(root, "tsconfig.json"))
-  ) {
-    let command = "scip-typescript index --output .dora/index.scip";
+  const hasTsConfig = existsSync(join(root, "tsconfig.json"));
+  const hasPackageJson = existsSync(join(root, "package.json"));
 
-    // Add workspace flag if detected
+  // TypeScript/JavaScript projects
+  if (hasTsConfig || hasPackageJson) {
     const workspaceType = detectWorkspaceType(root);
-    if (workspaceType === "pnpm") {
-      command =
-        "scip-typescript index --pnpm-workspaces --output .dora/index.scip";
-    } else if (workspaceType === "yarn") {
-      command =
-        "scip-typescript index --yarn-workspaces --output .dora/index.scip";
-    }
 
-    return command;
+    // For JavaScript projects (no tsconfig.json), add --infer-tsconfig flag
+    const needsInferTsConfig = !hasTsConfig && hasPackageJson;
+
+    // Build command based on workspace type
+    if (workspaceType === "pnpm") {
+      return needsInferTsConfig
+        ? "scip-typescript index --infer-tsconfig --pnpm-workspaces --output .dora/index.scip"
+        : "scip-typescript index --pnpm-workspaces --output .dora/index.scip";
+    } else if (workspaceType === "yarn") {
+      return needsInferTsConfig
+        ? "scip-typescript index --infer-tsconfig --yarn-workspaces --output .dora/index.scip"
+        : "scip-typescript index --yarn-workspaces --output .dora/index.scip";
+    } else {
+      return needsInferTsConfig
+        ? "scip-typescript index --infer-tsconfig --output .dora/index.scip"
+        : "scip-typescript index --output .dora/index.scip";
+    }
   }
 
   // Python - check for Python project files
