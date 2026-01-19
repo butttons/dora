@@ -94,11 +94,10 @@ For other languages, see [SCIP Indexers](#scip-indexers).
 **→ See [AGENTS.md](AGENTS.md) for complete integration guides** for:
 
 - **Claude Code** - Skills, hooks, auto-indexing
-- **Cursor** - Rules and terminal integration
-- **Aider** - CLI pair programming workflow
-- **Cline / Continue** - VSCode/JetBrains extensions
-- **Windsurf** - Cascade agent integration
-- **Other AI agents** - Generic integration patterns
+- **OpenCode** - Agent system integration
+- **Cursor** - Custom commands and rules
+- **Windsurf** - Skills, AGENTS.md, and rules
+- **Other AI agents** - Generic integration using SKILL.md and SNIPPET.md
 
 Quick start for any agent:
 
@@ -435,7 +434,7 @@ MIT
 
 ## Links
 
-- **AI Agent Integration**: [AGENTS.md](./AGENTS.md) - Integration guides for Claude Code, Cursor, Aider, Cline, Continue, Windsurf
+- **AI Agent Integration**: [AGENTS.md](./AGENTS.md) - Integration guides for Claude Code, OpenCode, Cursor, Windsurf
 - **GitHub**: [https://github.com/butttons/dora](https://github.com/butttons/dora)
 - **SCIP Protocol**: [https://github.com/sourcegraph/scip](https://github.com/sourcegraph/scip)
 - **Claude Code**: [https://claude.ai/code](https://claude.ai/code)

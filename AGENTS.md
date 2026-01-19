@@ -107,6 +107,162 @@ Once configured, Claude will automatically:
 
 ---
 
+## OpenCode Integration
+
+OpenCode's agent system allows deep integration with dora for code exploration and analysis.
+
+### Setup
+
+1. **Configure global settings:**
+
+   Create or edit `~/.config/opencode/opencode.json`:
+
+   ```json
+   {
+     "$schema": "https://opencode.ai/config.json",
+     "permission": {
+       "bash": {
+         "dora *": "allow"
+       }
+     }
+   }
+   ```
+
+   This pre-approves all dora commands so agents can use them without permission prompts.
+
+2. **Create dora agent (optional):**
+
+   Create `~/.config/opencode/agents/dora.md`:
+
+   ```markdown
+   ---
+   description: Fast code exploration using dora CLI
+   mode: subagent
+   tools:
+     write: false
+     edit: false
+   permission:
+     bash:
+       "dora *": "allow"
+   ---
+
+   You are a code exploration specialist using the dora CLI.
+
+   Always start by checking index status:
+   - Run `dora status` to verify index is available
+
+   For code exploration, use:
+   - `dora file <path>` - Understand files and their dependencies
+   - `dora symbol <query>` - Find symbol definitions
+   - `dora deps <path>` - Show what a file imports
+   - `dora rdeps <path>` - Show what imports a file
+   - `dora adventure <from> <to>` - Find path between files
+
+   For architecture analysis:
+   - `dora cycles` - Find circular dependencies
+   - `dora coupling` - Find tightly coupled files
+   - `dora complexity` - Identify high-impact files
+   - `dora treasure` - Find most referenced files
+
+   Never modify code - focus on analysis and exploration.
+   ```
+
+   This creates a `@dora` subagent optimized for code exploration.
+
+3. **Add project-specific config (optional):**
+
+   Create `.opencode/opencode.json` in your project:
+
+   ```json
+   {
+     "$schema": "https://opencode.ai/config.json",
+     "agent": {
+       "build": {
+         "permission": {
+           "bash": {
+             "dora *": "allow"
+           }
+         }
+       }
+     }
+   }
+   ```
+
+4. **Initialize dora:**
+
+   ```bash
+   dora init
+   dora index
+   ```
+
+### OpenCode Usage
+
+**Using the @dora subagent:**
+
+```
+@dora find the AuthService class and show me its dependencies
+@dora what files would be impacted if I change src/types.ts?
+@dora are there any circular dependencies in the codebase?
+```
+
+**With primary agents (Build/Plan):**
+
+The Build agent can automatically use dora commands when exploring code:
+
+```
+show me how the billing module is structured
+what files depend on the authentication system?
+find all references to the Logger interface
+```
+
+**In custom agents:**
+
+Create task-specific agents that leverage dora:
+
+`~/.config/opencode/agents/refactor-analyzer.md`:
+
+```markdown
+---
+description: Analyzes code for refactoring opportunities
+mode: subagent
+permission:
+  bash:
+    "dora *": "allow"
+  edit: deny
+---
+
+Before suggesting refactorings:
+1. Run `dora file <path>` to understand dependencies
+2. Run `dora rdeps <path>` to check impact
+3. Run `dora coupling` to find tightly coupled code
+4. Run `dora complexity` to prioritize high-impact files
+
+Focus on architectural improvements backed by data.
+```
+
+### Auto-indexing
+
+Add dora indexing to your workflow by creating a task agent:
+
+`~/.config/opencode/agents/indexer.md`:
+
+```markdown
+---
+description: Keeps dora index up-to-date
+mode: subagent
+hidden: true
+permission:
+  bash:
+    "dora index*": "allow"
+---
+
+Run `dora index` in the background after file changes.
+```
+
+Invoke it from your Build agent when needed, or add to your project's watch scripts.
+
+---
+
 ## Cursor Integration
 
 Cursor can use dora as a CLI tool via terminal commands or indexed codebase context.
@@ -137,7 +293,54 @@ Cursor can use dora as a CLI tool via terminal commands or indexed codebase cont
    - dora treasure - Find most referenced files
    ```
 
-3. **Index your codebase:**
+3. **Create custom commands (recommended):**
+
+   Create `.cursor/commands/` directory in your project and add dora command files:
+
+   `.cursor/commands/dora-explore.md`:
+   ```markdown
+   Use dora CLI to explore the codebase structure.
+
+   Steps:
+   1. Run `dora status` to check index health
+   2. Run `dora map` to show packages and statistics
+   3. Run `dora treasure` to identify core files
+   4. Analyze the results and provide insights
+   ```
+
+   `.cursor/commands/dora-analyze-file.md`:
+   ```markdown
+   Analyze a file and its dependencies using dora.
+
+   For the file path provided in the parameters:
+   1. Run `dora file <path>` to see symbols and dependencies
+   2. Run `dora rdeps <path>` to see what depends on this file
+   3. Explain the file's role in the codebase
+   ```
+
+   `.cursor/commands/dora-find-symbol.md`:
+   ```markdown
+   Find a symbol definition using dora.
+
+   For the symbol name provided:
+   1. Run `dora symbol <name>` to find the definition
+   2. If found, run `dora file <path>` on the containing file
+   3. Show the symbol location and context
+   ```
+
+   `.cursor/commands/dora-check-architecture.md`:
+   ```markdown
+   Check codebase architecture for issues using dora.
+
+   1. Run `dora cycles` to find circular dependencies
+   2. Run `dora coupling --threshold 5` to find tightly coupled files
+   3. Run `dora complexity --sort complexity` to identify high-risk files
+   4. Summarize findings and suggest improvements
+   ```
+
+   These commands appear when you type `/` in Cursor chat.
+
+4. **Index your codebase:**
    ```bash
    dora init
    dora index
@@ -145,189 +348,248 @@ Cursor can use dora as a CLI tool via terminal commands or indexed codebase cont
 
 ### Cursor Usage
 
-- **In chat:** Ask Cursor to "use dora to find the AuthService definition"
+**Using custom commands:**
+
+```
+/dora-explore
+/dora-analyze-file src/app.ts
+/dora-find-symbol AuthService
+/dora-check-architecture
+```
+
+**Direct chat:**
+
+- **In chat:** "Use dora to find the AuthService definition"
 - **In composer:** "Run dora deps on src/app.ts and explain the dependency tree"
-- **Auto-indexing:** Add `dora index` to your build/watch scripts
 
----
+**Auto-indexing:** Add `dora index` to your build/watch scripts
 
-## Aider Integration
+### Team Commands (Team/Enterprise)
 
-Aider is a CLI pair programmer that works in your terminal with git integration.
+For organizations, create team-wide dora commands in the Cursor Dashboard:
 
-### Setup
+1. Navigate to Team Content → Commands
+2. Create commands like "Analyze with dora", "Check architecture", etc.
+3. All team members get instant access via `/` commands
 
-1. **Install dora and aider:**
-
-   ```bash
-   # Install dora (see README.md)
-   # Install aider
-   pip install aider-chat
-   ```
-
-2. **Create `.aider.conf.yml` in your project:**
-
-   ```yaml
-   # Suggest using dora for code exploration
-   edit-format: diff
-   map-tokens: 2048
-   ```
-
-3. **Index your codebase:**
-   ```bash
-   dora init
-   dora index
-   ```
-
-### Aider Usage
-
-Start aider and give it context using dora:
-
-```bash
-# Start aider
-aider
-
-# In aider chat, ask it to use dora
-> Before making changes, run `dora file src/app.ts` to see dependencies
-> Use `dora symbol AuthService` to find where it's defined
-> Run `dora rdeps src/types.ts` to see what depends on this file
-```
-
-**Pro tip:** Create shell aliases for common workflows:
-
-```bash
-alias aider-explore="dora map && dora treasure && aider"
-```
-
----
-
-## Cline / Continue Integration
-
-Cline (VSCode) and Continue (VSCode/JetBrains) can execute CLI tools and use MCP servers.
-
-### Setup for Both
-
-1. **Install dora** and ensure it's in PATH
-
-2. **Index your codebase:**
-   ```bash
-   dora init
-   dora index
-   ```
-
-### Cline-Specific Setup
-
-1. **Configure in VSCode settings** (`settings.json`):
-
-   ```json
-   {
-     "cline.terminalShell": "/bin/bash",
-     "cline.allowedCommands": ["dora"]
-   }
-   ```
-
-2. **Add to Cline custom instructions:**
-   ```
-   When exploring code:
-   - Use `dora file <path>` to understand files
-   - Use `dora symbol <query>` to find definitions
-   - Use `dora deps` and `dora rdeps` to trace dependencies
-   - Use `dora cycles` to check for circular dependencies
-   ```
-
-### Continue-Specific Setup
-
-1. **Configure in `.continue/config.json`:**
-   ```json
-   {
-     "customCommands": [
-       {
-         "name": "dora-explore",
-         "description": "Explore codebase with dora",
-         "prompt": "Use dora CLI to explore: dora map, dora file {filepath}, dora symbol {selection}"
-       }
-     ]
-   }
-   ```
-
-### Usage
-
-- **Ask to run commands:** "Run dora file src/app.ts and explain the dependencies"
-- **Context gathering:** "Use dora to find all references to UserContext"
-- **Architecture analysis:** "Run dora cycles to check for circular dependencies"
+This ensures consistent codebase exploration workflows across your team.
 
 ---
 
 ## Windsurf Integration
 
-Windsurf's Cascade agent can execute terminal commands and maintain context.
+Windsurf's Cascade agent supports Skills, AGENTS.md files, and Rules for deep dora integration.
 
 ### Setup
 
-1. **Install dora** and ensure it's in PATH
-
-2. **Add to Windsurf Rules** (Settings > Cascade > Custom Instructions):
-
-   ```
-   # Code Exploration with dora
-   - Use `dora` CLI for fast code intelligence
-   - Run `dora status` first to check index availability
-   - Use `dora file <path>` to understand files and their dependencies
-   - Use `dora symbol <query>` to find definitions across codebase
-   - Use `dora deps`/`dora rdeps` to trace relationships
-
-   # Architecture Analysis
-   - Run `dora cycles` to detect circular dependencies
-   - Run `dora complexity` to find high-impact files
-   - Run `dora treasure` to find core/hub files
-   ```
-
-3. **Index your codebase:**
-   ```bash
-   dora init
-   dora index
-   ```
-
-### Usage
-
-Cascade can autonomously:
-
-- Run `dora file` before editing files to understand dependencies
-- Use `dora rdeps` to check impact before changes
-- Run `dora cycles` to validate architecture
-- Execute `dora index` to refresh after changes
-
----
-
-## Other AI Agents / IDEs
-
-### Generic Integration
-
-Any AI agent with terminal access can use dora:
-
-1. **Ensure dora is in PATH:**
+1. **Install dora** and ensure it's in PATH:
 
    ```bash
    which dora  # Should return path
    dora --version
    ```
 
-2. **Add to agent's system prompt/instructions:**
+2. **Create a dora Skill (recommended):**
 
-   ```
-   Use dora CLI for code exploration:
-   - dora status - Check index health
-   - dora file <path> - Analyze file with dependencies
-   - dora symbol <query> - Find symbols
-   - dora deps/rdeps <path> - Show dependencies
-   - dora cycles - Find circular dependencies
+   After running `dora init`, copy the generated skill file:
+
+   ```bash
+   mkdir -p .windsurf/skills/dora
+   cp .dora/docs/SKILL.md .windsurf/skills/dora/SKILL.md
    ```
 
-3. **Index your codebase:**
+   Or create a symlink to always use the latest version:
+
+   ```bash
+   mkdir -p .windsurf/skills/dora
+   ln -s ../../../.dora/docs/SKILL.md .windsurf/skills/dora/SKILL.md
+   ```
+
+   You can now invoke the skill with `@dora` in Cascade chat. [View the skill template](https://github.com/butttons/dora/blob/main/src/templates/docs/SKILL.md).
+
+3. **Add AGENTS.md snippet (recommended):**
+
+   After running `dora init`, add dora context to your project's AGENTS.md:
+
+   ```bash
+   cat .dora/docs/SNIPPET.md >> AGENTS.md
+   ```
+
+   This gives Cascade automatic access to dora commands when working in your project. You can also place the snippet in directory-specific `AGENTS.md` files for scoped instructions. [View the snippet template](https://github.com/butttons/dora/blob/main/src/templates/docs/SNIPPET.md).
+
+4. **Add to Windsurf Rules (optional):**
+
+   Create `.windsurf/rules/dora.md`:
+
+   ```markdown
+   ---
+   description: Code exploration with dora CLI
+   trigger: glob
+   globs: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx']
+   ---
+
+   When exploring code:
+   - Run `dora status` first to check index availability
+   - Use `dora file <path>` to understand files
+   - Use `dora symbol <query>` to find definitions
+   - Use `dora deps`/`dora rdeps` to trace relationships
+   - Run `dora cycles` periodically to check architecture
+   ```
+
+5. **Initialize dora:**
    ```bash
    dora init
    dora index
    ```
+
+### Windsurf Usage
+
+**Using the @dora skill:**
+
+```
+@dora explore the authentication module
+@dora find all references to UserContext
+@dora check for circular dependencies
+```
+
+**With AGENTS.md:**
+
+When `AGENTS.md` contains dora instructions, Cascade automatically knows to use dora commands when exploring your codebase. Just ask naturally:
+
+```
+show me how the billing module is structured
+what would be impacted if I change src/types.ts?
+find the Logger interface definition
+```
+
+**With directory-scoped AGENTS.md:**
+
+Place `AGENTS.md` files in specific directories to provide targeted guidance:
+
+```
+src/components/AGENTS.md    # Instructions for component exploration
+src/api/AGENTS.md           # Instructions for API exploration
+```
+
+Cascade automatically uses the appropriate instructions based on which files you're working with.
+
+**Direct commands:**
+
+```
+run dora file src/app.ts and explain the dependencies
+use dora to check for circular dependencies
+run dora complexity to find high-risk files
+```
+
+---
+
+## Generic AI Agent Integration
+
+For AI agents and IDEs not listed above, dora provides standard integration files you can adapt.
+
+### Setup
+
+1. **Install dora** and ensure it's in PATH:
+
+   ```bash
+   which dora  # Should return path
+   dora --version
+   ```
+
+2. **Add command reference to agent memory:**
+
+   After running `dora init`, use the generated snippet for your AI agent's memory/context file:
+
+   ```bash
+   cat .dora/docs/SNIPPET.md >> <your-agent-memory-file>
+   ```
+
+   Examples:
+   - For agents with custom instructions: Copy to instructions file
+   - For agents with context files: Append to context file
+   - For agents with .cursorrules-like files: Add to rules file
+
+   This snippet includes:
+   - Command reference for all dora commands
+   - When to use dora vs other tools
+   - Best practices for code exploration
+
+3. **Reference the skill document:**
+
+   The generated `.dora/docs/SKILL.md` file contains detailed command usage:
+
+   ```bash
+   cat .dora/docs/SKILL.md
+   ```
+
+   Use this as a reference for:
+   - Creating agent-specific skills/commands
+   - Understanding dora workflows
+   - Command examples and patterns
+
+4. **Setup auto-indexing hooks (if supported):**
+
+   If your AI agent supports hooks or lifecycle scripts, configure:
+
+   **Session start hook:**
+   ```bash
+   # Check if initialized, run index in background
+   dora status 2>/dev/null && (dora index > /tmp/dora-index.log 2>&1 &) || echo 'Run: dora init && dora index'
+   ```
+
+   **End of turn hook (after file changes):**
+   ```bash
+   # Run index in background, never fail
+   (dora index > /tmp/dora-index.log 2>&1 &) || true
+   ```
+
+   This keeps the index up-to-date automatically as you work.
+
+5. **Initialize dora:**
+   ```bash
+   dora init
+   dora index
+   ```
+
+### Usage Patterns
+
+**For terminal-based agents:**
+
+```bash
+# Explore before making changes
+dora file src/app.ts
+dora rdeps src/types.ts
+
+# Make changes
+# ... agent makes file edits ...
+
+# Refresh index
+dora index
+```
+
+**For chat-based agents:**
+
+Configure the agent to use dora commands when:
+- Exploring code: `dora file`, `dora symbol`, `dora deps`
+- Understanding architecture: `dora map`, `dora treasure`, `dora cycles`
+- Checking impact: `dora rdeps`, `dora coupling`
+- Finding code: `dora symbol`, `dora refs`
+
+**For workflow-based agents:**
+
+Create workflows that use dora for:
+1. Pre-task analysis (understand dependencies)
+2. Impact checking (what will be affected)
+3. Post-task validation (check for cycles, complexity)
+
+### Integration Files Reference
+
+After `dora init`, you'll find these files in `.dora/docs/`:
+
+- **`SNIPPET.md`** - Short command reference for agent memory/context
+- **`SKILL.md`** - Complete skill document with workflows and examples
+
+Use these as templates to create agent-specific configurations.
 
 ---
 
