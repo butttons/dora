@@ -1,24 +1,24 @@
 ---
 const examples = [
     {
-        title: "List files with metadata",
-        traditional: `$ find src -type f -name "*.ts" | wc -l`,
-        dora: `$ dora ls src`,
+        title: "Find symbol definitions",
+        traditional: `$ grep -r "Logger"`,
+        dora: `$ dora symbol Logger`,
     },
     {
-        title: "Find exported symbols",
-        traditional: `$ grep "^export function" src/db/queries.ts`,
-        dora: `$ dora exports src/db/queries.ts`,
+        title: "Analyze a file",
+        traditional: `$ cat config.ts`,
+        dora: `$ dora file config.ts`,
     },
     {
-        title: "Count files and show details",
-        traditional: `$ ls src/commands/*.ts | wc -l`,
-        dora: `$ dora ls src/commands --sort symbols`,
+        title: "Check dependencies",
+        traditional: `$ grep ^import`,
+        dora: `$ dora deps app.ts`,
     },
     {
-        title: "Analyze file dependencies",
-        traditional: `$ cat src/converter/convert.ts | grep "^export"`,
-        dora: `$ dora file src/converter/convert.ts`,
+        title: "List TypeScript files",
+        traditional: `$ find . -name "*.ts"`,
+        dora: `$ dora ls`,
     },
 ];
 ---
