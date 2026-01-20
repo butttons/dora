@@ -4,9 +4,11 @@
 
 ### Minor Changes
 
+- **BREAKING**: Remove `dora docs find` command (redundant with `documented_in` field in symbol/file commands)
+- Add `dora docs` list command to show all documentation files
+- Add `--type` flag to filter docs by md/txt
+- Improve `dora symbol` and `dora file` to show `documented_in` field
 - Fix `dora docs show` to filter out empty symbol names
-- Fix `dora docs find` symbol lookup to work without exact line number match
-- Improve fallback behavior in `dora docs find` to try fuzzy search when exact match has no docs
 
 ## 1.2.2
 
