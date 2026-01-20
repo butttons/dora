@@ -68,6 +68,12 @@ dora understands code structure, dependencies, symbols, and architectural relati
 - `dora changes <ref>` - Show files changed since git ref and their impact
 - `dora graph <path> [--depth N] [--direction type]` - Generate dependency graph. Direction: deps, rdeps, both. Default: both, depth 1
 
+### Documentation
+
+- `dora docs find <query>` - Find documentation mentioning a symbol, file, or document
+- `dora docs search <query> [--limit N]` - Search through documentation content. Default limit: 20
+- `dora docs show <path> [--content]` - Show document metadata and references. Use --content to include full text
+
 ### Database
 
 - `dora schema` - Show database schema (tables, columns, indexes)
@@ -82,6 +88,7 @@ dora understands code structure, dependencies, symbols, and architectural relati
 - Architecture issues → `dora cycles`, `dora coupling`, `dora complexity`
 - Navigation → `dora deps`, `dora adventure`
 - Dead code → `dora lost`
+- Finding documentation → `dora docs find`, `dora docs search`
 - Custom queries → `dora schema` then `dora query`
 
 ## Typical Workflow
@@ -192,6 +199,27 @@ dora refs UserContext                 # All usages
 dora complexity --sort complexity     # Find risky files
 ```
 
+Finding documentation for code:
+
+```bash
+# DON'T: grep -r "AuthService" docs/
+# DON'T: Manually search through README files
+# DO:
+dora docs find AuthService              # Find docs mentioning this symbol
+dora docs find src/auth/service.ts      # Find docs referencing this file
+dora docs search "authentication"       # Search doc content
+```
+
+Understanding what a document covers:
+
+```bash
+# DON'T: Read entire doc, manually trace references
+# DON'T: grep for symbol names in the doc
+# DO:
+dora docs show README.md                # See all symbols/files/docs referenced
+dora docs show docs/api.md --content    # Include full content
+```
+
 ## Practical Examples
 
 Understanding a feature:
@@ -254,6 +282,15 @@ dora schema                          # See database structure
 dora query "SELECT f.path, COUNT(s.id) as symbols FROM files f JOIN symbols s ON s.file_id = f.id WHERE s.is_local = 0 GROUP BY f.path ORDER BY symbols DESC LIMIT 20"
 ```
 
+Working with documentation:
+
+```bash
+dora docs find AuthService           # Where is AuthService documented?
+dora docs show README.md             # What does README reference?
+dora docs search "setup"             # Find all docs about setup
+dora docs find docs/api.md           # Which docs link to api.md?
+```
+
 ## Advanced Tips
 
 Performance:
@@ -282,8 +319,18 @@ Architecture metrics:
 - Empty `cycles` output = healthy architecture
 - High `coupling` (> 20 symbols) = consider refactoring
 
+Documentation:
+
+- Automatically indexes `.md`, `.json`, `.yaml`, `.yml`, `.toml`, and `.txt` files
+- Tracks symbol references (e.g., mentions of `AuthService`)
+- Tracks file references (e.g., mentions of `src/auth/service.ts`)
+- Tracks document-to-document references (e.g., README linking to docs/api.md)
+- Use `dora docs find` to discover where code is documented
+- Use `dora docs show` to see what a document covers with line numbers
+
 ## Limitations
 
 - Includes local symbols (parameters) in `dora file` and `dora exports`
 - Symbol search is substring-based, not fuzzy
 - Index is a snapshot, updates at checkpoints
+- Documentation indexing processes text files (.md, .txt, etc.) at index time

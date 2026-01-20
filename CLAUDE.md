@@ -489,6 +489,248 @@ Output:
 }
 ```
 
+## Documentation Commands
+
+### dora docs find <query>
+
+Find documentation files that mention a specific symbol or file path.
+
+**Purpose:** Discover which documentation files reference a particular symbol or file. Useful for finding where code is documented without manually searching through markdown, JSON, YAML, or other documentation files.
+
+**Query Logic:**
+
+The command performs a three-stage search:
+
+1. **Exact file path match** - Checks if query matches a file path exactly
+2. **Exact symbol match** - Looks for symbols with the exact name
+3. **Fuzzy symbol match** - Falls back to similar symbol names if no exact match
+
+**Queries:**
+
+```sql
+-- Check if query is a file path
+SELECT id, path FROM files WHERE path = ?
+
+-- If file found, get documents referencing it
+SELECT
+  d.path,
+  d.type,
+  d.symbol_count as symbol_refs,
+  d.file_count as file_refs
+FROM documents d
+JOIN document_file_refs dfr ON dfr.document_id = d.id
+WHERE dfr.file_id = ?
+ORDER BY d.path;
+
+-- If symbol found, get documents referencing it
+SELECT
+  d.path,
+  d.type,
+  d.symbol_count as symbol_refs,
+  d.file_count as file_refs
+FROM documents d
+JOIN document_symbol_refs dsr ON dsr.document_id = d.id
+WHERE dsr.symbol_id = ?
+ORDER BY d.path;
+```
+
+**Output:**
+
+```json
+{
+  "query": "AuthService",
+  "type": "symbol",
+  "documents": [
+    {
+      "path": "docs/authentication.md",
+      "type": "markdown",
+      "symbol_refs": 5,
+      "file_refs": 2
+    },
+    {
+      "path": "README.md",
+      "type": "markdown",
+      "symbol_refs": 12,
+      "file_refs": 4
+    }
+  ]
+}
+```
+
+**Use Cases:**
+- Finding where a symbol is documented before making changes
+- Discovering related documentation when exploring code
+- Linking code changes to documentation updates
+- Understanding which docs need updates after refactoring
+
+---
+
+### dora docs search <query>
+
+Search through all indexed documentation files for specific text content.
+
+**Purpose:** Full-text search across all documentation. Useful for finding mentions of concepts, keywords, or specific phrases in your project's documentation.
+
+**Flags:**
+- `--limit <number>` - Maximum number of results to return (default: 20)
+
+**Query:**
+
+```sql
+SELECT
+  d.path,
+  d.type,
+  d.symbol_count,
+  d.file_count
+FROM documents d
+WHERE d.content LIKE '%' || ? || '%'
+ORDER BY d.path
+LIMIT ?;
+```
+
+**Output:**
+
+```json
+{
+  "query": "authentication",
+  "limit": 20,
+  "results": [
+    {
+      "path": "docs/api.md",
+      "type": "markdown",
+      "symbol_refs": 8,
+      "file_refs": 3
+    },
+    {
+      "path": "docs/setup.md",
+      "type": "markdown",
+      "symbol_refs": 2,
+      "file_refs": 1
+    }
+  ],
+  "total": 2
+}
+```
+
+**Use Cases:**
+- Finding documentation about a specific topic
+- Searching for configuration examples
+- Locating documentation that needs updating
+- Discovering related documentation across the project
+
+---
+
+### dora docs show <path>
+
+Display metadata and references for a specific documentation file.
+
+**Purpose:** Understand what a documentation file covers by showing which symbols and files it references, along with line numbers where references occur.
+
+**Flags:**
+- `--content` - Include the full document content in the output
+
+**Queries:**
+
+```sql
+-- Get document metadata
+SELECT path, type, content
+FROM documents
+WHERE path = ?;
+
+-- Get symbol references with line numbers
+SELECT
+  s.name,
+  s.kind,
+  f.path,
+  s.start_line,
+  s.end_line,
+  dsr.line as ref_line
+FROM document_symbol_refs dsr
+JOIN symbols s ON s.id = dsr.symbol_id
+JOIN files f ON f.id = s.file_id
+WHERE dsr.document_id = ?
+ORDER BY dsr.line;
+
+-- Get file references with line numbers
+SELECT
+  f.path,
+  dfr.line as ref_line
+FROM document_file_refs dfr
+JOIN files f ON f.id = dfr.file_id
+WHERE dfr.document_id = ?
+ORDER BY dfr.line;
+```
+
+**Output (without --content):**
+
+```json
+{
+  "path": "docs/authentication.md",
+  "type": "markdown",
+  "symbol_refs": [
+    {
+      "name": "AuthService",
+      "kind": "class",
+      "path": "src/auth/service.ts",
+      "lines": [15, 42],
+      "ref_line": 23
+    },
+    {
+      "name": "validateToken",
+      "kind": "function",
+      "path": "src/auth/token.ts",
+      "lines": [8, 12],
+      "ref_line": 45
+    }
+  ],
+  "file_refs": [
+    {
+      "path": "src/auth/config.ts",
+      "ref_line": 12
+    }
+  ]
+}
+```
+
+**Output (with --content):**
+
+```json
+{
+  "path": "docs/authentication.md",
+  "type": "markdown",
+  "symbol_refs": [...],
+  "file_refs": [...],
+  "content": "# Authentication\n\nThis document describes..."
+}
+```
+
+**Use Cases:**
+- Understanding what code a documentation file covers
+- Finding exact line numbers where symbols/files are mentioned
+- Verifying documentation accuracy against code
+- Reviewing documentation coverage for specific features
+
+---
+
+**What Files Are Indexed:**
+
+The documentation indexer automatically processes these file types:
+- `.md` - Markdown files
+- `.json` - JSON configuration and documentation
+- `.yaml`, `.yml` - YAML configuration
+- `.toml` - TOML configuration
+
+**Exclusions:**
+- Respects `.gitignore` patterns
+- Auto-ignores: `node_modules/`, `.git/`, `.dora/`, `dist/`, `build/`, `coverage/`, `.next/`, `.nuxt/`, `out/`, `*.log`
+
+**Integration with Other Commands:**
+
+Documentation references are automatically included in:
+- `dora status` - Shows document count and breakdown by type
+- `dora symbol <query>` - Shows which docs mention the symbol (via `documented_in` field)
+- `dora file <path>` - Shows which docs reference the file (via `documented_in` field)
+
 ## Architecture Analysis Commands
 
 ### dora cycles [--limit N]

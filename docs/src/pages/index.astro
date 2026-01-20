@@ -253,6 +253,30 @@ import {
                             <div class="text-blue-300">dora status</div>
                         </div>
                     </div>
+
+                    <!-- Example 7: Documentation Search -->
+                    <div class="grid md:grid-cols-2 gap-3">
+                        <div
+                            class="bg-zinc-900 border border-zinc-800 rounded p-3"
+                        >
+                            <div class="text-zinc-500 mb-1">
+                                # Find documentation about a symbol
+                            </div>
+                            <div class="text-zinc-300">
+                                grep -r "AuthService" docs/ README.md
+                            </div>
+                        </div>
+                        <div
+                            class="bg-zinc-900 border border-blue-900/50 rounded p-3"
+                        >
+                            <div class="text-zinc-500 mb-1">
+                                # Find documentation about a symbol
+                            </div>
+                            <div class="text-blue-300">
+                                dora docs find AuthService
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <p class="text-center text-zinc-500 mt-8 text-sm px-6">
@@ -350,6 +374,18 @@ import {
                     <p class="text-zinc-400">
                         Answer complex questions about code structure with SQL.
                         No limitations, just structured data.
+                    </p>
+                </div>
+
+                <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
+                    <div
+                        class="w-12 h-12 rounded-lg bg-blue-500/10 flex items-center justify-center mb-4"
+                    >
+                        <BookOpen class="w-6 h-6 text-blue-400" />
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Search documentation</h3>
+                    <p class="text-zinc-400">
+                        Find documentation mentioning symbols or files. Link code to docs without manual searching.
                     </p>
                 </div>
             </div>

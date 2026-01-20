@@ -15,35 +15,41 @@ This codebase uses dora for fast code intelligence and architectural analysis.
 
 **Files & Symbols:**
 
-- `dora ls [directory] [--limit N] [--sort field]` - List files in directory with metadata (symbols, deps, rdeps)
+- `dora ls [directory] [--limit N] [--sort field]` - List files in directory with metadata (symbols, deps, rdeps). Default limit: 100
 - `dora file <path>` - Show file's symbols, dependencies, and dependents
-- `dora symbol <query> [--kind type] [--limit N]` - Find symbols by name across codebase
+- `dora symbol <query> [--kind type] [--limit N]` - Find symbols by name across codebase. Default limit: 20
 - `dora refs <symbol> [--kind type] [--limit N]` - Find all references to a symbol
 - `dora exports <path>` - List exported symbols from a file
 - `dora imports <path>` - Show what a file imports
 
 **Dependencies:**
 
-- `dora deps <path> [--depth N]` - Show file dependencies (what this imports)
-- `dora rdeps <path> [--depth N]` - Show reverse dependencies (what imports this)
+- `dora deps <path> [--depth N]` - Show file dependencies (what this imports). Default depth: 1
+- `dora rdeps <path> [--depth N]` - Show reverse dependencies (what imports this). Default depth: 1
 - `dora adventure <from> <to>` - Find shortest dependency path between two files
 
 **Code Health:**
 
-- `dora leaves [--max-dependents N]` - Find files with few/no dependents
-- `dora lost [--limit N]` - Find unused exported symbols
-- `dora treasure [--limit N]` - Find most referenced files and files with most dependencies
+- `dora leaves [--max-dependents N]` - Find files with few/no dependents. Default: 0
+- `dora lost [--limit N]` - Find unused exported symbols. Default limit: 50
+- `dora treasure [--limit N]` - Find most referenced files and files with most dependencies. Default: 10
 
 **Architecture Analysis:**
 
-- `dora cycles [--limit N]` - Detect circular dependencies
-- `dora coupling [--threshold N]` - Find bidirectionally dependent file pairs
-- `dora complexity [--sort metric]` - Show file complexity metrics (sort by: complexity, symbols, stability)
+- `dora cycles [--limit N]` - Detect circular dependencies. Empty = good. Default: 50
+- `dora coupling [--threshold N]` - Find bidirectionally dependent file pairs. Default threshold: 5
+- `dora complexity [--sort metric]` - Show file complexity metrics (sort by: complexity, symbols, stability). Default: complexity
 
 **Change Impact:**
 
 - `dora changes <ref>` - Show files changed since git ref and their impact
-- `dora graph <path> [--depth N] [--direction type]` - Generate dependency graph
+- `dora graph <path> [--depth N] [--direction type]` - Generate dependency graph. Direction: deps, rdeps, both. Default: both, depth 1
+
+**Documentation:**
+
+- `dora docs find <query>` - Find documentation mentioning a symbol, file, or document
+- `dora docs search <query> [--limit N]` - Search through documentation content. Default limit: 20
+- `dora docs show <path> [--content]` - Show document metadata and references. Use --content to include full text
 
 **Database:**
 
@@ -66,6 +72,7 @@ dora file <path>                 # Understand a file
 dora deps/rdeps <path>           # Navigate dependencies
 dora symbol <query>              # Find symbols
 dora refs <symbol>               # Find references
+dora docs find <query>           # Find documentation
 ```
 
 For detailed usage and examples, refer to `./dora/docs/SKILL.md`.

@@ -14,7 +14,7 @@ export interface DocumentFile {
  */
 export async function scanDocumentFiles(
   repoRoot: string,
-  extensions: string[] = [".md", ".json", ".yaml", ".yml", ".toml"]
+  extensions: string[] = [".md", ".json", ".yaml", ".yml", ".toml", ".txt"]
 ): Promise<DocumentFile[]> {
   debugScanner("Scanning for document files in %s", repoRoot);
   debugScanner("Extensions: %o", extensions);

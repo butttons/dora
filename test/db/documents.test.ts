@@ -46,7 +46,8 @@ describe("Document Queries", () => {
         mtime INTEGER NOT NULL,
         indexed_at INTEGER NOT NULL,
         symbol_count INTEGER DEFAULT 0,
-        file_count INTEGER DEFAULT 0
+        file_count INTEGER DEFAULT 0,
+        document_count INTEGER DEFAULT 0
       )
     `);
 
@@ -72,6 +73,17 @@ describe("Document Queries", () => {
       )
     `);
 
+    db.run(`
+      CREATE TABLE document_document_refs (
+        id INTEGER PRIMARY KEY,
+        document_id INTEGER NOT NULL,
+        referenced_document_id INTEGER NOT NULL,
+        line INTEGER NOT NULL,
+        FOREIGN KEY (document_id) REFERENCES documents(id),
+        FOREIGN KEY (referenced_document_id) REFERENCES documents(id)
+      )
+    `);
+
     // Insert test data
     db.run("INSERT INTO files (id, path) VALUES (1, 'src/auth.ts')");
     db.run("INSERT INTO files (id, path) VALUES (2, 'src/logger.ts')");
@@ -84,12 +96,12 @@ describe("Document Queries", () => {
     );
 
     db.run(
-      `INSERT INTO documents (id, path, type, content, mtime, indexed_at, symbol_count, file_count)
-       VALUES (1, 'docs/auth.md', 'md', 'The AuthService class handles authentication. See src/auth.ts for details.', 1000, 2000, 1, 1)`
+      `INSERT INTO documents (id, path, type, content, mtime, indexed_at, symbol_count, file_count, document_count)
+       VALUES (1, 'docs/auth.md', 'md', 'The AuthService class handles authentication. See src/auth.ts for details.', 1000, 2000, 1, 1, 0)`
     );
     db.run(
-      `INSERT INTO documents (id, path, type, content, mtime, indexed_at, symbol_count, file_count)
-       VALUES (2, 'README.md', 'md', 'This project uses Logger interface and AuthService for authentication.', 1000, 2000, 2, 0)`
+      `INSERT INTO documents (id, path, type, content, mtime, indexed_at, symbol_count, file_count, document_count)
+       VALUES (2, 'README.md', 'md', 'This project uses Logger interface and AuthService for authentication.', 1000, 2000, 2, 0, 0)`
     );
 
     db.run(
@@ -131,6 +143,8 @@ describe("Document Queries", () => {
     expect(refs.symbols[0].name).toBe("AuthService");
     expect(refs.files.length).toBe(1);
     expect(refs.files[0].path).toBe("src/auth.ts");
+    expect(refs.documents).toBeDefined();
+    expect(refs.documents.length).toBe(0); // No document references in this test data
   });
 
   test("getDocumentContent should return document with metadata", () => {

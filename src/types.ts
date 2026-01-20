@@ -280,9 +280,15 @@ export interface DocumentFileRef {
   lines: number[]; // Line numbers where this file is mentioned in the document
 }
 
+export interface DocumentDocRef {
+  path: string;
+  lines: number[]; // Line numbers where this document is mentioned
+}
+
 export interface DocumentReferences {
   symbols: DocumentSymbolRef[];
   files: DocumentFileRef[];
+  documents: DocumentDocRef[];
 }
 
 export interface DocResult {
@@ -290,17 +296,19 @@ export interface DocResult {
   type: string;
   symbol_refs: DocumentSymbolRef[];
   file_refs: DocumentFileRef[];
+  document_refs: DocumentDocRef[];
   content?: string;
 }
 
 export interface DocsResult {
   query: string;
-  type: "symbol" | "file";
+  type: "symbol" | "file" | "document";
   documents: Array<{
     path: string;
     type: string;
     symbol_refs?: number;
     file_refs?: number;
+    document_refs?: number;
   }>;
 }
 

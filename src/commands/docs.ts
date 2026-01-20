@@ -35,7 +35,8 @@ export function registerDocsCommand(program: Command): void {
             d.path,
             d.type,
             d.symbol_count as symbol_refs,
-            d.file_count as file_refs
+            d.file_count as file_refs,
+            d.document_count as document_refs
           FROM documents d
           JOIN document_file_refs dfr ON dfr.document_id = d.id
           WHERE dfr.file_id = ?
@@ -47,6 +48,7 @@ export function registerDocsCommand(program: Command): void {
           type: string;
           symbol_refs: number;
           file_refs: number;
+          document_refs: number;
         }>;
 
         const result: DocsResult = {
@@ -87,7 +89,8 @@ export function registerDocsCommand(program: Command): void {
               d.path,
               d.type,
               d.symbol_count as symbol_refs,
-              d.file_count as file_refs
+              d.file_count as file_refs,
+              d.document_count as document_refs
             FROM documents d
             JOIN document_symbol_refs dsr ON dsr.document_id = d.id
             WHERE dsr.symbol_id = ?
@@ -99,6 +102,7 @@ export function registerDocsCommand(program: Command): void {
             type: string;
             symbol_refs: number;
             file_refs: number;
+            document_refs: number;
           }>;
 
           const result: DocsResult = {
@@ -110,6 +114,44 @@ export function registerDocsCommand(program: Command): void {
           outputJson(result);
           return;
         }
+      }
+
+      // Try to match as a document path
+      const docResult = db
+        .query("SELECT id, path FROM documents WHERE path = ?")
+        .get(query) as { id: number; path: string } | null;
+
+      if (docResult) {
+        // Found as a document - get documents referencing this document
+        const docsQuery = `
+          SELECT
+            d.path,
+            d.type,
+            d.symbol_count as symbol_refs,
+            d.file_count as file_refs,
+            d.document_count as document_refs
+          FROM documents d
+          JOIN document_document_refs ddr ON ddr.document_id = d.id
+          WHERE ddr.referenced_document_id = ?
+          ORDER BY d.path
+        `;
+
+        const docs = db.query(docsQuery).all(docResult.id) as Array<{
+          path: string;
+          type: string;
+          symbol_refs: number;
+          file_refs: number;
+          document_refs: number;
+        }>;
+
+        const result: DocsResult = {
+          query,
+          type: "document",
+          documents: docs,
+        };
+
+        outputJson(result);
+        return;
       }
 
       // No exact match - try fuzzy search for symbols
@@ -145,7 +187,8 @@ export function registerDocsCommand(program: Command): void {
               d.path,
               d.type,
               d.symbol_count as symbol_refs,
-              d.file_count as file_refs
+              d.file_count as file_refs,
+              d.document_count as document_refs
             FROM documents d
             JOIN document_symbol_refs dsr ON dsr.document_id = d.id
             WHERE dsr.symbol_id IN (${placeholders})
@@ -157,6 +200,7 @@ export function registerDocsCommand(program: Command): void {
             type: string;
             symbol_refs: number;
             file_refs: number;
+            document_refs: number;
           }>;
 
           const result: DocsResult = {
@@ -235,6 +279,7 @@ export function registerDocsCommand(program: Command): void {
         type: doc.type,
         symbol_refs: refs.symbols,
         file_refs: refs.files,
+        document_refs: refs.documents,
         ...(options.content && { content: doc.content }),
       };
 

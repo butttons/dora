@@ -751,6 +751,7 @@ export function getDocumentsForFile(db: Database, fileId: number): Document[] {
 export function getDocumentReferences(db: Database, docPath: string): {
 	symbols: import("../types.ts").DocumentSymbolRef[];
 	files: import("../types.ts").DocumentFileRef[];
+	documents: import("../types.ts").DocumentDocRef[];
 } {
 	// Get symbols with aggregated line numbers
 	const symbolQuery = `
@@ -782,6 +783,19 @@ export function getDocumentReferences(db: Database, docPath: string): {
     ORDER BY f.path
   `;
 
+	// Get documents with aggregated line numbers
+	const docQuery = `
+    SELECT
+      d2.path,
+      GROUP_CONCAT(ddr.line) as lines
+    FROM documents d2
+    JOIN document_document_refs ddr ON ddr.referenced_document_id = d2.id
+    JOIN documents d ON d.id = ddr.document_id
+    WHERE d.path = ?
+    GROUP BY d2.id, d2.path
+    ORDER BY d2.path
+  `;
+
 	const symbolRows = db.query(symbolQuery).all(docPath) as Array<{
 		name: string;
 		kind: string;
@@ -791,6 +805,11 @@ export function getDocumentReferences(db: Database, docPath: string): {
 	}>;
 
 	const fileRows = db.query(fileQuery).all(docPath) as Array<{
+		path: string;
+		lines: string;
+	}>;
+
+	const docRows = db.query(docQuery).all(docPath) as Array<{
 		path: string;
 		lines: string;
 	}>;
@@ -808,7 +827,12 @@ export function getDocumentReferences(db: Database, docPath: string): {
 		lines: row.lines.split(",").map((l) => parseInt(l, 10)),
 	}));
 
-	return { symbols, files };
+	const documents = docRows.map((row) => ({
+		path: row.path,
+		lines: row.lines.split(",").map((l) => parseInt(l, 10)),
+	}));
+
+	return { symbols, files, documents };
 }
 
 /**
@@ -823,9 +847,10 @@ export function getDocumentContent(
 	content: string;
 	symbol_count: number;
 	file_count: number;
+	document_count: number;
 } | null {
 	const query = `
-    SELECT path, type, content, symbol_count, file_count
+    SELECT path, type, content, symbol_count, file_count, document_count
     FROM documents
     WHERE path = ?
   `;
@@ -836,6 +861,7 @@ export function getDocumentContent(
 		content: string;
 		symbol_count: number;
 		file_count: number;
+		document_count: number;
 	} | null;
 }
 

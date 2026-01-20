@@ -60,7 +60,8 @@ See src/logger.ts for implementation.
         mtime INTEGER NOT NULL,
         indexed_at INTEGER NOT NULL,
         symbol_count INTEGER DEFAULT 0,
-        file_count INTEGER DEFAULT 0
+        file_count INTEGER DEFAULT 0,
+        document_count INTEGER DEFAULT 0
       )
     `);
 
@@ -83,6 +84,17 @@ See src/logger.ts for implementation.
         line INTEGER NOT NULL,
         FOREIGN KEY (document_id) REFERENCES documents(id),
         FOREIGN KEY (file_id) REFERENCES files(id)
+      )
+    `);
+
+    db.run(`
+      CREATE TABLE document_document_refs (
+        id INTEGER PRIMARY KEY,
+        document_id INTEGER NOT NULL,
+        referenced_document_id INTEGER NOT NULL,
+        line INTEGER NOT NULL,
+        FOREIGN KEY (document_id) REFERENCES documents(id),
+        FOREIGN KEY (referenced_document_id) REFERENCES documents(id)
       )
     `);
 

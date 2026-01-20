@@ -277,6 +277,14 @@ dora rdeps <path> --depth 2  # Show dependents
 dora adventure <from> <to>   # Find shortest path
 ```
 
+### Documentation
+
+```bash
+dora docs find <query>       # Find docs mentioning symbol/file
+dora docs search <query>     # Search documentation content
+dora docs show <path>        # Show document details
+```
+
 ### Architecture Analysis
 
 ```bash
@@ -323,6 +331,14 @@ Quick reference for all commands with common flags:
 | `dora deps <path>`           | Show dependencies              | `--depth N` (default: 1)      |
 | `dora rdeps <path>`          | Show reverse dependencies      | `--depth N` (default: 1)      |
 | `dora adventure <from> <to>` | Find dependency path           | -                             |
+
+### Documentation
+
+| Command                     | Description                    | Common Flags                          |
+| --------------------------- | ------------------------------ | ------------------------------------- |
+| `dora docs find <query>`    | Find docs mentioning symbol/file | -                                   |
+| `dora docs search <query>`  | Search documentation content   | `--limit N` (default: 20)             |
+| `dora docs show <path>`     | Show document metadata         | `--content` (include full content)    |
 
 ### Architecture Analysis
 

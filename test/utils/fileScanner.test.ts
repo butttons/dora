@@ -24,6 +24,7 @@ describe("File Scanner", () => {
     await writeFile(join(testDir, "package.json"), "{}");
     await writeFile(join(testDir, "node_modules", "foo.md"), "# Foo");
     await writeFile(join(testDir, "src", "config.yaml"), "key: value");
+    await writeFile(join(testDir, "notes.txt"), "Project notes");
 
     // Create .gitignore
     await writeFile(join(testDir, ".gitignore"), "node_modules/\n*.log\n");
@@ -85,5 +86,23 @@ describe("File Scanner", () => {
     expect(changed.some((d) => d.path === "docs/guide.md")).toBe(true);
     expect(changed.some((d) => d.path === "NEW.md")).toBe(true);
     expect(changed.some((d) => d.path === "README.md")).toBe(false);
+  });
+
+  test("should scan and find .txt files", async () => {
+    const docs = await scanDocumentFiles(testDir);
+
+    // Should include .txt files
+    expect(docs.some((d) => d.path.endsWith("notes.txt"))).toBe(true);
+
+    const txtFile = docs.find((d) => d.path.endsWith("notes.txt"));
+    expect(txtFile?.type).toBe("txt");
+  });
+
+  test("should include .txt in default extensions", async () => {
+    const docs = await scanDocumentFiles(testDir);
+
+    // Verify that .txt files are scanned by default
+    const txtDocs = docs.filter((d) => d.type === "txt");
+    expect(txtDocs.length).toBeGreaterThan(0);
   });
 });

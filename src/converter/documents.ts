@@ -23,9 +23,15 @@ interface FileReference {
   line: number;
 }
 
+interface DocReference {
+  docId: number;
+  line: number;
+}
+
 interface DocumentReference {
   symbolRefs: SymbolReference[];
   fileRefs: FileReference[];
+  docRefs: DocReference[];
 }
 
 /**
@@ -81,14 +87,15 @@ export async function processDocuments(
     db.run("DELETE FROM documents");
     db.run("DELETE FROM document_symbol_refs");
     db.run("DELETE FROM document_file_refs");
+    db.run("DELETE FROM document_document_refs");
     docsToProcess = scannedDocs;
   }
 
   // Process each document
   let processed = 0;
   const insertDocStmt = db.prepare(`
-    INSERT OR REPLACE INTO documents (path, type, content, mtime, indexed_at, symbol_count, file_count)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    INSERT OR REPLACE INTO documents (path, type, content, mtime, indexed_at, symbol_count, file_count, document_count)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `);
 
   const insertSymRefStmt = db.prepare(`
@@ -98,6 +105,11 @@ export async function processDocuments(
 
   const insertFileRefStmt = db.prepare(`
     INSERT INTO document_file_refs (document_id, file_id, line)
+    VALUES (?, ?, ?)
+  `);
+
+  const insertDocRefStmt = db.prepare(`
+    INSERT INTO document_document_refs (document_id, referenced_document_id, line)
     VALUES (?, ?, ?)
   `);
 
@@ -120,7 +132,8 @@ export async function processDocuments(
         doc.mtime,
         now,
         refs.symbolRefs.length,
-        refs.fileRefs.length
+        refs.fileRefs.length,
+        refs.docRefs.length
       );
 
       // Get the document ID
@@ -133,6 +146,7 @@ export async function processDocuments(
       // Clear existing references for this document
       db.run("DELETE FROM document_symbol_refs WHERE document_id = ?", [docRow.id]);
       db.run("DELETE FROM document_file_refs WHERE document_id = ?", [docRow.id]);
+      db.run("DELETE FROM document_document_refs WHERE document_id = ?", [docRow.id]);
 
       // Insert symbol references
       for (const symRef of refs.symbolRefs) {
@@ -142,6 +156,11 @@ export async function processDocuments(
       // Insert file references
       for (const fileRef of refs.fileRefs) {
         insertFileRefStmt.run(docRow.id, fileRef.fileId, fileRef.line);
+      }
+
+      // Insert document references
+      for (const docRef of refs.docRefs) {
+        insertDocRefStmt.run(docRow.id, docRef.docId, docRef.line);
       }
 
       processed++;
@@ -171,8 +190,10 @@ export async function processDocuments(
 function extractReferences(content: string, db: Database): DocumentReference {
   const symbolRefs: SymbolReference[] = [];
   const fileRefs: FileReference[] = [];
+  const docRefs: DocReference[] = [];
   const symbolRefsMap = new Map<number, Set<number>>(); // symbolId -> Set of line numbers
   const fileRefsMap = new Map<number, Set<number>>(); // fileId -> Set of line numbers
+  const docRefsMap = new Map<number, Set<number>>(); // docId -> Set of line numbers
 
   // Split content into lines (1-indexed like in editors)
   const lines = content.split("\n");
@@ -230,8 +251,10 @@ function extractReferences(content: string, db: Database): DocumentReference {
         continue;
       }
 
-      // Normalize path and check if it's a code file
+      // Normalize path
       const normalized = normalizePath(linkPath);
+
+      // Check if it's a code file
       const fileRow = db.query("SELECT id FROM files WHERE path = ?").get(normalized) as
         | { id: number }
         | null;
@@ -241,6 +264,19 @@ function extractReferences(content: string, db: Database): DocumentReference {
           fileRefsMap.set(fileRow.id, new Set());
         }
         fileRefsMap.get(fileRow.id)!.add(lineNumber);
+        continue;
+      }
+
+      // Check if it's a document file
+      const docRow = db.query("SELECT id FROM documents WHERE path = ?").get(normalized) as
+        | { id: number }
+        | null;
+
+      if (docRow) {
+        if (!docRefsMap.has(docRow.id)) {
+          docRefsMap.set(docRow.id, new Set());
+        }
+        docRefsMap.get(docRow.id)!.add(lineNumber);
       }
     }
   }
@@ -258,15 +294,23 @@ function extractReferences(content: string, db: Database): DocumentReference {
     }
   }
 
+  for (const [docId, lineNumbers] of docRefsMap.entries()) {
+    for (const line of lineNumbers) {
+      docRefs.push({ docId, line });
+    }
+  }
+
   debugDocs(
-    "Extracted %d symbol refs and %d file refs",
+    "Extracted %d symbol refs, %d file refs, and %d doc refs",
     symbolRefs.length,
-    fileRefs.length
+    fileRefs.length,
+    docRefs.length
   );
 
   return {
     symbolRefs,
     fileRefs,
+    docRefs,
   };
 }
 

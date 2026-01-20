@@ -119,7 +119,8 @@ CREATE TABLE IF NOT EXISTS documents (
   mtime INTEGER NOT NULL,
   indexed_at INTEGER NOT NULL,
   symbol_count INTEGER DEFAULT 0,
-  file_count INTEGER DEFAULT 0
+  file_count INTEGER DEFAULT 0,
+  document_count INTEGER DEFAULT 0
 );
 
 CREATE INDEX IF NOT EXISTS idx_documents_path ON documents(path);
@@ -152,7 +153,21 @@ CREATE TABLE IF NOT EXISTS document_file_refs (
 
 CREATE INDEX IF NOT EXISTS idx_document_file_refs_document ON document_file_refs(document_id);
 CREATE INDEX IF NOT EXISTS idx_document_file_refs_file ON document_file_refs(file_id);
-CREATE INDEX IF NOT EXISTS idx_document_file_refs_line ON document_file_refs(document_id, line);`;
+CREATE INDEX IF NOT EXISTS idx_document_file_refs_line ON document_file_refs(document_id, line);
+
+-- Document-to-document references
+CREATE TABLE IF NOT EXISTS document_document_refs (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  document_id INTEGER NOT NULL,
+  referenced_document_id INTEGER NOT NULL,
+  line INTEGER NOT NULL,
+  FOREIGN KEY (document_id) REFERENCES documents(id) ON DELETE CASCADE,
+  FOREIGN KEY (referenced_document_id) REFERENCES documents(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_document_document_refs_document ON document_document_refs(document_id);
+CREATE INDEX IF NOT EXISTS idx_document_document_refs_referenced ON document_document_refs(referenced_document_id);
+CREATE INDEX IF NOT EXISTS idx_document_document_refs_line ON document_document_refs(line);`;
 
 export interface ConversionOptions {
   force?: boolean; // Force full rebuild

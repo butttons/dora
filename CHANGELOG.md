@@ -1,5 +1,11 @@
 # @butttons/dora
 
+## 1.2.0
+
+### Minor Changes
+
+- Added document-to-document references.
+
 ## 1.1.0
 
 ### Minor Changes
