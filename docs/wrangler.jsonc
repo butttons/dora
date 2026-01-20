@@ -4,13 +4,13 @@
   "compatibility_date": "2026-01-17",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "assets": {
-    "directory": "./dist",
+    "directory": "./dist"
   },
   "observability": {
-    "enabled": true,
+    "enabled": true
   },
   "route": {
     "pattern": "dora-cli.dev",
-    "custom_domain": true,
-  },
+    "custom_domain": true
+  }
 }

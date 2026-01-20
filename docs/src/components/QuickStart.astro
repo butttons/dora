@@ -1,76 +1,76 @@
 ---
 const platformConfigs = {
-    "macos-arm": {
-        install: `curl -L https://github.com/butttons/dora/releases/latest/download/dora-darwin-arm64 -o dora
+	"macos-arm": {
+		install: `curl -L https://github.com/butttons/dora/releases/latest/download/dora-darwin-arm64 -o dora
 chmod +x dora
 sudo mv dora /usr/local/bin/`,
-    },
-    "macos-intel": {
-        install: `curl -L https://github.com/butttons/dora/releases/latest/download/dora-darwin-x64 -o dora
+	},
+	"macos-intel": {
+		install: `curl -L https://github.com/butttons/dora/releases/latest/download/dora-darwin-x64 -o dora
 chmod +x dora
 sudo mv dora /usr/local/bin/`,
-    },
-    linux: {
-        install: `curl -L https://github.com/butttons/dora/releases/latest/download/dora-linux-x64 -o dora
+	},
+	linux: {
+		install: `curl -L https://github.com/butttons/dora/releases/latest/download/dora-linux-x64 -o dora
 chmod +x dora
 sudo mv dora /usr/local/bin/`,
-    },
-    windows: {
-        install: `# Download from releases page
+	},
+	windows: {
+		install: `# Download from releases page
 curl -L https://github.com/butttons/dora/releases/latest/download/dora-windows-x64.exe -o dora.exe
 # Add to PATH or move to a directory in PATH`,
-    },
+	},
 };
 
 const languageConfigs = {
-    typescript: {
-        name: "TypeScript / JavaScript",
-        install: "npm install -g @sourcegraph/scip-typescript",
-    },
-    python: {
-        name: "Python",
-        install: "npm install -g @sourcegraph/scip-python",
-    },
-    java: {
-        name: "Java / Scala / Kotlin",
-        install: `# Download coursier
+	typescript: {
+		name: "TypeScript / JavaScript",
+		install: "npm install -g @sourcegraph/scip-typescript",
+	},
+	python: {
+		name: "Python",
+		install: "npm install -g @sourcegraph/scip-python",
+	},
+	java: {
+		name: "Java / Scala / Kotlin",
+		install: `# Download coursier
 curl -fLo coursier https://git.io/coursier-cli
 chmod +x coursier
 ./coursier bootstrap --standalone -o scip-java com.sourcegraph:scip-java_2.13:0.11.2`,
-    },
-    rust: {
-        name: "Rust",
-        install: `# Install rust-analyzer (if not already installed)
+	},
+	rust: {
+		name: "Rust",
+		install: `# Install rust-analyzer (if not already installed)
 rustup component add rust-analyzer
 # Generate SCIP index
 rust-analyzer scip .`,
-    },
-    csharp: {
-        name: "C# / Visual Basic",
-        install: "dotnet tool install --global scip-dotnet",
-    },
-    cpp: {
-        name: "C / C++",
-        install: `# Download binary from releases
+	},
+	csharp: {
+		name: "C# / Visual Basic",
+		install: "dotnet tool install --global scip-dotnet",
+	},
+	cpp: {
+		name: "C / C++",
+		install: `# Download binary from releases
 curl -L https://github.com/sourcegraph/scip-clang/releases/latest/download/scip-clang-linux -o scip-clang
 chmod +x scip-clang
 sudo mv scip-clang /usr/local/bin/`,
-    },
-    ruby: {
-        name: "Ruby",
-        install: `# Add to Gemfile
+	},
+	ruby: {
+		name: "Ruby",
+		install: `# Add to Gemfile
 gem 'scip-ruby', require: false, group: :development
 # Then run
 bundle install`,
-    },
-    dart: {
-        name: "Dart",
-        install: "dart pub global activate scip_dart",
-    },
-    php: {
-        name: "PHP",
-        install: "composer require --dev davidrjenni/scip-php",
-    },
+	},
+	dart: {
+		name: "Dart",
+		install: "dart pub global activate scip_dart",
+	},
+	php: {
+		name: "PHP",
+		install: "composer require --dev davidrjenni/scip-php",
+	},
 };
 ---
 

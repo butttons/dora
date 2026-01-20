@@ -10,8 +10,8 @@ import {
 	findDefinitionFile,
 	getDocumentSymbols,
 	getFileDependencies,
-	parseScipFile,
 	type ParsedDocument,
+	parseScipFile,
 	type ScipData,
 } from "../../src/converter/scip-parser.ts";
 
@@ -363,9 +363,7 @@ describe("SCIP Parser", () => {
 					);
 
 					// Should find in current document or return null
-					expect(
-						defFile === null || defFile === doc.relativePath,
-					).toBe(true);
+					expect(defFile === null || defFile === doc.relativePath).toBe(true);
 					break;
 				}
 			}

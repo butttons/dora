@@ -1,5 +1,3 @@
-// schema command - Show database schema
-
 import { outputJson, setupCommand } from "./shared.ts";
 
 export interface SchemaInfo {

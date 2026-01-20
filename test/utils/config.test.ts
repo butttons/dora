@@ -139,7 +139,10 @@ describe("Config Management", () => {
 
 		test("should add --infer-tsconfig for JavaScript-only project", async () => {
 			// Create package.json only (no tsconfig.json)
-			await Bun.write(`${tempDir}/package.json`, JSON.stringify({ name: "test" }));
+			await Bun.write(
+				`${tempDir}/package.json`,
+				JSON.stringify({ name: "test" }),
+			);
 
 			const config = createDefaultConfig(tempDir);
 
@@ -150,7 +153,10 @@ describe("Config Management", () => {
 
 		test("should NOT add --infer-tsconfig for TypeScript project", async () => {
 			// Create both package.json and tsconfig.json
-			await Bun.write(`${tempDir}/package.json`, JSON.stringify({ name: "test" }));
+			await Bun.write(
+				`${tempDir}/package.json`,
+				JSON.stringify({ name: "test" }),
+			);
 			await Bun.write(
 				`${tempDir}/tsconfig.json`,
 				JSON.stringify({ compilerOptions: {} }),
@@ -165,8 +171,14 @@ describe("Config Management", () => {
 
 		test("should add --infer-tsconfig for JavaScript + pnpm workspace", async () => {
 			// Create package.json and pnpm-workspace.yaml (no tsconfig.json)
-			await Bun.write(`${tempDir}/package.json`, JSON.stringify({ name: "test" }));
-			await Bun.write(`${tempDir}/pnpm-workspace.yaml`, "packages:\n  - packages/*");
+			await Bun.write(
+				`${tempDir}/package.json`,
+				JSON.stringify({ name: "test" }),
+			);
+			await Bun.write(
+				`${tempDir}/pnpm-workspace.yaml`,
+				"packages:\n  - packages/*",
+			);
 
 			const config = createDefaultConfig(tempDir);
 
@@ -177,12 +189,18 @@ describe("Config Management", () => {
 
 		test("should NOT add --infer-tsconfig for TypeScript + pnpm workspace", async () => {
 			// Create package.json, tsconfig.json, and pnpm-workspace.yaml
-			await Bun.write(`${tempDir}/package.json`, JSON.stringify({ name: "test" }));
+			await Bun.write(
+				`${tempDir}/package.json`,
+				JSON.stringify({ name: "test" }),
+			);
 			await Bun.write(
 				`${tempDir}/tsconfig.json`,
 				JSON.stringify({ compilerOptions: {} }),
 			);
-			await Bun.write(`${tempDir}/pnpm-workspace.yaml`, "packages:\n  - packages/*");
+			await Bun.write(
+				`${tempDir}/pnpm-workspace.yaml`,
+				"packages:\n  - packages/*",
+			);
 
 			const config = createDefaultConfig(tempDir);
 

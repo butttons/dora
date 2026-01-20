@@ -2,7 +2,10 @@
 
 import { Database } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
-import { getDependencies, getReverseDependencies } from "../../src/db/queries.ts";
+import {
+	getDependencies,
+	getReverseDependencies,
+} from "../../src/db/queries.ts";
 
 describe("Adventure Command - Pathfinding Algorithm", () => {
 	let db: Database;

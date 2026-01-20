@@ -1,5 +1,3 @@
-// dora adventure command
-
 import type { Database } from "bun:sqlite";
 import { getDependencies, getReverseDependencies } from "../db/queries.ts";
 import type { PathResult } from "../types.ts";

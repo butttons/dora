@@ -1,5 +1,3 @@
-// Shared command utilities to reduce boilerplate and duplication
-
 import type { Database } from "bun:sqlite";
 import { getDb } from "../db/connection.ts";
 import {
@@ -7,12 +5,11 @@ import {
 	findIndexFile,
 	getFilesInDirectory,
 } from "../db/queries.ts";
-import { loadConfig, type Config } from "../utils/config.ts";
+import { type Config, loadConfig } from "../utils/config.ts";
 import { CtxError } from "../utils/errors.ts";
 import { outputJson } from "../utils/output.ts";
 import { normalizeToRelative } from "../utils/paths.ts";
 
-// Default values for common flags
 export const DEFAULTS = {
 	DEPTH: 1,
 	SYMBOL_LIMIT: 20,
@@ -102,26 +99,22 @@ export function resolveAndValidatePath(
 ): string {
 	const relativePath = normalizeToRelative(ctx.config.root, inputPath);
 
-	// First, try exact file match (fast path for explicit files)
 	if (fileExists(ctx.db, relativePath)) {
 		return relativePath;
 	}
 
-	// Check if there are files in the database matching this as a directory
 	const filesInDir = getFilesInDirectory(ctx.db, relativePath, {
 		limit: 10,
 		exactMatch: true,
 	});
 
 	if (filesInDir.length > 0) {
-		// Looks like a directory - try to find an index file
 		const indexFile = findIndexFile(ctx.db, relativePath);
 
 		if (indexFile) {
 			return indexFile;
 		}
 
-		// No index file found - output helpful info and exit successfully
 		outputJson({
 			message: "Directory has no index file",
 			directory: relativePath,
@@ -131,14 +124,12 @@ export function resolveAndValidatePath(
 		process.exit(0);
 	}
 
-	// Not an exact match and not a directory - might be a partial path or typo
 	const matchingFiles = getFilesInDirectory(ctx.db, relativePath, {
 		limit: 10,
 		exactMatch: false,
 	});
 
 	if (matchingFiles.length > 0) {
-		// Output suggestions and exit successfully
 		outputJson({
 			message: "File not found - showing suggestions",
 			path: relativePath,
@@ -148,14 +139,9 @@ export function resolveAndValidatePath(
 		process.exit(0);
 	}
 
-	// No matches at all - this is a real error
-	throw new CtxError(
-		"File not found in index",
-		undefined,
-		{
-			path: relativePath,
-		},
-	);
+	throw new CtxError("File not found in index", undefined, {
+		path: relativePath,
+	});
 }
 
 /**
@@ -165,5 +151,4 @@ export function resolvePath(ctx: CommandContext, inputPath: string): string {
 	return normalizeToRelative(ctx.config.root, inputPath);
 }
 
-// Re-export for convenience
 export { outputJson };

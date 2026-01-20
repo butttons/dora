@@ -1,5 +1,3 @@
-// dora lost command
-
 import { getUnusedSymbols } from "../db/queries.ts";
 import type { UnusedResult } from "../types.ts";
 import { DEFAULTS, outputJson, parseIntFlag, setupCommand } from "./shared.ts";

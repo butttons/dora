@@ -1,5 +1,3 @@
-// dora treasure command
-
 import {
 	getMostDependentFiles,
 	getMostReferencedFiles,

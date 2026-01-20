@@ -29,6 +29,86 @@ The `docs/` directory contains the documentation website for dora, built with As
 
 See `docs/CLAUDE.md` for detailed documentation-specific guidance on maintaining and updating the website.
 
+## Code Style Guidelines
+
+### Comments
+
+This codebase follows strict comment guidelines to maintain clean, self-documenting code:
+
+**Rules:**
+
+1. **NO inline comments** - Code should be self-explanatory through clear function and variable names
+2. **NO section separator comments** - Like `// ===== Section Name =====` or `// Query commands`
+3. **NO file header comments** - Like `// dora symbol command` or `// Type definitions for dora CLI`
+4. **Use ONLY valid JSDoc** - And only when clearly warranted for complex public APIs
+5. **NO emojis** - Keep code and comments professional and emoji-free
+
+**Valid JSDoc Format:**
+
+```typescript
+/**
+ * Find shortest path between two files using BFS
+ */
+export function findPath(from: string, to: string): string[] {
+  // Implementation
+}
+```
+
+**Examples of Comments to AVOID:**
+
+```typescript
+// BAD - Obvious inline comment
+const limit = options.limit || 20;  // Default limit is 20
+
+// BAD - Section separator
+// ===== Status Queries =====
+
+// BAD - File header
+// dora symbol command
+
+// BAD - Explaining obvious code
+// Get the symbol ID
+const symbolId = getSymbolId(name);
+
+// BAD - Trivial explanation
+// Loop through results
+for (const result of results) {
+  // Process each result
+  processResult(result);
+}
+```
+
+**Examples of Comments to KEEP:**
+
+```typescript
+/**
+ * GOOD - Valid JSDoc for complex function
+ * Find tightly coupled file pairs (bidirectional dependencies)
+ */
+export function getCoupledFiles(threshold: number): CoupledFiles[] {
+  // Implementation
+}
+
+/**
+ * GOOD - JSDoc with parameters and return type
+ * @param db - Database connection
+ * @param path - File path to analyze
+ * @returns Array of dependency nodes with depth information
+ */
+export function getDependencies(db: Database, path: string): DependencyNode[] {
+  // Implementation
+}
+```
+
+**When Comments ARE Warranted:**
+
+- Complex algorithms that aren't immediately obvious
+- Non-obvious edge cases or workarounds
+- Security-related warnings or considerations
+- Performance optimizations that aren't self-evident
+
+**Note:** Generated files (like `scip_pb.ts`) are exempt from these rules.
+
 ## Directory Structure
 
 Note: Example scip files in `example` folder

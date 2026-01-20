@@ -1,15 +1,15 @@
 ---
 import "../styles/global.css";
-import { Terminal, Home, BookOpen, FileCode, Github } from "lucide-astro";
+import { BookOpen, FileCode, Github, Home, Terminal } from "lucide-astro";
 
 interface Props {
-    title: string;
-    description?: string;
+	title: string;
+	description?: string;
 }
 
 const {
-    title,
-    description = "Code context CLI for AI agents. Fast, local, and built for speed.",
+	title,
+	description = "Code context CLI for AI agents. Fast, local, and built for speed.",
 } = Astro.props;
 const currentPath = Astro.url.pathname;
 const canonicalURL = new URL(currentPath, "https://dora-cli.dev").href;

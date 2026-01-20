@@ -1,7 +1,7 @@
 // Template file copying utilities for dora init
 
-import { join, dirname } from "path";
 import { chmodSync, mkdirSync } from "fs";
+import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 
 /**

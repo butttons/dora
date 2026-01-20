@@ -1,5 +1,3 @@
-// dora symbol command
-
 import { searchSymbols } from "../db/queries.ts";
 import type { SymbolSearchResult } from "../types.ts";
 import {
@@ -20,9 +18,7 @@ export async function symbol(
 
 	const results = searchSymbols(ctx.db, query, { kind, limit });
 
-	// Enhance results with related documentation
 	const enhancedResults = results.map((result) => {
-		// Get symbol ID
 		const symbolIdQuery = `
       SELECT s.id
       FROM symbols s
@@ -33,15 +29,14 @@ export async function symbol(
 
 		const symbolRow = ctx.db
 			.query(symbolIdQuery)
-			.get(result.name, result.path, result.lines?.[0]) as
-			| { id: number }
-			| null;
+			.get(result.name, result.path, result.lines?.[0]) as {
+			id: number;
+		} | null;
 
 		if (!symbolRow) {
 			return result;
 		}
 
-		// Get documents referencing this symbol
 		const docsQuery = `
       SELECT d.path
       FROM documents d

@@ -14,44 +14,44 @@ let currentDbPath: string | null = null;
  * Always uses the dora database
  */
 export function getDb(config: Config): Database {
-  const dbPath = resolveAbsolute(config.root, config.db);
+	const dbPath = resolveAbsolute(config.root, config.db);
 
-  // Check if database exists
-  if (!existsSync(dbPath)) {
-    throw new CtxError(
-      `Database not found at ${dbPath}. Run 'dora index' to create the index.`,
-    );
-  }
+	// Check if database exists
+	if (!existsSync(dbPath)) {
+		throw new CtxError(
+			`Database not found at ${dbPath}. Run 'dora index' to create the index.`,
+		);
+	}
 
-  // Return existing connection if same database
-  if (dbInstance && currentDbPath === dbPath) {
-    return dbInstance;
-  }
+	// Return existing connection if same database
+	if (dbInstance && currentDbPath === dbPath) {
+		return dbInstance;
+	}
 
-  // Close old connection if switching databases
-  if (dbInstance) {
-    dbInstance.close();
-  }
+	// Close old connection if switching databases
+	if (dbInstance) {
+		dbInstance.close();
+	}
 
-  // Open new connection in readonly mode
-  try {
-    dbInstance = new Database(dbPath, { readonly: true });
-    currentDbPath = dbPath;
-    return dbInstance;
-  } catch (error) {
-    throw new CtxError(
-      `Failed to open database: ${error instanceof Error ? error.message : String(error)}`,
-    );
-  }
+	// Open new connection in readonly mode
+	try {
+		dbInstance = new Database(dbPath, { readonly: true });
+		currentDbPath = dbPath;
+		return dbInstance;
+	} catch (error) {
+		throw new CtxError(
+			`Failed to open database: ${error instanceof Error ? error.message : String(error)}`,
+		);
+	}
 }
 
 /**
  * Close database connection
  */
 export function closeDb(): void {
-  if (dbInstance) {
-    dbInstance.close();
-    dbInstance = null;
-    currentDbPath = null;
-  }
+	if (dbInstance) {
+		dbInstance.close();
+		dbInstance = null;
+		currentDbPath = null;
+	}
 }

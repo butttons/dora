@@ -240,7 +240,9 @@ export function inferPackageManager(scipSymbol: string | null): string {
  * @param documentation Documentation lines array
  * @returns Symbol kind string
  */
-export function extractKindFromDocumentation(documentation: string[] | undefined): string {
+export function extractKindFromDocumentation(
+	documentation: string[] | undefined,
+): string {
 	if (!documentation || documentation.length === 0) {
 		return "unknown";
 	}
@@ -251,11 +253,11 @@ export function extractKindFromDocumentation(documentation: string[] | undefined
 	// Strip code fences (```ts, ```typescript, etc.)
 	const cleanedDoc = fullDoc
 		.replace(/^```[a-z]*\s*\n/i, "") // Remove opening fence
-		.replace(/\n```\s*$/i, "")       // Remove closing fence
+		.replace(/\n```\s*$/i, "") // Remove closing fence
 		.trim();
 
 	// Get first non-empty line (usually contains the signature)
-	const lines = cleanedDoc.split("\n").filter(l => l.trim().length > 0);
+	const lines = cleanedDoc.split("\n").filter((l) => l.trim().length > 0);
 	if (lines.length === 0) return "unknown";
 
 	const firstLine = lines[0].trim();
@@ -273,8 +275,19 @@ export function extractKindFromDocumentation(documentation: string[] | undefined
 
 	// Match standalone keywords at start: "interface", "class", "function", "type", etc.
 	const keywords = [
-		"interface", "class", "function", "type", "enum", "const", "let", "var",
-		"module", "namespace", "struct", "trait", "constructor"
+		"interface",
+		"class",
+		"function",
+		"type",
+		"enum",
+		"const",
+		"let",
+		"var",
+		"module",
+		"namespace",
+		"struct",
+		"trait",
+		"constructor",
 	];
 
 	for (const keyword of keywords) {

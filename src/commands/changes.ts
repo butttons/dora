@@ -1,5 +1,3 @@
-// ctx changes command
-
 import { getReverseDependencies } from "../db/queries.ts";
 import type { ChangesResult } from "../types.ts";
 import { CtxError } from "../utils/errors.ts";

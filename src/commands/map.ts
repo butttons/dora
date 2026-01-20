@@ -1,5 +1,3 @@
-// dora map command
-
 import { getFileCount, getPackages, getSymbolCount } from "../db/queries.ts";
 import type { OverviewResult } from "../types.ts";
 import { outputJson, setupCommand } from "./shared.ts";

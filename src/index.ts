@@ -1,17 +1,18 @@
 #!/usr/bin/env bun
 
-// dora CLI entry point
-
 import { Command } from "commander";
+import { adventure } from "./commands/adventure.ts";
 import { changes } from "./commands/changes.ts";
 import { complexity } from "./commands/complexity.ts";
 import { coupling } from "./commands/coupling.ts";
 import { cycles } from "./commands/cycles.ts";
 import { deps } from "./commands/deps.ts";
+import { docsFind } from "./commands/docs/find.ts";
+import { docsSearch } from "./commands/docs/search.ts";
+import { docsShow } from "./commands/docs/show.ts";
 import { exports } from "./commands/exports.ts";
 import { file } from "./commands/file.ts";
 import { graph } from "./commands/graph.ts";
-import { adventure } from "./commands/adventure.ts";
 import { imports } from "./commands/imports.ts";
 import { index } from "./commands/index.ts";
 import { init } from "./commands/init.ts";
@@ -26,187 +27,204 @@ import { schema } from "./commands/schema.ts";
 import { status } from "./commands/status.ts";
 import { symbol } from "./commands/symbol.ts";
 import { treasure } from "./commands/treasure.ts";
-import { registerDocsCommand } from "./commands/docs.ts";
 import { wrapCommand } from "./utils/errors.ts";
+
+import packageJson from "../package.json";
 
 const program = new Command();
 
 program
-	.name("dora")
-	.description("Code Context CLI for AI Agents")
-	.version("1.0.0");
-
-// Setup commands
-program
-	.command("init")
-	.description("Initialize dora in the current repository")
-	.action(wrapCommand(init));
+  .name("dora")
+  .description("Code Context CLI for AI Agents")
+  .version(packageJson.version);
 
 program
-	.command("index")
-	.description("Run SCIP indexing (requires configured commands)")
-	.option("--full", "Force full rebuild")
-	.option("--skip-scip", "Skip running SCIP indexer (use existing .scip file)")
-	.action(wrapCommand(async (options) => {
-		await index({ full: options.full, skipScip: options.skipScip });
-	}));
+  .command("init")
+  .description("Initialize dora in the current repository")
+  .action(wrapCommand(init));
 
 program
-	.command("status")
-	.description("Show index status and statistics")
-	.action(wrapCommand(status));
+  .command("index")
+  .description("Run SCIP indexing (requires configured commands)")
+  .option("--full", "Force full rebuild")
+  .option("--skip-scip", "Skip running SCIP indexer (use existing .scip file)")
+  .action(
+    wrapCommand(async (options) => {
+      await index({ full: options.full, skipScip: options.skipScip });
+    })
+  );
 
 program
-	.command("map")
-	.description("Show high-level codebase map")
-	.action(wrapCommand(map));
+  .command("status")
+  .description("Show index status and statistics")
+  .action(wrapCommand(status));
 
 program
-	.command("ls")
-	.description("List files in a directory from the index")
-	.argument("[directory]", "Directory path (optional, defaults to all files)")
-	.option("--limit <number>", "Maximum number of results (default: 100)")
-	.option(
-		"--sort <field>",
-		"Sort by: path, symbols, deps, or rdeps (default: path)",
-	)
-	.action(wrapCommand(ls));
-
-// Query commands
-program
-	.command("file")
-	.description("Analyze a specific file with symbols and dependencies")
-	.argument("<path>", "File path to analyze")
-	.action(wrapCommand(file));
+  .command("map")
+  .description("Show high-level codebase map")
+  .action(wrapCommand(map));
 
 program
-	.command("symbol")
-	.description("Search for symbols by name")
-	.argument("<query>", "Symbol name to search for")
-	.option("--limit <number>", "Maximum number of results")
-	.option(
-		"--kind <type>",
-		"Filter by symbol kind (type, class, function, interface)",
-	)
-	.action(wrapCommand(symbol));
+  .command("ls")
+  .description("List files in a directory from the index")
+  .argument("[directory]", "Directory path (optional, defaults to all files)")
+  .option("--limit <number>", "Maximum number of results (default: 100)")
+  .option(
+    "--sort <field>",
+    "Sort by: path, symbols, deps, or rdeps (default: path)"
+  )
+  .action(wrapCommand(ls));
 
 program
-	.command("refs")
-	.description("Find all references to a symbol")
-	.argument("<symbol>", "Symbol name to find references for")
-	.option("--kind <type>", "Filter by symbol kind")
-	.option("--limit <number>", "Maximum number of results")
-	.action(wrapCommand(refs));
+  .command("file")
+  .description("Analyze a specific file with symbols and dependencies")
+  .argument("<path>", "File path to analyze")
+  .action(wrapCommand(file));
 
 program
-	.command("deps")
-	.description("Show file dependencies")
-	.argument("<path>", "File path to analyze")
-	.option("--depth <number>", "Recursion depth (default: 1)")
-	.action(wrapCommand(deps));
+  .command("symbol")
+  .description("Search for symbols by name")
+  .argument("<query>", "Symbol name to search for")
+  .option("--limit <number>", "Maximum number of results")
+  .option(
+    "--kind <type>",
+    "Filter by symbol kind (type, class, function, interface)"
+  )
+  .action(wrapCommand(symbol));
 
 program
-	.command("rdeps")
-	.description("Show reverse dependencies (what depends on this file)")
-	.argument("<path>", "File path to analyze")
-	.option("--depth <number>", "Recursion depth (default: 1)")
-	.action(wrapCommand(rdeps));
+  .command("refs")
+  .description("Find all references to a symbol")
+  .argument("<symbol>", "Symbol name to find references for")
+  .option("--kind <type>", "Filter by symbol kind")
+  .option("--limit <number>", "Maximum number of results")
+  .action(wrapCommand(refs));
 
 program
-	.command("adventure")
-	.description("Find shortest adventure between two files")
-	.argument("<from>", "Source file path")
-	.argument("<to>", "Target file path")
-	.action(wrapCommand(adventure));
+  .command("deps")
+  .description("Show file dependencies")
+  .argument("<path>", "File path to analyze")
+  .option("--depth <number>", "Recursion depth (default: 1)")
+  .action(wrapCommand(deps));
 
 program
-	.command("leaves")
-	.description("Find leaf nodes - files with few dependents")
-	.option(
-		"--max-dependents <number>",
-		"Maximum number of dependents (default: 0)",
-	)
-	.action(wrapCommand(leaves));
-
-// Advanced query commands
-program
-	.command("exports")
-	.description("List exported symbols from a file or package")
-	.argument("<target>", "File path or package name")
-	.action(wrapCommand(exports));
+  .command("rdeps")
+  .description("Show reverse dependencies (what depends on this file)")
+  .argument("<path>", "File path to analyze")
+  .option("--depth <number>", "Recursion depth (default: 1)")
+  .action(wrapCommand(rdeps));
 
 program
-	.command("imports")
-	.description("Show what a file imports (direct dependencies)")
-	.argument("<path>", "File path to analyze")
-	.action(wrapCommand(imports));
+  .command("adventure")
+  .description("Find shortest adventure between two files")
+  .argument("<from>", "Source file path")
+  .argument("<to>", "Target file path")
+  .action(wrapCommand(adventure));
 
 program
-	.command("lost")
-	.description("Find lost symbols (potentially unused)")
-	.option("--limit <number>", "Maximum number of results (default: 50)")
-	.action(wrapCommand(lost));
+  .command("leaves")
+  .description("Find leaf nodes - files with few dependents")
+  .option(
+    "--max-dependents <number>",
+    "Maximum number of dependents (default: 0)"
+  )
+  .action(wrapCommand(leaves));
 
 program
-	.command("treasure")
-	.description("Find treasure (most referenced files and largest dependencies)")
-	.option("--limit <number>", "Maximum number of results (default: 10)")
-	.action(wrapCommand(treasure));
+  .command("exports")
+  .description("List exported symbols from a file or package")
+  .argument("<target>", "File path or package name")
+  .action(wrapCommand(exports));
 
 program
-	.command("changes")
-	.description("Show files changed since git ref and their impact")
-	.argument("<ref>", "Git ref to compare against (e.g., main, HEAD~5)")
-	.action(wrapCommand(changes));
+  .command("imports")
+  .description("Show what a file imports (direct dependencies)")
+  .argument("<path>", "File path to analyze")
+  .action(wrapCommand(imports));
 
 program
-	.command("graph")
-	.description("Generate dependency graph")
-	.argument("<path>", "File path to analyze")
-	.option("--depth <number>", "Graph depth (default: 1)")
-	.option(
-		"--direction <type>",
-		"Graph direction: deps, rdeps, or both (default: both)",
-	)
-	.action(wrapCommand(graph));
+  .command("lost")
+  .description("Find lost symbols (potentially unused)")
+  .option("--limit <number>", "Maximum number of results (default: 50)")
+  .action(wrapCommand(lost));
 
 program
-	.command("cycles")
-	.description("Find bidirectional dependencies (A imports B, B imports A)")
-	.option("--limit <number>", "Maximum number of results (default: 50)")
-	.action(wrapCommand(cycles));
+  .command("treasure")
+  .description("Find treasure (most referenced files and largest dependencies)")
+  .option("--limit <number>", "Maximum number of results (default: 10)")
+  .action(wrapCommand(treasure));
 
 program
-	.command("coupling")
-	.description("Find tightly coupled file pairs")
-	.option(
-		"--threshold <number>",
-		"Minimum total coupling score (default: 5)",
-	)
-	.action(wrapCommand(coupling));
+  .command("changes")
+  .description("Show files changed since git ref and their impact")
+  .argument("<ref>", "Git ref to compare against (e.g., main, HEAD~5)")
+  .action(wrapCommand(changes));
 
 program
-	.command("complexity")
-	.description("Show file complexity metrics")
-	.option(
-		"--sort <metric>",
-		"Sort by: complexity, symbols, or stability (default: complexity)",
-	)
-	.action(wrapCommand(complexity));
+  .command("graph")
+  .description("Generate dependency graph")
+  .argument("<path>", "File path to analyze")
+  .option("--depth <number>", "Graph depth (default: 1)")
+  .option(
+    "--direction <type>",
+    "Graph direction: deps, rdeps, or both (default: both)"
+  )
+  .action(wrapCommand(graph));
 
 program
-	.command("schema")
-	.description("Show database schema (tables, columns, indexes)")
-	.action(wrapCommand(schema));
+  .command("cycles")
+  .description("Find bidirectional dependencies (A imports B, B imports A)")
+  .option("--limit <number>", "Maximum number of results (default: 50)")
+  .action(wrapCommand(cycles));
 
 program
-	.command("query")
-	.description("Execute raw SQL query (read-only)")
-	.argument("<sql>", "SQL query to execute")
-	.action(wrapCommand(query));
+  .command("coupling")
+  .description("Find tightly coupled file pairs")
+  .option("--threshold <number>", "Minimum total coupling score (default: 5)")
+  .action(wrapCommand(coupling));
 
-// Documentation commands
-registerDocsCommand(program);
+program
+  .command("complexity")
+  .description("Show file complexity metrics")
+  .option(
+    "--sort <metric>",
+    "Sort by: complexity, symbols, or stability (default: complexity)"
+  )
+  .action(wrapCommand(complexity));
 
-// Parse and execute
+program
+  .command("schema")
+  .description("Show database schema (tables, columns, indexes)")
+  .action(wrapCommand(schema));
+
+program
+  .command("query")
+  .description("Execute raw SQL query (read-only)")
+  .argument("<sql>", "SQL query to execute")
+  .action(wrapCommand(query));
+
+const docs = program
+  .command("docs")
+  .description("Find, search, and view documentation files");
+
+docs
+  .command("find")
+  .argument("<query>", "Symbol name or file path to find in documentation")
+  .description("Find documentation mentioning a symbol or file")
+  .action(wrapCommand(docsFind));
+
+docs
+  .command("search")
+  .argument("<query>", "Text to search for in documentation")
+  .option("-l, --limit <number>", "Maximum number of results (default: 20)")
+  .description("Search through documentation content")
+  .action(wrapCommand(docsSearch));
+
+docs
+  .command("show")
+  .argument("<path>", "Document path")
+  .option("-c, --content", "Include full document content")
+  .description("Show document metadata and references")
+  .action(wrapCommand(docsShow));
+
 program.parse();

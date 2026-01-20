@@ -1,5 +1,3 @@
-// query command - Execute raw SQL queries
-
 import { outputJson, setupCommand } from "./shared.ts";
 
 export interface QueryResult {
