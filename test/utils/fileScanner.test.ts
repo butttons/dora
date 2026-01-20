@@ -21,9 +21,7 @@ describe("File Scanner", () => {
 		// Create test files
 		await writeFile(join(testDir, "README.md"), "# Test");
 		await writeFile(join(testDir, "docs", "guide.md"), "# Guide");
-		await writeFile(join(testDir, "package.json"), "{}");
 		await writeFile(join(testDir, "node_modules", "foo.md"), "# Foo");
-		await writeFile(join(testDir, "src", "config.yaml"), "key: value");
 		await writeFile(join(testDir, "notes.txt"), "Project notes");
 
 		// Create .gitignore
@@ -41,8 +39,7 @@ describe("File Scanner", () => {
 		expect(docs.length).toBeGreaterThan(0);
 		expect(docs.some((d) => d.path.endsWith("README.md"))).toBe(true);
 		expect(docs.some((d) => d.path.endsWith("guide.md"))).toBe(true);
-		expect(docs.some((d) => d.path.endsWith("package.json"))).toBe(true);
-		expect(docs.some((d) => d.path.endsWith("config.yaml"))).toBe(true);
+		expect(docs.some((d) => d.path.endsWith("notes.txt"))).toBe(true);
 	});
 
 	test("should respect .gitignore rules", async () => {
@@ -65,7 +62,7 @@ describe("File Scanner", () => {
 		const docs = await scanDocumentFiles(testDir, [".md"]);
 
 		expect(docs.every((d) => d.type === "md")).toBe(true);
-		expect(docs.some((d) => d.type === "json")).toBe(false);
+		expect(docs.some((d) => d.type === "txt")).toBe(false);
 	});
 
 	test("should filter changed documents", () => {

@@ -728,7 +728,7 @@ SELECT
 FROM document_symbol_refs dsr
 JOIN symbols s ON s.id = dsr.symbol_id
 JOIN files f ON f.id = s.file_id
-WHERE dsr.document_id = ?
+WHERE dsr.document_id = ? AND s.name != ''
 ORDER BY dsr.line;
 
 -- Get file references with line numbers
@@ -796,9 +796,7 @@ ORDER BY dfr.line;
 
 The documentation indexer automatically processes these file types:
 - `.md` - Markdown files
-- `.json` - JSON configuration and documentation
-- `.yaml`, `.yml` - YAML configuration
-- `.toml` - TOML configuration
+- `.txt` - Plain text documentation
 
 **Exclusions:**
 - Respects `.gitignore` patterns

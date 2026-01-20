@@ -119,8 +119,8 @@ See src/logger.ts for implementation.
 	test("should process documents and extract references", async () => {
 		const stats = await processDocuments(db, testDir, "full");
 
-		expect(stats.processed).toBe(2);
-		expect(stats.total).toBe(2);
+		expect(stats.processed).toBe(1);
+		expect(stats.total).toBe(1);
 	});
 
 	test("should store document content", async () => {

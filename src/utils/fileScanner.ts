@@ -6,7 +6,7 @@ import { debugScanner } from "./logger.js";
 export interface DocumentFile {
 	path: string; // relative to repo root
 	mtime: number; // unix timestamp in milliseconds
-	type: string; // file extension without dot (md, json, yaml, toml)
+	type: string; // file extension without dot (md, txt)
 }
 
 /**
@@ -14,7 +14,7 @@ export interface DocumentFile {
  */
 export async function scanDocumentFiles(
 	repoRoot: string,
-	extensions: string[] = [".md", ".json", ".yaml", ".yml", ".toml", ".txt"],
+	extensions: string[] = [".md", ".txt"],
 ): Promise<DocumentFile[]> {
 	debugScanner("Scanning for document files in %s", repoRoot);
 	debugScanner("Extensions: %o", extensions);

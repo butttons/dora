@@ -321,7 +321,7 @@ Architecture metrics:
 
 Documentation:
 
-- Automatically indexes `.md`, `.json`, `.yaml`, `.yml`, `.toml`, and `.txt` files
+- Automatically indexes `.md` and `.txt` files
 - Tracks symbol references (e.g., mentions of `AuthService`)
 - Tracks file references (e.g., mentions of `src/auth/service.ts`)
 - Tracks document-to-document references (e.g., README linking to docs/api.md)

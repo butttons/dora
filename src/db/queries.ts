@@ -732,7 +732,7 @@ export function getDocumentReferences(
     JOIN files f ON f.id = s.file_id
     JOIN document_symbol_refs dsr ON dsr.symbol_id = s.id
     JOIN documents d ON d.id = dsr.document_id
-    WHERE d.path = ?
+    WHERE d.path = ? AND s.name != ''
     GROUP BY s.id, s.name, s.kind, f.path, s.start_line
     ORDER BY s.name
   `;

@@ -51,13 +51,13 @@ export async function docsFind(query: string): Promise<void> {
       SELECT s.id
       FROM symbols s
       JOIN files f ON f.id = s.file_id
-      WHERE s.name = ? AND f.path = ? AND s.start_line = ?
+      WHERE s.name = ? AND f.path = ?
       LIMIT 1
     `;
 
 		const symbolRow = db
 			.query(symbolIdQuery)
-			.get(symbol.name, symbol.path, symbol.lines?.[0]) as {
+			.get(symbol.name, symbol.path) as {
 			id: number;
 		} | null;
 
@@ -83,14 +83,16 @@ export async function docsFind(query: string): Promise<void> {
 				document_refs: number;
 			}>;
 
-			const result: DocsResult = {
-				query,
-				type: "symbol",
-				documents: docs,
-			};
+			if (docs.length > 0) {
+				const result: DocsResult = {
+					query,
+					type: "symbol",
+					documents: docs,
+				};
 
-			outputJson(result);
-			return;
+				outputJson(result);
+				return;
+			}
 		}
 	}
 
@@ -140,13 +142,13 @@ export async function docsFind(query: string): Promise<void> {
         SELECT s.id
         FROM symbols s
         JOIN files f ON f.id = s.file_id
-        WHERE s.name = ? AND f.path = ? AND s.start_line = ?
+        WHERE s.name = ? AND f.path = ?
         LIMIT 1
       `;
 
 			const symbolRow = db
 				.query(symbolIdQuery)
-				.get(sym.name, sym.path, sym.lines?.[0]) as { id: number } | null;
+				.get(sym.name, sym.path) as { id: number } | null;
 
 			if (symbolRow) {
 				symbolIds.push(symbolRow.id);
