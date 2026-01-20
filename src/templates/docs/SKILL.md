@@ -70,9 +70,11 @@ dora understands code structure, dependencies, symbols, and architectural relati
 
 ### Documentation
 
-- `dora docs find <query>` - Find documentation mentioning a symbol, file, or document
+- `dora docs [--type TYPE]` - List all documentation files. Use --type to filter by md or txt
 - `dora docs search <query> [--limit N]` - Search through documentation content. Default limit: 20
 - `dora docs show <path> [--content]` - Show document metadata and references. Use --content to include full text
+
+**Note:** To find where a symbol is documented, use `dora symbol` which includes a `documented_in` field. To find documentation about a file, use `dora file` which also includes `documented_in`.
 
 ### Database
 
@@ -88,7 +90,8 @@ dora understands code structure, dependencies, symbols, and architectural relati
 - Architecture issues → `dora cycles`, `dora coupling`, `dora complexity`
 - Navigation → `dora deps`, `dora adventure`
 - Dead code → `dora lost`
-- Finding documentation → `dora docs find`, `dora docs search`
+- Finding documentation → `dora symbol` (shows documented_in), `dora docs search`
+- Listing documentation → `dora docs`
 - Custom queries → `dora schema` then `dora query`
 
 ## Typical Workflow
@@ -205,9 +208,10 @@ Finding documentation for code:
 # DON'T: grep -r "AuthService" docs/
 # DON'T: Manually search through README files
 # DO:
-dora docs find AuthService              # Find docs mentioning this symbol
-dora docs find src/auth/service.ts      # Find docs referencing this file
+dora symbol AuthService                 # Shows documented_in field
+dora file src/auth/service.ts           # Shows documented_in field
 dora docs search "authentication"       # Search doc content
+dora docs                               # List all docs
 ```
 
 Understanding what a document covers:
@@ -285,10 +289,11 @@ dora query "SELECT f.path, COUNT(s.id) as symbols FROM files f JOIN symbols s ON
 Working with documentation:
 
 ```bash
-dora docs find AuthService           # Where is AuthService documented?
+dora symbol AuthService              # Shows documented_in field
 dora docs show README.md             # What does README reference?
 dora docs search "setup"             # Find all docs about setup
-dora docs find docs/api.md           # Which docs link to api.md?
+dora docs                            # List all documentation files
+dora docs --type md                  # List only markdown docs
 ```
 
 ## Advanced Tips
@@ -325,7 +330,8 @@ Documentation:
 - Tracks symbol references (e.g., mentions of `AuthService`)
 - Tracks file references (e.g., mentions of `src/auth/service.ts`)
 - Tracks document-to-document references (e.g., README linking to docs/api.md)
-- Use `dora docs find` to discover where code is documented
+- Use `dora symbol` or `dora file` to see where code is documented (via `documented_in` field)
+- Use `dora docs` to list all documentation files
 - Use `dora docs show` to see what a document covers with line numbers
 
 ## Limitations

@@ -7,7 +7,7 @@ import { complexity } from "./commands/complexity.ts";
 import { coupling } from "./commands/coupling.ts";
 import { cycles } from "./commands/cycles.ts";
 import { deps } from "./commands/deps.ts";
-import { docsFind } from "./commands/docs/find.ts";
+import { docsList } from "./commands/docs/list.ts";
 import { docsSearch } from "./commands/docs/search.ts";
 import { docsShow } from "./commands/docs/show.ts";
 import { exports } from "./commands/exports.ts";
@@ -205,13 +205,9 @@ program
 
 const docs = program
   .command("docs")
-  .description("Find, search, and view documentation files");
-
-docs
-  .command("find")
-  .argument("<query>", "Symbol name or file path to find in documentation")
-  .description("Find documentation mentioning a symbol or file")
-  .action(wrapCommand(docsFind));
+  .description("List, search, and view documentation files")
+  .option("-t, --type <type>", "Filter by document type (md, txt)")
+  .action(wrapCommand((options) => docsList(options)));
 
 docs
   .command("search")

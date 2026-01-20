@@ -90,7 +90,7 @@ This enables the `/dora` command. View the skill file: https://github.com/buttto
 - `dora refs <symbol>` - Find all references to a symbol
 
 ### Documentation
-- `dora docs find <query>` - Find documentation mentioning a symbol or file
+- `dora docs` - List all documentation files (supports --type for filtering by md/txt)
 - `dora docs search <query>` - Search through documentation content (supports --limit)
 - `dora docs show <path>` - Show document metadata and references (supports --content)
 

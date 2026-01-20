@@ -286,18 +286,6 @@ export interface DocResult {
 	content?: string;
 }
 
-export interface DocsResult {
-	query: string;
-	type: "symbol" | "file" | "document";
-	documents: Array<{
-		path: string;
-		type: string;
-		symbol_refs?: number;
-		file_refs?: number;
-		document_refs?: number;
-	}>;
-}
-
 export interface DefnEnclosingRange {
 	path: string;
 	start_line: number;

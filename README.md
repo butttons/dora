@@ -280,7 +280,8 @@ dora adventure <from> <to>   # Find shortest path
 ### Documentation
 
 ```bash
-dora docs find <query>       # Find docs mentioning symbol/file
+dora docs                    # List all documentation files
+dora docs --type md          # Filter by document type
 dora docs search <query>     # Search documentation content
 dora docs show <path>        # Show document details
 ```
@@ -336,7 +337,7 @@ Quick reference for all commands with common flags:
 
 | Command                     | Description                    | Common Flags                          |
 | --------------------------- | ------------------------------ | ------------------------------------- |
-| `dora docs find <query>`    | Find docs mentioning symbol/file | -                                   |
+| `dora docs`                 | List all documentation files   | `--type <type>` (md, txt)             |
 | `dora docs search <query>`  | Search documentation content   | `--limit N` (default: 20)             |
 | `dora docs show <path>`     | Show document metadata         | `--content` (include full content)    |
 

@@ -164,7 +164,7 @@ Also see [README](README.md) for an overview.
 		expect(results.some((r) => r.path === "docs/api.md")).toBe(true);
 	});
 
-	test("docs find logic should find documents referencing a symbol", () => {
+	test("should find documents referencing a symbol", () => {
 		// Simulate finding symbol ID
 		const symbolRow = db
 			.query("SELECT id FROM symbols WHERE name = ? AND is_local = 0 LIMIT 1")
@@ -224,7 +224,7 @@ Also see [README](README.md) for an overview.
 		expect(doc?.content).toContain("initializeDatabase");
 	});
 
-	test("docs find logic should handle unknown symbols gracefully", () => {
+	test("should handle unknown symbols gracefully", () => {
 		const symbolRow = db
 			.query("SELECT id FROM symbols WHERE name = ? AND is_local = 0 LIMIT 1")
 			.get("NonExistentSymbol") as { id: number } | null;
@@ -256,7 +256,7 @@ Also see [README](README.md) for an overview.
 		expect(readmeRef?.lines).toEqual([4]);
 	});
 
-	test("docs find logic should find documents that reference another document", () => {
+	test("should find documents that reference another document", () => {
 		const docResult = db
 			.query("SELECT id, path FROM documents WHERE path = ?")
 			.get("docs/api.md") as { id: number; path: string } | null;

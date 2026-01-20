@@ -571,77 +571,53 @@ Output:
 
 ## Documentation Commands
 
-### dora docs find <query>
+### dora docs [--type TYPE]
 
-Find documentation files that mention a specific symbol or file path.
+List all indexed documentation files.
 
-**Purpose:** Discover which documentation files reference a particular symbol or file. Useful for finding where code is documented without manually searching through markdown, JSON, YAML, or other documentation files.
+**Purpose:** Discover what documentation exists in the project. Useful for AI agents to understand what documentation is available before searching or exploring.
 
-**Query Logic:**
+**Flags:**
+- `--type <type>` - Filter by document type (md, txt)
 
-The command performs a three-stage search:
-
-1. **Exact file path match** - Checks if query matches a file path exactly
-2. **Exact symbol match** - Looks for symbols with the exact name
-3. **Fuzzy symbol match** - Falls back to similar symbol names if no exact match
-
-**Queries:**
+**Query:**
 
 ```sql
--- Check if query is a file path
-SELECT id, path FROM files WHERE path = ?
-
--- If file found, get documents referencing it
-SELECT
-  d.path,
-  d.type,
-  d.symbol_count as symbol_refs,
-  d.file_count as file_refs
-FROM documents d
-JOIN document_file_refs dfr ON dfr.document_id = d.id
-WHERE dfr.file_id = ?
-ORDER BY d.path;
-
--- If symbol found, get documents referencing it
-SELECT
-  d.path,
-  d.type,
-  d.symbol_count as symbol_refs,
-  d.file_count as file_refs
-FROM documents d
-JOIN document_symbol_refs dsr ON dsr.document_id = d.id
-WHERE dsr.symbol_id = ?
-ORDER BY d.path;
+SELECT path, type, symbol_count, file_count, document_count
+FROM documents
+ORDER BY path;
 ```
 
 **Output:**
 
 ```json
 {
-  "query": "AuthService",
-  "type": "symbol",
   "documents": [
-    {
-      "path": "docs/authentication.md",
-      "type": "markdown",
-      "symbol_refs": 5,
-      "file_refs": 2
-    },
     {
       "path": "README.md",
       "type": "markdown",
       "symbol_refs": 12,
-      "file_refs": 4
+      "file_refs": 4,
+      "document_refs": 2
+    },
+    {
+      "path": "docs/api.md",
+      "type": "markdown",
+      "symbol_refs": 8,
+      "file_refs": 3,
+      "document_refs": 0
     }
-  ]
+  ],
+  "total": 2
 }
 ```
 
 **Use Cases:**
-- Finding where a symbol is documented before making changes
-- Discovering related documentation when exploring code
-- Linking code changes to documentation updates
-- Understanding which docs need updates after refactoring
+- Discover what documentation files exist in the project
+- Filter documentation by type (markdown vs plain text)
+- Quick overview of documentation coverage
+
+**Note:** To find documentation about specific code, use `dora symbol` or `dora file` which include a `documented_in` field showing which docs reference that code.
 
 ---
 

@@ -47,9 +47,11 @@ This codebase uses dora for fast code intelligence and architectural analysis.
 
 **Documentation:**
 
-- `dora docs find <query>` - Find documentation mentioning a symbol, file, or document
+- `dora docs [--type TYPE]` - List all documentation files. Use --type to filter by md or txt
 - `dora docs search <query> [--limit N]` - Search through documentation content. Default limit: 20
 - `dora docs show <path> [--content]` - Show document metadata and references. Use --content to include full text
+
+**Note:** To find where a symbol/file is documented, use `dora symbol` or `dora file` which show a `documented_in` field.
 
 **Database:**
 
@@ -70,9 +72,10 @@ dora status                      # Check index health
 dora treasure                    # Find core files
 dora file <path>                 # Understand a file
 dora deps/rdeps <path>           # Navigate dependencies
-dora symbol <query>              # Find symbols
+dora symbol <query>              # Find symbols (shows documented_in)
 dora refs <symbol>               # Find references
-dora docs find <query>           # Find documentation
+dora docs                        # List all documentation
+dora docs search <query>         # Search documentation content
 ```
 
 For detailed usage and examples, refer to `./dora/docs/SKILL.md`.
