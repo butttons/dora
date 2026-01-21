@@ -4,7 +4,7 @@ import { Command } from "commander";
 import { adventure } from "./commands/adventure.ts";
 import { changes } from "./commands/changes.ts";
 import { complexity } from "./commands/complexity.ts";
-import { cookbook } from "./commands/cookbook.ts";
+import { cookbookList, cookbookShow } from "./commands/cookbook.ts";
 import { coupling } from "./commands/coupling.ts";
 import { cycles } from "./commands/cycles.ts";
 import { deps } from "./commands/deps.ts";
@@ -204,11 +204,22 @@ program
   .argument("<sql>", "SQL query to execute")
   .action(wrapCommand(query));
 
-program
+const cookbook = program
   .command("cookbook")
-  .argument("[recipe]", "Recipe name (methods, references, etc.)")
-  .description("Show query pattern cookbook")
-  .action(wrapCommand(cookbook));
+  .description("Query pattern cookbook and recipes");
+
+cookbook
+  .command("list")
+  .description("List all available recipes")
+  .option("-f, --format <format>", "Output format: json or markdown", "json")
+  .action(wrapCommand(cookbookList));
+
+cookbook
+  .command("show")
+  .argument("[recipe]", "Recipe name (quickstart, methods, references, exports)")
+  .description("Show a recipe or index")
+  .option("-f, --format <format>", "Output format: json or markdown", "json")
+  .action(wrapCommand(cookbookShow));
 
 const docs = program
   .command("docs")

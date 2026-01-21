@@ -77,10 +77,35 @@ export async function copyTemplates(targetDoraDir: string): Promise<void> {
 			target: join(targetDoraDir, "docs", "SKILL.md"),
 			executable: false,
 		},
+		{
+			source: join(templatesDir, "cookbook", "index.md"),
+			target: join(targetDoraDir, "cookbook", "index.md"),
+			executable: false,
+		},
+		{
+			source: join(templatesDir, "cookbook", "quickstart.md"),
+			target: join(targetDoraDir, "cookbook", "quickstart.md"),
+			executable: false,
+		},
+		{
+			source: join(templatesDir, "cookbook", "methods.md"),
+			target: join(targetDoraDir, "cookbook", "methods.md"),
+			executable: false,
+		},
+		{
+			source: join(templatesDir, "cookbook", "references.md"),
+			target: join(targetDoraDir, "cookbook", "references.md"),
+			executable: false,
+		},
+		{
+			source: join(templatesDir, "cookbook", "exports.md"),
+			target: join(targetDoraDir, "cookbook", "exports.md"),
+			executable: false,
+		},
 	];
 
 	// Create subdirectories
-	const subdirs = [join(targetDoraDir, "docs")];
+	const subdirs = [join(targetDoraDir, "docs"), join(targetDoraDir, "cookbook")];
 
 	for (const dir of subdirs) {
 		try {

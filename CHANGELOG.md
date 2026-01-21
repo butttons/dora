@@ -1,5 +1,16 @@
 # @butttons/dora
 
+## 1.4.0
+
+### Minor Changes
+
+- Refactor `dora cookbook` to use subcommands for better UX:
+  - `dora cookbook list` - List all available recipes
+  - `dora cookbook show [recipe]` - Show a specific recipe or index
+  - Add `--format` flag supporting `json` (default) and `markdown` output
+- Cookbook files now read from `.dora/cookbook/` for customization
+- Cookbook templates automatically copied during `dora init`
+
 ## 1.3.1
 
 ### Patch Changes
