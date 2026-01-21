@@ -1,5 +1,11 @@
 # @butttons/dora
 
+## 1.4.2
+
+### Patch Changes
+
+- Update all documentation to use new cookbook subcommand syntax (`dora cookbook show`)
+
 ## 1.4.1
 
 ### Patch Changes

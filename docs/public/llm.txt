@@ -114,6 +114,8 @@ This enables the `/dora` command. View the skill file: https://github.com/buttto
 - `dora query "<sql>"` - Execute custom SQL queries (read-only)
 - `dora changes [ref]` - Show changed files and impact
 - `dora graph <path>` - Generate dependency graph data
+- `dora cookbook list` - Show existing cookbooks
+- `dora cookbook show [name]` - Show cookbook contents
 
 ## Architecture & Philosophy
 
@@ -197,15 +199,6 @@ dora query "SELECT kind, COUNT(*) FROM symbols GROUP BY kind"
 ## Output Format
 
 All commands output valid JSON to stdout. Errors are sent to stderr. This makes dora easy to integrate with AI agents and scripts.
-
-## Future
-
-- Multi-language support (Python, Go, Rust, Java)
-- Watch mode for automatic reindexing
-- Integration with language servers (LSP)
-- Visualization tools for dependency graphs
-
-The goal is simple: make code intelligence fast, accurate, and accessible to AI agents.
 
 ---
 

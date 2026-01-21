@@ -58,7 +58,7 @@ export function findPath(from: string, to: string): string[] {
 
 ```typescript
 // BAD - Obvious inline comment
-const limit = options.limit || 20;  // Default limit is 20
+const limit = options.limit || 20; // Default limit is 20
 
 // BAD - Section separator
 // ===== Status Queries =====
@@ -178,6 +178,7 @@ dora/
 ```
 
 **Optional fields:**
+
 - `ignore` - Array of glob patterns for files to exclude from indexing (e.g., `["test/**", "**/*.d.ts"]`)
 
 ## Hooks
@@ -583,6 +584,7 @@ List all indexed documentation files.
 **Purpose:** Discover what documentation exists in the project. Useful for AI agents to understand what documentation is available before searching or exploring.
 
 **Flags:**
+
 - `--type <type>` - Filter by document type (md, txt)
 
 **Query:**
@@ -618,6 +620,7 @@ ORDER BY path;
 ```
 
 **Use Cases:**
+
 - Discover what documentation files exist in the project
 - Filter documentation by type (markdown vs plain text)
 - Quick overview of documentation coverage
@@ -633,6 +636,7 @@ Search through all indexed documentation files for specific text content.
 **Purpose:** Full-text search across all documentation. Useful for finding mentions of concepts, keywords, or specific phrases in your project's documentation.
 
 **Flags:**
+
 - `--limit <number>` - Maximum number of results to return (default: 20)
 
 **Query:**
@@ -674,6 +678,7 @@ LIMIT ?;
 ```
 
 **Use Cases:**
+
 - Finding documentation about a specific topic
 - Searching for configuration examples
 - Locating documentation that needs updating
@@ -688,6 +693,7 @@ Display metadata and references for a specific documentation file.
 **Purpose:** Understand what a documentation file covers by showing which symbols and files it references, along with line numbers where references occur.
 
 **Flags:**
+
 - `--content` - Include the full document content in the output
 
 **Queries:**
@@ -766,6 +772,7 @@ ORDER BY dfr.line;
 ```
 
 **Use Cases:**
+
 - Understanding what code a documentation file covers
 - Finding exact line numbers where symbols/files are mentioned
 - Verifying documentation accuracy against code
@@ -776,16 +783,19 @@ ORDER BY dfr.line;
 **What Files Are Indexed:**
 
 The documentation indexer automatically processes these file types:
+
 - `.md` - Markdown files
 - `.txt` - Plain text documentation
 
 **Exclusions:**
+
 - Respects `.gitignore` patterns
 - Auto-ignores: `node_modules/`, `.git/`, `.dora/`, `dist/`, `build/`, `coverage/`, `.next/`, `.nuxt/`, `out/`, `*.log`
 
 **Integration with Other Commands:**
 
 Documentation references are automatically included in:
+
 - `dora status` - Shows document count and breakdown by type
 - `dora symbol <query>` - Shows which docs mention the symbol (via `documented_in` field)
 - `dora file <path>` - Shows which docs reference the file (via `documented_in` field)
@@ -1085,9 +1095,11 @@ Show query pattern cookbook with examples and tips for common SQL patterns.
 **Purpose:** Provides ready-to-use SQL query patterns for AI agents and users who want to explore the database without needing to learn the schema first. All recipes include real examples tested on actual codebases.
 
 **Flags:**
+
 - `[recipe]` - Optional recipe name. Omit to see all available recipes.
 
 **Available Recipes:**
+
 - `quickstart` - Complete walkthrough exploring a codebase from scratch with real-world workflows
 - `methods` - Finding class methods by name, finding all methods in a class, counting method usages
 - `references` - Tracking symbol usage, finding most referenced symbols, identifying dead code
@@ -1106,22 +1118,23 @@ Show query pattern cookbook with examples and tips for common SQL patterns.
 
 ```bash
 # Show all available recipes
-dora cookbook
+dora cookbook list
 
 # Show quickstart guide
-dora cookbook quickstart
+dora cookbook show quickstart
 
 # Show methods recipe
-dora cookbook methods
+dora cookbook show methods
 
 # Show references recipe
-dora cookbook references
+dora cookbook show references
 
 # Show exports recipe
-dora cookbook exports
+dora cookbook show exports
 ```
 
 **Use Cases:**
+
 - **New to dora?** Start with `dora cookbook quickstart` for a complete walkthrough
 - Discovering query patterns for common tasks
 - Learning how to use `dora query` effectively
@@ -1129,14 +1142,15 @@ dora cookbook exports
 - Understanding how to query methods, references, and exported symbols
 
 **Integration with Other Commands:**
+
 - Use `dora schema` to understand the database structure
 - Use `dora query` to execute the SQL patterns shown in recipes
 - Copy-paste SQL examples directly from cookbook output into `dora query`
 
 **Custom Cookbooks:**
-You can add your own cookbook recipes by creating markdown files in `.dora/cookbooks/`. Each file becomes a recipe that can be accessed with `dora cookbook <filename>` (without the .md extension).
+You can add your own cookbook recipes by creating markdown files in `.dora/cookbooks/`. Each file becomes a recipe that can be accessed with `dora cookbook show <filename>` (without the .md extension).
 
-Example: Create `.dora/cookbooks/my-patterns.md` with your custom SQL patterns, then access it with `dora cookbook my-patterns`.
+Example: Create `.dora/cookbooks/my-patterns.md` with your custom SQL patterns, then access it with `dora cookbook show my-patterns`.
 
 ---
 
@@ -1351,6 +1365,6 @@ dora deps src/app.ts --depth 2
 dora adventure src/component.tsx src/utils.ts
 
 # 8. Advanced custom queries
-dora cookbook methods  # Learn how to query methods
+dora cookbook show methods  # Learn how to query methods
 dora query "<sql>"     # Execute custom SQL queries
 ```

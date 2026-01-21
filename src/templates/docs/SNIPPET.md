@@ -56,7 +56,7 @@ This codebase uses dora for fast code intelligence and architectural analysis.
 **Database:**
 
 - `dora schema` - Show database schema (tables, columns, indexes)
-- `dora cookbook [recipe]` - Query patterns with real examples (quickstart, methods, references, exports)
+- `dora cookbook show [recipe]` - Query patterns with real examples (quickstart, methods, references, exports)
 - `dora query "<sql>"` - Execute read-only SQL query against the database
 
 ### When to Use Other Tools

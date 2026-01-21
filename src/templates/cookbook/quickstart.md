@@ -17,6 +17,7 @@ dora map
 ```
 
 **Result:**
+
 ```json
 {
   "packages": ["@butttons/dora", "docs"],
@@ -38,12 +39,28 @@ dora ls src/commands --sort symbols --limit 5
 ```
 
 **Result:**
+
 ```json
 {
   "files": [
-    {"path": "src/commands/shared.ts", "symbols": 55, "dependencies": 6, "dependents": 22},
-    {"path": "src/commands/ls.ts", "symbols": 40, "dependencies": 2, "dependents": 3},
-    {"path": "src/commands/adventure.ts", "symbols": 38, "dependencies": 5, "dependents": 3}
+    {
+      "path": "src/commands/shared.ts",
+      "symbols": 55,
+      "dependencies": 6,
+      "dependents": 22
+    },
+    {
+      "path": "src/commands/ls.ts",
+      "symbols": 40,
+      "dependencies": 2,
+      "dependents": 3
+    },
+    {
+      "path": "src/commands/adventure.ts",
+      "symbols": 38,
+      "dependencies": 5,
+      "dependents": 3
+    }
   ]
 }
 ```
@@ -61,6 +78,7 @@ dora file src/commands/shared.ts
 ```
 
 **Result shows:**
+
 - Exported symbols: `setupCommand`, `parseIntFlag`, `parseStringFlag`, etc.
 - Dependencies: imports from `commander`, `./output`, `./config`
 - Dependents: 22 command files import from it
@@ -78,12 +96,13 @@ dora rdeps src/commands/shared.ts --depth 1
 ```
 
 **Result:**
+
 ```json
 {
   "dependents": [
-    {"path": "src/commands/adventure.ts", "depth": 1},
-    {"path": "src/commands/changes.ts", "depth": 1},
-    {"path": "src/commands/deps.ts", "depth": 1}
+    { "path": "src/commands/adventure.ts", "depth": 1 },
+    { "path": "src/commands/changes.ts", "depth": 1 },
+    { "path": "src/commands/deps.ts", "depth": 1 }
   ]
 }
 ```
@@ -101,14 +120,15 @@ dora query "SELECT s.kind, COUNT(*) as count FROM symbols s JOIN files f ON s.fi
 ```
 
 **Result:**
+
 ```json
 {
   "rows": [
-    {"kind": "property", "count": 73},
-    {"kind": "parameter", "count": 62},
-    {"kind": "function", "count": 38},
-    {"kind": "module", "count": 28},
-    {"kind": "interface", "count": 7}
+    { "kind": "property", "count": 73 },
+    { "kind": "parameter", "count": 62 },
+    { "kind": "function", "count": 38 },
+    { "kind": "module", "count": 28 },
+    { "kind": "interface", "count": 7 }
   ]
 }
 ```
@@ -126,11 +146,20 @@ dora query "SELECT f.path, f.symbol_count, f.dependent_count FROM files f WHERE 
 ```
 
 **Result:**
+
 ```json
 {
   "rows": [
-    {"path": "src/commands/shared.ts", "symbol_count": 55, "dependent_count": 22},
-    {"path": "src/commands/complexity.ts", "symbol_count": 7, "dependent_count": 4}
+    {
+      "path": "src/commands/shared.ts",
+      "symbol_count": 55,
+      "dependent_count": 22
+    },
+    {
+      "path": "src/commands/complexity.ts",
+      "symbol_count": 7,
+      "dependent_count": 4
+    }
   ]
 }
 ```
@@ -148,12 +177,28 @@ dora query "SELECT s.name, s.kind, s.reference_count, f.path FROM symbols s JOIN
 ```
 
 **Result:**
+
 ```json
 {
   "rows": [
-    {"name": "debugConverter.", "kind": "variable", "reference_count": 69, "path": "src/utils/logger.ts"},
-    {"name": "outputJson().", "kind": "function", "reference_count": 46, "path": "src/utils/output.ts"},
-    {"name": "setupCommand().", "kind": "function", "reference_count": 40, "path": "src/commands/shared.ts"}
+    {
+      "name": "debugConverter.",
+      "kind": "variable",
+      "reference_count": 69,
+      "path": "src/utils/logger.ts"
+    },
+    {
+      "name": "outputJson().",
+      "kind": "function",
+      "reference_count": 46,
+      "path": "src/utils/output.ts"
+    },
+    {
+      "name": "setupCommand().",
+      "kind": "function",
+      "reference_count": 40,
+      "path": "src/commands/shared.ts"
+    }
   ]
 }
 ```
@@ -171,12 +216,13 @@ dora query "SELECT f.path, COUNT(*) as usage_count FROM symbol_references sr JOI
 ```
 
 **Result:**
+
 ```json
 {
   "rows": [
-    {"path": "src/commands/treasure.ts", "usage_count": 2},
-    {"path": "src/commands/symbol.ts", "usage_count": 2},
-    {"path": "src/commands/schema.ts", "usage_count": 2}
+    { "path": "src/commands/treasure.ts", "usage_count": 2 },
+    { "path": "src/commands/symbol.ts", "usage_count": 2 },
+    { "path": "src/commands/schema.ts", "usage_count": 2 }
   ]
 }
 ```
@@ -194,11 +240,13 @@ dora file src/commands/complexity.ts
 ```
 
 **Symbols found:**
+
 - `complexity()` function
 - Imports from `shared.ts` (setupCommand, parseIntFlag)
 - Imports from query utilities
 
 **Pattern Discovered:** Each command file:
+
 1. Imports setupCommand from shared.ts
 2. Defines a main command function
 3. Uses setupCommand to register with Commander
@@ -222,28 +270,33 @@ All of this without reading a single line of code - just by querying the index.
 ## Common Workflows
 
 ### Workflow 1: "Where is X used?"
+
 ```bash
 dora symbol <name>           # Find the symbol
 dora refs <symbol>           # See all references
 ```
 
 ### Workflow 2: "What depends on this file?"
+
 ```bash
 dora rdeps <path> --depth 2  # Find reverse dependencies
 ```
 
 ### Workflow 3: "What are the most important files?"
+
 ```bash
 dora ls --sort rdeps         # Sort by dependents (fan-in)
 dora treasure                # Find hub files
 ```
 
 ### Workflow 4: "What's the code composition?"
+
 ```bash
 dora query "SELECT kind, COUNT(*) FROM symbols WHERE is_local = 0 GROUP BY kind"
 ```
 
 ### Workflow 5: "Find architectural patterns"
+
 ```bash
 dora cycles                  # Find circular dependencies
 dora coupling                # Find tightly coupled files
@@ -256,10 +309,11 @@ dora complexity              # Find high-impact files
 
 Now that you understand the basics, dive deeper with specialized recipes:
 
-- **dora cookbook methods** - Finding and analyzing class methods
-- **dora cookbook references** - Tracking symbol usage patterns
-- **dora cookbook exports** - Distinguishing public APIs from internals
+- **dora cookbook show methods** - Finding and analyzing class methods
+- **dora cookbook show references** - Tracking symbol usage patterns
+- **dora cookbook show exports** - Distinguishing public APIs from internals
 
 Or explore custom queries:
+
 - **dora schema** - See the full database structure
 - **dora query "<sql>"** - Run any SQL query against the index

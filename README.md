@@ -260,16 +260,16 @@ New to dora? The cookbook has recipes with real examples:
 
 ```bash
 # Start here - complete walkthrough
-dora cookbook quickstart
+dora cookbook show quickstart
 
 # Find class methods
-dora cookbook methods
+dora cookbook show methods
 
 # Track symbol references
-dora cookbook references
+dora cookbook show references
 
 # Find exported APIs
-dora cookbook exports
+dora cookbook show exports
 ```
 
 All recipes include tested SQL patterns from real codebases.
@@ -335,12 +335,12 @@ Quick reference for all commands with common flags:
 
 ### Setup Commands
 
-| Command       | Description                   | Common Flags                                        |
-| ------------- | ----------------------------- | --------------------------------------------------- |
-| `dora init`   | Initialize dora in repository | -                                                   |
-| `dora index`  | Build/update index            | `--full`, `--skip-scip`, `--ignore <pattern>`       |
-| `dora status` | Check index status            | -                                                   |
-| `dora map`    | High-level statistics         | -                                                   |
+| Command       | Description                   | Common Flags                                  |
+| ------------- | ----------------------------- | --------------------------------------------- |
+| `dora init`   | Initialize dora in repository | -                                             |
+| `dora index`  | Build/update index            | `--full`, `--skip-scip`, `--ignore <pattern>` |
+| `dora status` | Check index status            | -                                             |
+| `dora map`    | High-level statistics         | -                                             |
 
 ### Code Navigation
 
@@ -356,11 +356,11 @@ Quick reference for all commands with common flags:
 
 ### Documentation
 
-| Command                     | Description                    | Common Flags                          |
-| --------------------------- | ------------------------------ | ------------------------------------- |
-| `dora docs`                 | List all documentation files   | `--type <type>` (md, txt)             |
-| `dora docs search <query>`  | Search documentation content   | `--limit N` (default: 20)             |
-| `dora docs show <path>`     | Show document metadata         | `--content` (include full content)    |
+| Command                    | Description                  | Common Flags                       |
+| -------------------------- | ---------------------------- | ---------------------------------- |
+| `dora docs`                | List all documentation files | `--type <type>` (md, txt)          |
+| `dora docs search <query>` | Search documentation content | `--limit N` (default: 20)          |
+| `dora docs show <path>`    | Show document metadata       | `--content` (include full content) |
 
 ### Architecture Analysis
 
@@ -375,15 +375,15 @@ Quick reference for all commands with common flags:
 
 ### Advanced Commands
 
-| Command                 | Description                  | Common Flags                       |
-| ----------------------- | ---------------------------- | ---------------------------------- |
-| `dora schema`           | Show database schema         | -                                  |
-| `dora cookbook [recipe]`| Query pattern cookbook       | `quickstart`, `methods`, `refs`, `exports` |
-| `dora query "<sql>"`    | Execute raw SQL (read-only)  | -                                  |
-| `dora changes <ref>`    | Git impact analysis          | -                                  |
-| `dora exports <target>` | List exported symbols        | -                                  |
-| `dora imports <path>`   | Show file imports            | -                                  |
-| `dora graph <path>`     | Dependency graph             | `--depth N`, `--direction`         |
+| Command                  | Description                 | Common Flags                               |
+| ------------------------ | --------------------------- | ------------------------------------------ |
+| `dora schema`            | Show database schema        | -                                          |
+| `dora cookbook [recipe]` | Query pattern cookbook      | `quickstart`, `methods`, `refs`, `exports` |
+| `dora query "<sql>"`     | Execute raw SQL (read-only) | -                                          |
+| `dora changes <ref>`     | Git impact analysis         | -                                          |
+| `dora exports <target>`  | List exported symbols       | -                                          |
+| `dora imports <path>`    | Show file imports           | -                                          |
+| `dora graph <path>`      | Dependency graph            | `--depth N`, `--direction`                 |
 
 ## SCIP Indexers
 
