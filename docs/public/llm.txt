@@ -79,7 +79,7 @@ This enables the `/dora` command. View the skill file: https://github.com/buttto
 
 ### Setup
 - `dora init` - Initialize dora in your project
-- `dora index` - Index the codebase (supports --full, --skip-scip)
+- `dora index` - Index the codebase (supports --full, --skip-scip, --ignore <pattern>)
 - `dora status` - Check index health and statistics
 
 ### Code Exploration

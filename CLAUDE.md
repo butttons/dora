@@ -172,9 +172,13 @@ dora/
   "commands": {
     "index": "scip-typescript index --output .dora/index.scip"
   },
-  "lastIndexed": "2025-01-15T10:30:00Z"
+  "lastIndexed": "2025-01-15T10:30:00Z",
+  "ignore": ["test/**", "**/*.generated.ts"]
 }
 ```
+
+**Optional fields:**
+- `ignore` - Array of glob patterns for files to exclude from indexing (e.g., `["test/**", "**/*.d.ts"]`)
 
 ## Hooks
 
@@ -270,6 +274,7 @@ Note: Hooks are configured in .claude/settings.json (Stop and SessionStart)
 - **Flags:**
   - `--full` - Force full rebuild (ignore incremental detection)
   - `--skip-scip` - Skip running SCIP indexer, use existing .scip file
+  - `--ignore <pattern>` - Ignore files matching glob pattern (can be repeated)
 - Output: file count, symbol count, time taken, mode (full/incremental)
 
 ### dora status
@@ -1127,6 +1132,11 @@ dora cookbook exports
 - Use `dora schema` to understand the database structure
 - Use `dora query` to execute the SQL patterns shown in recipes
 - Copy-paste SQL examples directly from cookbook output into `dora query`
+
+**Custom Cookbooks:**
+You can add your own cookbook recipes by creating markdown files in `.dora/cookbooks/`. Each file becomes a recipe that can be accessed with `dora cookbook <filename>` (without the .md extension).
+
+Example: Create `.dora/cookbooks/my-patterns.md` with your custom SQL patterns, then access it with `dora cookbook my-patterns`.
 
 ---
 

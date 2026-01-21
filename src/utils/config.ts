@@ -28,6 +28,7 @@ const ConfigSchema = z.object({
 		.optional(),
 	lastIndexed: z.string().nullable(),
 	indexState: IndexStateSchema.optional(),
+	ignore: z.array(z.string()).optional(),
 });
 
 // Export types inferred from schemas

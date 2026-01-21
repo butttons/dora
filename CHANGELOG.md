@@ -4,8 +4,11 @@
 
 ### Patch Changes
 
+- Add `--ignore <pattern>` flag to `dora index` for excluding files via glob patterns (can be repeated)
+- Add optional `ignore` field in `.dora/config.json` for persistent ignore patterns
+- Document custom cookbook feature: users can add recipes in `.dora/cookbooks/` directory
 - Fix UNIQUE constraint violation during batch processing when multiple SCIP documents reference same file path
-- Add comprehensive test coverage for converter and batch processing edge cases
+- Add test coverage for converter and batch processing edge cases
 
 ## 1.4.0
 

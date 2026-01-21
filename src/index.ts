@@ -49,9 +49,10 @@ program
   .description("Run SCIP indexing (requires configured commands)")
   .option("--full", "Force full rebuild")
   .option("--skip-scip", "Skip running SCIP indexer (use existing .scip file)")
+  .option("--ignore <pattern>", "Ignore files matching pattern (can be repeated)", (value: string, previous: string[]) => previous.concat([value]), [])
   .action(
     wrapCommand(async (options) => {
-      await index({ full: options.full, skipScip: options.skipScip });
+      await index({ full: options.full, skipScip: options.skipScip, ignore: options.ignore });
     })
   );
 

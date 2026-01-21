@@ -335,12 +335,12 @@ Quick reference for all commands with common flags:
 
 ### Setup Commands
 
-| Command       | Description                   | Common Flags |
-| ------------- | ----------------------------- | ------------ |
-| `dora init`   | Initialize dora in repository | -            |
-| `dora index`  | Build/update index            | -            |
-| `dora status` | Check index status            | -            |
-| `dora map`    | High-level statistics         | -            |
+| Command       | Description                   | Common Flags                                        |
+| ------------- | ----------------------------- | --------------------------------------------------- |
+| `dora init`   | Initialize dora in repository | -                                                   |
+| `dora index`  | Build/update index            | `--full`, `--skip-scip`, `--ignore <pattern>`       |
+| `dora status` | Check index status            | -                                                   |
+| `dora map`    | High-level statistics         | -                                                   |
 
 ### Code Navigation
 

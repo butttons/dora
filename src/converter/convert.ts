@@ -1,5 +1,6 @@
 import { Database } from "bun:sqlite";
 import { existsSync } from "fs";
+import ignore from "ignore";
 import path from "path";
 import { debugConverter } from "../utils/logger.ts";
 import {
@@ -170,7 +171,8 @@ CREATE INDEX IF NOT EXISTS idx_document_document_refs_referenced ON document_doc
 CREATE INDEX IF NOT EXISTS idx_document_document_refs_line ON document_document_refs(line);`;
 
 export interface ConversionOptions {
-  force?: boolean; // Force full rebuild
+  force?: boolean;
+  ignore?: string[];
 }
 
 export interface ConversionStats {
@@ -259,6 +261,13 @@ export async function convertToDatabase(
     `Build mode: ${mode} (firstRun=${isFirstRun}, force=${isForceFull})`
   );
 
+  // Create ignore matcher if patterns are provided
+  const ig = ignore();
+  if (options.ignore && options.ignore.length > 0) {
+    ig.add(options.ignore);
+    debugConverter(`Filtering with ${options.ignore.length} ignore patterns`);
+  }
+
   // Build a quick document lookup (lightweight - just paths)
   const documentsByPath = new Map(
     scipData.documents.map((doc) => [doc.relativePath, doc])
@@ -270,7 +279,7 @@ export async function convertToDatabase(
   if (mode === "full") {
     // Full rebuild: get all files from SCIP data
     debugConverter("Getting all files for full rebuild...");
-    changedFiles = await getAllFiles(documentsByPath, repoRoot);
+    changedFiles = await getAllFiles(documentsByPath, repoRoot, ig);
     deletedFiles = [];
     debugConverter(`Full rebuild: processing ${changedFiles.length} files`);
 
@@ -281,7 +290,7 @@ export async function convertToDatabase(
   } else {
     // Incremental: detect changes via filesystem scan
     debugConverter("Detecting changed and deleted files...");
-    const changes = await detectChangedFiles(documentsByPath, db, repoRoot);
+    const changes = await detectChangedFiles(documentsByPath, db, repoRoot, ig);
     changedFiles = changes.changed;
     deletedFiles = changes.deleted;
     debugConverter(
@@ -604,11 +613,16 @@ function clearAllData(db: Database): void {
  */
 async function getAllFiles(
   documentsByPath: Map<string, ParsedDocument>,
-  repoRoot: string
+  repoRoot: string,
+  ig: ReturnType<typeof ignore>
 ): Promise<ChangedFile[]> {
   const files: ChangedFile[] = [];
 
   for (const [relativePath, doc] of documentsByPath) {
+    if (ig.ignores(relativePath)) {
+      continue;
+    }
+
     const fullPath = path.join(repoRoot, relativePath);
     try {
       const stat = await Bun.file(fullPath).stat();
@@ -626,7 +640,8 @@ async function getAllFiles(
 async function detectChangedFiles(
   documentsByPath: Map<string, ParsedDocument>,
   db: Database,
-  repoRoot: string
+  repoRoot: string,
+  ig: ReturnType<typeof ignore>
 ): Promise<{ changed: ChangedFile[]; deleted: string[] }> {
   // Get existing files from database with mtime
   const existingFiles = new Map(
@@ -642,6 +657,10 @@ async function detectChangedFiles(
   const deleted = new Set(existingFiles.keys());
 
   for (const [relativePath, doc] of documentsByPath) {
+    if (ig.ignores(relativePath)) {
+      continue;
+    }
+
     deleted.delete(relativePath);
 
     // Get current mtime from filesystem
