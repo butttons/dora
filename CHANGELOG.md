@@ -1,5 +1,12 @@
 # @butttons/dora
 
+## 1.4.1
+
+### Patch Changes
+
+- Fix UNIQUE constraint violation during batch processing when multiple SCIP documents reference same file path
+- Add comprehensive test coverage for converter and batch processing edge cases
+
 ## 1.4.0
 
 ### Minor Changes

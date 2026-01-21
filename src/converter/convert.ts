@@ -367,6 +367,8 @@ async function processBatches(
 ): Promise<void> {
   const timestamp = Math.floor(Date.now() / 1000);
 
+  const insertedFiles = new Set<string>();
+
   // Create a set of changed paths for quick lookup
   const changedPathsSet = new Set(changedFiles.map((f) => f.path));
 
@@ -469,7 +471,8 @@ async function processBatches(
       globalSymbolsById,
       db,
       batchChangedFiles,
-      timestamp
+      timestamp,
+      insertedFiles
     );
 
     // Update dependencies for this batch (uses global maps for cross-batch deps)
@@ -692,7 +695,8 @@ async function convertFiles(
   symbolsById: Map<string, ParsedSymbol>,
   db: Database,
   changedFiles: ChangedFile[],
-  timestamp: number
+  timestamp: number,
+  insertedFiles: Set<string>
 ): Promise<void> {
   if (changedFiles.length === 0) return;
 
@@ -727,12 +731,19 @@ async function convertFiles(
         } (${Math.floor((processedCount / changedFiles.length) * 100)}%)`
       );
     }
+
+    if (insertedFiles.has(filePath)) {
+      continue;
+    }
+
     // Get document from parsed SCIP data
     const doc = documentsByPath.get(filePath);
     if (!doc) continue;
 
     // Insert file
     fileStmt.run(filePath, doc.language, mtime, timestamp);
+
+    insertedFiles.add(filePath);
 
     // Get file_id from database
     const fileRecord = db
