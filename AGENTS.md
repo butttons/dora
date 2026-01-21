@@ -649,6 +649,7 @@ dora leaves              # Find leaf nodes
 
 ```bash
 dora schema              # Show database schema
+dora cookbook [recipe]   # Query pattern examples
 dora query "<sql>"       # Execute raw SQL (read-only)
 dora changes <ref>       # Git impact analysis
 ```

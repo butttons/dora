@@ -112,6 +112,10 @@ const commands = [
 				desc: "Show database schema for custom queries",
 			},
 			{
+				name: "dora cookbook [recipe]",
+				desc: "Query patterns with real examples (quickstart, methods, references, exports)",
+			},
+			{
 				name: 'dora query "<sql>"',
 				desc: "Execute custom SQL queries (read-only)",
 			},
@@ -270,8 +274,13 @@ const commands = [
                         Custom Analysis
                     </h3>
                     <div
-                        class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm"
+                        class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm space-y-2"
                     >
+                        <div>
+                            <span class="text-zinc-500">$</span>
+                            <span class="text-zinc-300"
+                                >dora cookbook methods</span>
+                        </div>
                         <div>
                             <span class="text-zinc-500">$</span>
                             <span class="text-zinc-300"

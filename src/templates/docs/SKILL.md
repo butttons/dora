@@ -79,6 +79,7 @@ dora understands code structure, dependencies, symbols, and architectural relati
 ### Database
 
 - `dora schema` - Show database schema (tables, columns, indexes)
+- `dora cookbook [recipe]` - Query patterns with real examples (quickstart, methods, references, exports)
 - `dora query "<sql>"` - Execute read-only SQL query against the database
 
 ## When to Use What
@@ -92,7 +93,7 @@ dora understands code structure, dependencies, symbols, and architectural relati
 - Dead code → `dora lost`
 - Finding documentation → `dora symbol` (shows documented_in), `dora docs search`
 - Listing documentation → `dora docs`
-- Custom queries → `dora schema` then `dora query`
+- Custom queries → `dora cookbook` for examples, `dora schema` for structure, `dora query` to execute
 
 ## Typical Workflow
 
@@ -282,6 +283,7 @@ dora graph src/modified.ts --depth 2 # Visualize dependency tree
 Custom analysis:
 
 ```bash
+dora cookbook methods                # See query pattern examples
 dora schema                          # See database structure
 dora query "SELECT f.path, COUNT(s.id) as symbols FROM files f JOIN symbols s ON s.file_id = f.id WHERE s.is_local = 0 GROUP BY f.path ORDER BY symbols DESC LIMIT 20"
 ```

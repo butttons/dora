@@ -4,6 +4,7 @@ import { Command } from "commander";
 import { adventure } from "./commands/adventure.ts";
 import { changes } from "./commands/changes.ts";
 import { complexity } from "./commands/complexity.ts";
+import { cookbook } from "./commands/cookbook.ts";
 import { coupling } from "./commands/coupling.ts";
 import { cycles } from "./commands/cycles.ts";
 import { deps } from "./commands/deps.ts";
@@ -202,6 +203,12 @@ program
   .description("Execute raw SQL query (read-only)")
   .argument("<sql>", "SQL query to execute")
   .action(wrapCommand(query));
+
+program
+  .command("cookbook")
+  .argument("[recipe]", "Recipe name (methods, references, etc.)")
+  .description("Show query pattern cookbook")
+  .action(wrapCommand(cookbook));
 
 const docs = program
   .command("docs")

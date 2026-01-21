@@ -1073,6 +1073,63 @@ Output:
 
 ---
 
+### dora cookbook [recipe]
+
+Show query pattern cookbook with examples and tips for common SQL patterns.
+
+**Purpose:** Provides ready-to-use SQL query patterns for AI agents and users who want to explore the database without needing to learn the schema first. All recipes include real examples tested on actual codebases.
+
+**Flags:**
+- `[recipe]` - Optional recipe name. Omit to see all available recipes.
+
+**Available Recipes:**
+- `quickstart` - Complete walkthrough exploring a codebase from scratch with real-world workflows
+- `methods` - Finding class methods by name, finding all methods in a class, counting method usages
+- `references` - Tracking symbol usage, finding most referenced symbols, identifying dead code
+- `exports` - Distinguishing exported symbols from internal ones, finding public API functions/types
+
+**Output:**
+
+```json
+{
+  "recipe": "quickstart",
+  "content": "# Dora Quickstart: Exploring a Codebase\n\nA practical walkthrough..."
+}
+```
+
+**Usage:**
+
+```bash
+# Show all available recipes
+dora cookbook
+
+# Show quickstart guide
+dora cookbook quickstart
+
+# Show methods recipe
+dora cookbook methods
+
+# Show references recipe
+dora cookbook references
+
+# Show exports recipe
+dora cookbook exports
+```
+
+**Use Cases:**
+- **New to dora?** Start with `dora cookbook quickstart` for a complete walkthrough
+- Discovering query patterns for common tasks
+- Learning how to use `dora query` effectively
+- Finding SQL examples for specific use cases
+- Understanding how to query methods, references, and exported symbols
+
+**Integration with Other Commands:**
+- Use `dora schema` to understand the database structure
+- Use `dora query` to execute the SQL patterns shown in recipes
+- Copy-paste SQL examples directly from cookbook output into `dora query`
+
+---
+
 ### dora query "<sql>"
 
 Execute arbitrary SQL queries against the database (read-only).
@@ -1282,4 +1339,8 @@ dora lost --limit 50  # Find dead code
 # 7. Navigate dependencies
 dora deps src/app.ts --depth 2
 dora adventure src/component.tsx src/utils.ts
+
+# 8. Advanced custom queries
+dora cookbook methods  # Learn how to query methods
+dora query "<sql>"     # Execute custom SQL queries
 ```

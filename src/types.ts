@@ -291,3 +291,8 @@ export interface DefnEnclosingRange {
 	start_line: number;
 	end_line: number;
 }
+
+export interface CookbookResult {
+	recipe: string;
+	content: string;
+}

@@ -254,6 +254,26 @@ dora rdeps src/auth/service.ts --depth 2
 dora cycles
 ```
 
+### 6. Learn Custom Queries
+
+New to dora? The cookbook has recipes with real examples:
+
+```bash
+# Start here - complete walkthrough
+dora cookbook quickstart
+
+# Find class methods
+dora cookbook methods
+
+# Track symbol references
+dora cookbook references
+
+# Find exported APIs
+dora cookbook exports
+```
+
+All recipes include tested SQL patterns from real codebases.
+
 ## Commands Overview
 
 ### Setup & Status
@@ -301,6 +321,7 @@ dora leaves --max-dependents 3  # Leaf nodes
 
 ```bash
 dora schema                  # Show database schema
+dora cookbook [recipe]       # Show query pattern examples
 dora query "<sql>"           # Execute raw SQL (read-only)
 dora changes <ref>           # Changed/impacted files
 dora exports <path|package>  # List exports
@@ -354,14 +375,15 @@ Quick reference for all commands with common flags:
 
 ### Advanced Commands
 
-| Command                 | Description                 | Common Flags               |
-| ----------------------- | --------------------------- | -------------------------- |
-| `dora schema`           | Show database schema        | -                          |
-| `dora query "<sql>"`    | Execute raw SQL (read-only) | -                          |
-| `dora changes <ref>`    | Git impact analysis         | -                          |
-| `dora exports <target>` | List exported symbols       | -                          |
-| `dora imports <path>`   | Show file imports           | -                          |
-| `dora graph <path>`     | Dependency graph            | `--depth N`, `--direction` |
+| Command                 | Description                  | Common Flags                       |
+| ----------------------- | ---------------------------- | ---------------------------------- |
+| `dora schema`           | Show database schema         | -                                  |
+| `dora cookbook [recipe]`| Query pattern cookbook       | `quickstart`, `methods`, `refs`, `exports` |
+| `dora query "<sql>"`    | Execute raw SQL (read-only)  | -                                  |
+| `dora changes <ref>`    | Git impact analysis          | -                                  |
+| `dora exports <target>` | List exported symbols        | -                                  |
+| `dora imports <path>`   | Show file imports            | -                                  |
+| `dora graph <path>`     | Dependency graph             | `--depth N`, `--direction`         |
 
 ## SCIP Indexers
 

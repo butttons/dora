@@ -1,5 +1,16 @@
 # @butttons/dora
 
+## 1.3.1
+
+### Patch Changes
+
+- Add comprehensive cookbook system with 4 thoroughly tested recipes:
+  - **quickstart** - Complete walkthrough exploring a codebase from scratch
+  - **methods** - Finding class methods with 5 SQL patterns
+  - **references** - Tracking symbol usage with 6 SQL patterns
+  - **exports** - Finding exported symbols vs internal symbols
+- All cookbook recipes now include real examples tested on dora's own codebase
+
 ## 1.3.0
 
 ### Minor Changes
