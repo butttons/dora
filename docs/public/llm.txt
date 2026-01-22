@@ -15,6 +15,40 @@ dora is a command-line tool that helps AI agents understand large codebases by q
 - **Architecture Queries**: Detect cycles, coupling, complexity, and architectural smells
 - **Custom Queries**: Write arbitrary SQL queries for advanced codebase analysis
 
+## Installation
+
+**Download Pre-built Binary:**
+
+```bash
+# macOS (ARM64)
+curl -L https://github.com/butttons/dora/releases/latest/download/dora-darwin-arm64 -o dora
+chmod +x dora
+sudo mv dora /usr/local/bin/
+
+# macOS (Intel)
+curl -L https://github.com/butttons/dora/releases/latest/download/dora-darwin-x64 -o dora
+chmod +x dora
+sudo mv dora /usr/local/bin/
+
+# Linux
+curl -L https://github.com/butttons/dora/releases/latest/download/dora-linux-x64 -o dora
+chmod +x dora
+sudo mv dora /usr/local/bin/
+
+# Windows
+# Download dora-windows-x64.exe from releases page and add to PATH
+```
+
+**Install SCIP Indexer:**
+
+You'll need a SCIP indexer for your language. For TypeScript/JavaScript:
+
+```bash
+npm install -g @sourcegraph/scip-typescript
+```
+
+For other languages, see https://github.com/sourcegraph/scip?tab=readme-ov-file#tools-using-scip
+
 ## Quick Start
 
 ```bash
