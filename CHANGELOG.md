@@ -1,5 +1,14 @@
 # @butttons/dora
 
+## 1.4.4
+
+### Patch Changes
+
+- Fix package manager detection to check for bun, pnpm, and yarn lock files before defaulting to npm
+- Fix Rust indexing command to include required path argument. Thanks @dkmnx! (#4, fixes #3)
+- Fix cookbook command syntax in documentation
+- Add installation instructions to llm.txt documentation
+
 ## 1.4.3
 
 ### Patch Changes

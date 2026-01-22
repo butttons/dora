@@ -1,6 +1,6 @@
 {
   "name": "@butttons/dora",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "module": "src/index.ts",
   "type": "module",
   "private": true,
