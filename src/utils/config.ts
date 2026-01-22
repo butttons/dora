@@ -97,15 +97,28 @@ export function validateConfig(data: unknown): Config {
 }
 
 /**
- * Detect if project uses workspaces
+ * Detect package manager and workspace type based on lock files
  */
-function detectWorkspaceType(root: string): "pnpm" | "yarn" | null {
-	// Check for pnpm workspaces
-	if (existsSync(join(root, "pnpm-workspace.yaml"))) {
+function detectWorkspaceType(root: string): "bun" | "pnpm" | "yarn" | null {
+	// Check for Bun first (bun.lockb)
+	if (existsSync(join(root, "bun.lockb"))) {
+		return "bun";
+	}
+
+	// Check for pnpm (pnpm-lock.yaml or pnpm-workspace.yaml)
+	if (
+		existsSync(join(root, "pnpm-lock.yaml")) ||
+		existsSync(join(root, "pnpm-workspace.yaml"))
+	) {
 		return "pnpm";
 	}
 
-	// Check for yarn workspaces
+	// Check for Yarn (yarn.lock)
+	if (existsSync(join(root, "yarn.lock"))) {
+		return "yarn";
+	}
+
+	// Check for yarn workspaces in package.json as fallback
 	const packageJsonPath = join(root, "package.json");
 	if (existsSync(packageJsonPath)) {
 		try {
@@ -137,7 +150,11 @@ function detectIndexerCommand(root: string): string {
 		const needsInferTsConfig = !hasTsConfig && hasPackageJson;
 
 		// Build command based on workspace type
-		if (workspaceType === "pnpm") {
+		if (workspaceType === "bun") {
+			return needsInferTsConfig
+				? "scip-typescript index --infer-tsconfig --output .dora/index.scip"
+				: "scip-typescript index --output .dora/index.scip";
+		} else if (workspaceType === "pnpm") {
 			return needsInferTsConfig
 				? "scip-typescript index --infer-tsconfig --pnpm-workspaces --output .dora/index.scip"
 				: "scip-typescript index --pnpm-workspaces --output .dora/index.scip";
