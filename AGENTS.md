@@ -64,6 +64,7 @@ dora integrates deeply with Claude Code via skills, hooks, and pre-approved perm
    ```
 
    This enables:
+
    - **Auto-indexing**: Runs `dora index` in background after each turn
    - **Pre-approved permissions**: dora commands don't require permission prompts
    - **Automatic usage**: Claude prefers dora over Grep/Glob for code exploration
@@ -149,9 +150,11 @@ OpenCode's agent system allows deep integration with dora for code exploration a
    You are a code exploration specialist using the dora CLI.
 
    Always start by checking index status:
+
    - Run `dora status` to verify index is available
 
    For code exploration, use:
+
    - `dora file <path>` - Understand files and their dependencies
    - `dora symbol <query>` - Find symbol definitions
    - `dora deps <path>` - Show what a file imports
@@ -159,6 +162,7 @@ OpenCode's agent system allows deep integration with dora for code exploration a
    - `dora adventure <from> <to>` - Find path between files
 
    For architecture analysis:
+
    - `dora cycles` - Find circular dependencies
    - `dora coupling` - Find tightly coupled files
    - `dora complexity` - Identify high-impact files
@@ -232,6 +236,7 @@ permission:
 ---
 
 Before suggesting refactorings:
+
 1. Run `dora file <path>` to understand dependencies
 2. Run `dora rdeps <path>` to check impact
 3. Run `dora coupling` to find tightly coupled code
@@ -298,10 +303,12 @@ Cursor can use dora as a CLI tool via terminal commands or indexed codebase cont
    Create `.cursor/commands/` directory in your project and add dora command files:
 
    `.cursor/commands/dora-explore.md`:
+
    ```markdown
    Use dora CLI to explore the codebase structure.
 
    Steps:
+
    1. Run `dora status` to check index health
    2. Run `dora map` to show packages and statistics
    3. Run `dora treasure` to identify core files
@@ -309,26 +316,31 @@ Cursor can use dora as a CLI tool via terminal commands or indexed codebase cont
    ```
 
    `.cursor/commands/dora-analyze-file.md`:
+
    ```markdown
    Analyze a file and its dependencies using dora.
 
    For the file path provided in the parameters:
+
    1. Run `dora file <path>` to see symbols and dependencies
    2. Run `dora rdeps <path>` to see what depends on this file
    3. Explain the file's role in the codebase
    ```
 
    `.cursor/commands/dora-find-symbol.md`:
+
    ```markdown
    Find a symbol definition using dora.
 
    For the symbol name provided:
+
    1. Run `dora symbol <name>` to find the definition
    2. If found, run `dora file <path>` on the containing file
    3. Show the symbol location and context
    ```
 
    `.cursor/commands/dora-check-architecture.md`:
+
    ```markdown
    Check codebase architecture for issues using dora.
 
@@ -425,10 +437,11 @@ Windsurf's Cascade agent supports Skills, AGENTS.md files, and Rules for deep do
    ---
    description: Code exploration with dora CLI
    trigger: glob
-   globs: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx']
+   globs: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"]
    ---
 
    When exploring code:
+
    - Run `dora status` first to check index availability
    - Use `dora file <path>` to understand files
    - Use `dora symbol <query>` to find definitions
@@ -505,11 +518,13 @@ For AI agents and IDEs not listed above, dora provides standard integration file
    ```
 
    Examples:
+
    - For agents with custom instructions: Copy to instructions file
    - For agents with context files: Append to context file
    - For agents with .cursorrules-like files: Add to rules file
 
    This snippet includes:
+
    - Command reference for all dora commands
    - When to use dora vs other tools
    - Best practices for code exploration
@@ -523,6 +538,7 @@ For AI agents and IDEs not listed above, dora provides standard integration file
    ```
 
    Use this as a reference for:
+
    - Creating agent-specific skills/commands
    - Understanding dora workflows
    - Command examples and patterns
@@ -532,12 +548,14 @@ For AI agents and IDEs not listed above, dora provides standard integration file
    If your AI agent supports hooks or lifecycle scripts, configure:
 
    **Session start hook:**
+
    ```bash
    # Check if initialized, run index in background
    dora status 2>/dev/null && (dora index > /tmp/dora-index.log 2>&1 &) || echo 'Run: dora init && dora index'
    ```
 
    **End of turn hook (after file changes):**
+
    ```bash
    # Run index in background, never fail
    (dora index > /tmp/dora-index.log 2>&1 &) || true
@@ -570,6 +588,7 @@ dora index
 **For chat-based agents:**
 
 Configure the agent to use dora commands when:
+
 - Exploring code: `dora file`, `dora symbol`, `dora deps`
 - Understanding architecture: `dora map`, `dora treasure`, `dora cycles`
 - Checking impact: `dora rdeps`, `dora coupling`
@@ -578,6 +597,7 @@ Configure the agent to use dora commands when:
 **For workflow-based agents:**
 
 Create workflows that use dora for:
+
 1. Pre-task analysis (understand dependencies)
 2. Impact checking (what will be affected)
 3. Post-task validation (check for cycles, complexity)
@@ -648,10 +668,10 @@ dora leaves              # Find leaf nodes
 ### Advanced
 
 ```bash
-dora schema              # Show database schema
-dora cookbook [recipe]   # Query pattern examples
-dora query "<sql>"       # Execute raw SQL (read-only)
-dora changes <ref>       # Git impact analysis
+dora schema                     # Show database schema
+dora cookbook show [recipe]     # Query pattern examples
+dora query "<sql>"              # Execute raw SQL (read-only)
+dora changes <ref>              # Git impact analysis
 ```
 
 ## Output Format

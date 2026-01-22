@@ -1088,7 +1088,7 @@ Output:
 
 ---
 
-### dora cookbook [recipe]
+### dora cookbook show [recipe]
 
 Show query pattern cookbook with examples and tips for common SQL patterns.
 
