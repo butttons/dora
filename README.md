@@ -321,7 +321,7 @@ dora leaves --max-dependents 3  # Leaf nodes
 
 ```bash
 dora schema                  # Show database schema
-dora cookbook [recipe]       # Show query pattern examples
+dora cookbook show [recipe]  # Show query pattern examples
 dora query "<sql>"           # Execute raw SQL (read-only)
 dora changes <ref>           # Changed/impacted files
 dora exports <path|package>  # List exports
@@ -375,15 +375,15 @@ Quick reference for all commands with common flags:
 
 ### Advanced Commands
 
-| Command                  | Description                 | Common Flags                               |
-| ------------------------ | --------------------------- | ------------------------------------------ |
-| `dora schema`            | Show database schema        | -                                          |
-| `dora cookbook [recipe]` | Query pattern cookbook      | `quickstart`, `methods`, `refs`, `exports` |
-| `dora query "<sql>"`     | Execute raw SQL (read-only) | -                                          |
-| `dora changes <ref>`     | Git impact analysis         | -                                          |
-| `dora exports <target>`  | List exported symbols       | -                                          |
-| `dora imports <path>`    | Show file imports           | -                                          |
-| `dora graph <path>`      | Dependency graph            | `--depth N`, `--direction`                 |
+| Command                       | Description                 | Common Flags                               |
+| ----------------------------- | --------------------------- | ------------------------------------------ |
+| `dora schema`                 | Show database schema        | -                                          |
+| `dora cookbook show [recipe]` | Query pattern cookbook      | `quickstart`, `methods`, `refs`, `exports` |
+| `dora query "<sql>"`          | Execute raw SQL (read-only) | -                                          |
+| `dora changes <ref>`          | Git impact analysis         | -                                          |
+| `dora exports <target>`       | List exported symbols       | -                                          |
+| `dora imports <path>`         | Show file imports           | -                                          |
+| `dora graph <path>`           | Dependency graph            | `--depth N`, `--direction`                 |
 
 ## SCIP Indexers
 
