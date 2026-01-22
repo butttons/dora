@@ -34,11 +34,6 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 .DS_Store
 
 # dora code context index (selective ignore)
-.dora/*.scip
-.dora/*.db
-.dora/*.db-shm
-.dora/*.db-wal
-.dora/config.json
-# Keep .dora/hooks/ in version control
+.dora/
 
 stress-test/*

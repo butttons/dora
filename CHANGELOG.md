@@ -1,5 +1,11 @@
 # @butttons/dora
 
+## 1.4.3
+
+### Patch Changes
+
+- Fix template files not found when using `dora init`
+
 ## 1.4.2
 
 ### Patch Changes

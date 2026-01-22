@@ -1,28 +1,31 @@
 // Template file copying utilities for dora init
 
-import { chmodSync, mkdirSync } from "fs";
-import { dirname, join } from "path";
-import { fileURLToPath } from "url";
+import { mkdirSync } from "fs";
+import { join } from "path";
 
-/**
- * Get the path to the templates directory
- * Uses import.meta.url to get the current file's directory
- */
-function getTemplatesDir(): string {
-	// Get the directory of the current file (src/utils/)
-	const currentDir = dirname(fileURLToPath(import.meta.url));
-	// Templates are at src/templates/ relative to src/utils/
-	return join(currentDir, "..", "templates");
-}
+import snippetMd from "../templates/docs/SNIPPET.md" with { type: "text" };
+import skillMd from "../templates/docs/SKILL.md" with { type: "text" };
+import cookbookIndexMd from "../templates/cookbook/index.md" with { type: "text" };
+import cookbookQuickstartMd from "../templates/cookbook/quickstart.md" with {
+	type: "text",
+};
+import cookbookMethodsMd from "../templates/cookbook/methods.md" with {
+	type: "text",
+};
+import cookbookReferencesMd from "../templates/cookbook/references.md" with {
+	type: "text",
+};
+import cookbookExportsMd from "../templates/cookbook/exports.md" with {
+	type: "text",
+};
 
 /**
  * Copy a single file if it doesn't exist at target
  * @returns true if copied, false if skipped
  */
 async function copyFileIfNotExists(
-	sourcePath: string,
+	content: string,
 	targetPath: string,
-	makeExecutable = false,
 ): Promise<boolean> {
 	// Check if target file already exists
 	const targetFile = Bun.file(targetPath);
@@ -31,29 +34,8 @@ async function copyFileIfNotExists(
 		return false;
 	}
 
-	// Read source file
-	const sourceFile = Bun.file(sourcePath);
-	if (!(await sourceFile.exists())) {
-		console.warn(`Warning: Template file not found: ${sourcePath}`);
-		return false;
-	}
-
-	const content = await sourceFile.text();
-
 	// Write to target
 	await Bun.write(targetPath, content);
-
-	// Set executable permissions for shell scripts
-	if (makeExecutable && sourcePath.endsWith(".sh")) {
-		try {
-			chmodSync(targetPath, 0o755); // rwxr-xr-x
-		} catch (error) {
-			// Log warning but don't fail on Windows or permission errors
-			console.warn(
-				`Warning: Could not set executable permission for ${targetPath}`,
-			);
-		}
-	}
 
 	return true;
 }
@@ -63,44 +45,29 @@ async function copyFileIfNotExists(
  * Creates subdirectories and copies files, skipping existing ones
  */
 export async function copyTemplates(targetDoraDir: string): Promise<void> {
-	const templatesDir = getTemplatesDir();
-
-	// Define template files to copy
-	const templateFiles = [
+	// Define template files to copy with imported content
+	const templates = [
+		{ content: snippetMd, target: join(targetDoraDir, "docs", "SNIPPET.md") },
+		{ content: skillMd, target: join(targetDoraDir, "docs", "SKILL.md") },
 		{
-			source: join(templatesDir, "docs", "SNIPPET.md"),
-			target: join(targetDoraDir, "docs", "SNIPPET.md"),
-			executable: false,
-		},
-		{
-			source: join(templatesDir, "docs", "SKILL.md"),
-			target: join(targetDoraDir, "docs", "SKILL.md"),
-			executable: false,
-		},
-		{
-			source: join(templatesDir, "cookbook", "index.md"),
+			content: cookbookIndexMd,
 			target: join(targetDoraDir, "cookbook", "index.md"),
-			executable: false,
 		},
 		{
-			source: join(templatesDir, "cookbook", "quickstart.md"),
+			content: cookbookQuickstartMd,
 			target: join(targetDoraDir, "cookbook", "quickstart.md"),
-			executable: false,
 		},
 		{
-			source: join(templatesDir, "cookbook", "methods.md"),
+			content: cookbookMethodsMd,
 			target: join(targetDoraDir, "cookbook", "methods.md"),
-			executable: false,
 		},
 		{
-			source: join(templatesDir, "cookbook", "references.md"),
+			content: cookbookReferencesMd,
 			target: join(targetDoraDir, "cookbook", "references.md"),
-			executable: false,
 		},
 		{
-			source: join(templatesDir, "cookbook", "exports.md"),
+			content: cookbookExportsMd,
 			target: join(targetDoraDir, "cookbook", "exports.md"),
-			executable: false,
 		},
 	];
 
@@ -116,7 +83,7 @@ export async function copyTemplates(targetDoraDir: string): Promise<void> {
 	}
 
 	// Copy each template file
-	for (const { source, target, executable } of templateFiles) {
-		await copyFileIfNotExists(source, target, executable);
+	for (const { content, target } of templates) {
+		await copyFileIfNotExists(content, target);
 	}
 }
