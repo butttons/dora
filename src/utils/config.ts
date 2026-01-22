@@ -163,7 +163,7 @@ function detectIndexerCommand(root: string): string {
 
 	// Rust - check for Cargo.toml
 	if (existsSync(join(root, "Cargo.toml"))) {
-		return "rust-analyzer scip --output .dora/index.scip";
+		return "rust-analyzer scip . --output .dora/index.scip";
 	}
 
 	// Go - check for go.mod
