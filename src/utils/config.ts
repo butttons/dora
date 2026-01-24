@@ -22,10 +22,20 @@ const IndexStateSchema = z.object({
 	databaseMtime: z.number(),
 });
 
+export const LanguageSchema = z.enum([
+	"typescript",
+	"javascript",
+	"python",
+	"rust",
+	"go",
+	"java",
+]);
+
 const ConfigSchema = z.object({
 	root: z.string().min(1),
 	scip: z.string().min(1),
 	db: z.string().min(1),
+	language: LanguageSchema.optional(),
 	commands: z
 		.object({
 			index: z.string().optional(),
@@ -136,7 +146,6 @@ function detectWorkspaceType(root: string): "bun" | "pnpm" | "yarn" | null {
 				return "yarn";
 			}
 		} catch {
-			// Ignore JSON parse errors
 		}
 	}
 
@@ -146,38 +155,79 @@ function detectWorkspaceType(root: string): "bun" | "pnpm" | "yarn" | null {
 /**
  * Detect project type and return appropriate SCIP indexer command
  */
-function detectIndexerCommand(root: string): string {
+function detectIndexerCommand(params: {
+	root: string;
+	language?: string;
+}): string {
+	const { root, language } = params;
+
+	if (language) {
+		switch (language) {
+			case "typescript":
+			case "javascript": {
+				const workspaceType = detectWorkspaceType(root);
+				const needsInferTsConfig = language === "javascript";
+
+				if (workspaceType === "bun") {
+					return needsInferTsConfig
+						? "scip-typescript index --infer-tsconfig --output .dora/index.scip"
+						: "scip-typescript index --output .dora/index.scip";
+				}
+				if (workspaceType === "pnpm") {
+					return needsInferTsConfig
+						? "scip-typescript index --infer-tsconfig --pnpm-workspaces --output .dora/index.scip"
+						: "scip-typescript index --pnpm-workspaces --output .dora/index.scip";
+				}
+				if (workspaceType === "yarn") {
+					return needsInferTsConfig
+						? "scip-typescript index --infer-tsconfig --yarn-workspaces --output .dora/index.scip"
+						: "scip-typescript index --yarn-workspaces --output .dora/index.scip";
+				}
+				return needsInferTsConfig
+					? "scip-typescript index --infer-tsconfig --output .dora/index.scip"
+					: "scip-typescript index --output .dora/index.scip";
+			}
+			case "python":
+				return "scip-python index --output .dora/index.scip";
+			case "rust":
+				return "rust-analyzer scip . --output .dora/index.scip";
+			case "go":
+				return "scip-go --output .dora/index.scip";
+			case "java":
+				return "scip-java index --output .dora/index.scip";
+			default:
+				return "scip-typescript index --output .dora/index.scip";
+		}
+	}
+
 	const hasTsConfig = existsSync(join(root, "tsconfig.json"));
 	const hasPackageJson = existsSync(join(root, "package.json"));
 
-	// TypeScript/JavaScript projects
 	if (hasTsConfig || hasPackageJson) {
 		const workspaceType = detectWorkspaceType(root);
 
-		// For JavaScript projects (no tsconfig.json), add --infer-tsconfig flag
 		const needsInferTsConfig = !hasTsConfig && hasPackageJson;
 
-		// Build command based on workspace type
 		if (workspaceType === "bun") {
 			return needsInferTsConfig
 				? "scip-typescript index --infer-tsconfig --output .dora/index.scip"
 				: "scip-typescript index --output .dora/index.scip";
-		} else if (workspaceType === "pnpm") {
+		}
+		if (workspaceType === "pnpm") {
 			return needsInferTsConfig
 				? "scip-typescript index --infer-tsconfig --pnpm-workspaces --output .dora/index.scip"
 				: "scip-typescript index --pnpm-workspaces --output .dora/index.scip";
-		} else if (workspaceType === "yarn") {
+		}
+		if (workspaceType === "yarn") {
 			return needsInferTsConfig
 				? "scip-typescript index --infer-tsconfig --yarn-workspaces --output .dora/index.scip"
 				: "scip-typescript index --yarn-workspaces --output .dora/index.scip";
-		} else {
-			return needsInferTsConfig
-				? "scip-typescript index --infer-tsconfig --output .dora/index.scip"
-				: "scip-typescript index --output .dora/index.scip";
 		}
+		return needsInferTsConfig
+			? "scip-typescript index --infer-tsconfig --output .dora/index.scip"
+			: "scip-typescript index --output .dora/index.scip";
 	}
 
-	// Python - check for Python project files
 	if (
 		existsSync(join(root, "setup.py")) ||
 		existsSync(join(root, "pyproject.toml")) ||
@@ -186,17 +236,14 @@ function detectIndexerCommand(root: string): string {
 		return "scip-python index --output .dora/index.scip";
 	}
 
-	// Rust - check for Cargo.toml
 	if (existsSync(join(root, "Cargo.toml"))) {
 		return "rust-analyzer scip . --output .dora/index.scip";
 	}
 
-	// Go - check for go.mod
 	if (existsSync(join(root, "go.mod"))) {
 		return "scip-go --output .dora/index.scip";
 	}
 
-	// Java - check for Maven or Gradle
 	if (
 		existsSync(join(root, "pom.xml")) ||
 		existsSync(join(root, "build.gradle")) ||
@@ -205,20 +252,26 @@ function detectIndexerCommand(root: string): string {
 		return "scip-java index --output .dora/index.scip";
 	}
 
-	// Default to TypeScript (most common)
 	return "scip-typescript index --output .dora/index.scip";
 }
 
 /**
  * Create default configuration
  */
-export function createDefaultConfig(root: string): Config {
-	const indexCommand = detectIndexerCommand(root);
+export function createDefaultConfig(params: {
+	root: string;
+	language?: string;
+}): Config {
+	const indexCommand = detectIndexerCommand({
+		root: params.root,
+		language: params.language,
+	});
 
 	return {
-		root,
+		root: params.root,
 		scip: ".dora/index.scip",
 		db: ".dora/dora.db",
+		language: params.language,
 		commands: {
 			index: indexCommand,
 		},

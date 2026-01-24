@@ -42,7 +42,11 @@ program
 program
 	.command("init")
 	.description("Initialize dora in the current repository")
-	.action(wrapCommand(init));
+	.option(
+		"-l, --language <language>",
+		"Project language (typescript, javascript, python, rust, go, java)",
+	)
+	.action(wrapCommand((options) => init({ language: options.language })));
 
 program
 	.command("index")

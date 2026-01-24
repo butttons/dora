@@ -101,7 +101,7 @@ describe("Config Management", () => {
 	describe("createDefaultConfig", () => {
 		test("should create default config with correct structure", () => {
 			const root = "/Users/test/repo";
-			const config = createDefaultConfig(root);
+			const config = createDefaultConfig({ root });
 
 			expect(config.root).toBe(root);
 			expect(config.db).toBe(".dora/dora.db");
@@ -113,7 +113,7 @@ describe("Config Management", () => {
 
 		test("should create config with absolute root path", () => {
 			const root = "/absolute/path/to/repo";
-			const config = createDefaultConfig(root);
+			const config = createDefaultConfig({ root });
 
 			expect(config.root).toBe(root);
 		});
@@ -138,13 +138,12 @@ describe("Config Management", () => {
 		});
 
 		test("should add --infer-tsconfig for JavaScript-only project", async () => {
-			// Create package.json only (no tsconfig.json)
 			await Bun.write(
 				`${tempDir}/package.json`,
 				JSON.stringify({ name: "test" }),
 			);
 
-			const config = createDefaultConfig(tempDir);
+			const config = createDefaultConfig({ root: tempDir });
 
 			expect(config.commands?.index).toBe(
 				"scip-typescript index --infer-tsconfig --output .dora/index.scip",
@@ -152,7 +151,6 @@ describe("Config Management", () => {
 		});
 
 		test("should NOT add --infer-tsconfig for TypeScript project", async () => {
-			// Create both package.json and tsconfig.json
 			await Bun.write(
 				`${tempDir}/package.json`,
 				JSON.stringify({ name: "test" }),
@@ -162,7 +160,7 @@ describe("Config Management", () => {
 				JSON.stringify({ compilerOptions: {} }),
 			);
 
-			const config = createDefaultConfig(tempDir);
+			const config = createDefaultConfig({ root: tempDir });
 
 			expect(config.commands?.index).toBe(
 				"scip-typescript index --output .dora/index.scip",
@@ -170,7 +168,6 @@ describe("Config Management", () => {
 		});
 
 		test("should add --infer-tsconfig for JavaScript + pnpm workspace", async () => {
-			// Create package.json and pnpm-workspace.yaml (no tsconfig.json)
 			await Bun.write(
 				`${tempDir}/package.json`,
 				JSON.stringify({ name: "test" }),
@@ -180,7 +177,7 @@ describe("Config Management", () => {
 				"packages:\n  - packages/*",
 			);
 
-			const config = createDefaultConfig(tempDir);
+			const config = createDefaultConfig({ root: tempDir });
 
 			expect(config.commands?.index).toBe(
 				"scip-typescript index --infer-tsconfig --pnpm-workspaces --output .dora/index.scip",
@@ -188,7 +185,6 @@ describe("Config Management", () => {
 		});
 
 		test("should NOT add --infer-tsconfig for TypeScript + pnpm workspace", async () => {
-			// Create package.json, tsconfig.json, and pnpm-workspace.yaml
 			await Bun.write(
 				`${tempDir}/package.json`,
 				JSON.stringify({ name: "test" }),
@@ -202,7 +198,7 @@ describe("Config Management", () => {
 				"packages:\n  - packages/*",
 			);
 
-			const config = createDefaultConfig(tempDir);
+			const config = createDefaultConfig({ root: tempDir });
 
 			expect(config.commands?.index).toBe(
 				"scip-typescript index --pnpm-workspaces --output .dora/index.scip",
@@ -210,13 +206,12 @@ describe("Config Management", () => {
 		});
 
 		test("should add --infer-tsconfig for JavaScript + yarn workspace", async () => {
-			// Create package.json with workspaces (no tsconfig.json)
 			await Bun.write(
 				`${tempDir}/package.json`,
 				JSON.stringify({ name: "test", workspaces: ["packages/*"] }),
 			);
 
-			const config = createDefaultConfig(tempDir);
+			const config = createDefaultConfig({ root: tempDir });
 
 			expect(config.commands?.index).toBe(
 				"scip-typescript index --infer-tsconfig --yarn-workspaces --output .dora/index.scip",
@@ -224,7 +219,6 @@ describe("Config Management", () => {
 		});
 
 		test("should NOT add --infer-tsconfig for TypeScript + yarn workspace", async () => {
-			// Create package.json with workspaces and tsconfig.json
 			await Bun.write(
 				`${tempDir}/package.json`,
 				JSON.stringify({ name: "test", workspaces: ["packages/*"] }),
@@ -234,7 +228,7 @@ describe("Config Management", () => {
 				JSON.stringify({ compilerOptions: {} }),
 			);
 
-			const config = createDefaultConfig(tempDir);
+			const config = createDefaultConfig({ root: tempDir });
 
 			expect(config.commands?.index).toBe(
 				"scip-typescript index --yarn-workspaces --output .dora/index.scip",
@@ -242,16 +236,129 @@ describe("Config Management", () => {
 		});
 
 		test("should handle tsconfig.json only (no package.json)", async () => {
-			// Create tsconfig.json only
 			await Bun.write(
 				`${tempDir}/tsconfig.json`,
 				JSON.stringify({ compilerOptions: {} }),
 			);
 
-			const config = createDefaultConfig(tempDir);
+			const config = createDefaultConfig({ root: tempDir });
 
 			expect(config.commands?.index).toBe(
 				"scip-typescript index --output .dora/index.scip",
+			);
+		});
+	});
+
+	describe("Language flag", () => {
+		let tempDir: string;
+
+		beforeEach(async () => {
+			tempDir = `/tmp/dora-test-${Date.now()}`;
+			await Bun.write(`${tempDir}/.keep`, "");
+		});
+
+		afterEach(async () => {
+			try {
+				await Bun.$`rm -rf ${tempDir}`;
+			} catch {
+			}
+		});
+
+		test("should use explicit language when provided", async () => {
+			const config = createDefaultConfig({
+				root: tempDir,
+				language: "python",
+			});
+
+			expect(config.language).toBe("python");
+			expect(config.commands?.index).toBe(
+				"scip-python index --output .dora/index.scip",
+			);
+		});
+
+		test("should use rust indexer when language is rust", async () => {
+			const config = createDefaultConfig({
+				root: tempDir,
+				language: "rust",
+			});
+
+			expect(config.language).toBe("rust");
+			expect(config.commands?.index).toBe(
+				"rust-analyzer scip . --output .dora/index.scip",
+			);
+		});
+
+		test("should use go indexer when language is go", async () => {
+			const config = createDefaultConfig({
+				root: tempDir,
+				language: "go",
+			});
+
+			expect(config.language).toBe("go");
+			expect(config.commands?.index).toBe("scip-go --output .dora/index.scip");
+		});
+
+		test("should use java indexer when language is java", async () => {
+			const config = createDefaultConfig({
+				root: tempDir,
+				language: "java",
+			});
+
+			expect(config.language).toBe("java");
+			expect(config.commands?.index).toBe(
+				"scip-java index --output .dora/index.scip",
+			);
+		});
+
+		test("should use typescript indexer when language is typescript", async () => {
+			const config = createDefaultConfig({
+				root: tempDir,
+				language: "typescript",
+			});
+
+			expect(config.language).toBe("typescript");
+			expect(config.commands?.index).toBe(
+				"scip-typescript index --output .dora/index.scip",
+			);
+		});
+
+		test("should use --infer-tsconfig when language is javascript", async () => {
+			const config = createDefaultConfig({
+				root: tempDir,
+				language: "javascript",
+			});
+
+			expect(config.language).toBe("javascript");
+			expect(config.commands?.index).toBe(
+				"scip-typescript index --infer-tsconfig --output .dora/index.scip",
+			);
+		});
+
+		test("should not have language field when no language provided", async () => {
+			await Bun.write(
+				`${tempDir}/package.json`,
+				JSON.stringify({ name: "test" }),
+			);
+
+			const config = createDefaultConfig({ root: tempDir });
+
+			expect(config.language).toBeUndefined();
+		});
+
+		test("should respect workspace type with explicit language", async () => {
+			await Bun.write(
+				`${tempDir}/pnpm-workspace.yaml`,
+				"packages:\n  - packages/*",
+			);
+
+			const config = createDefaultConfig({
+				root: tempDir,
+				language: "typescript",
+			});
+
+			expect(config.language).toBe("typescript");
+			expect(config.commands?.index).toBe(
+				"scip-typescript index --pnpm-workspaces --output .dora/index.scip",
 			);
 		});
 	});

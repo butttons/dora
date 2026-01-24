@@ -2,6 +2,7 @@ import { existsSync } from "fs";
 import { join } from "path";
 import type { InitResult } from "../types.ts";
 import {
+	LanguageSchema,
 	createDefaultConfig,
 	isInitialized,
 	saveConfig,
@@ -11,29 +12,35 @@ import { outputJson } from "../utils/output.ts";
 import { findRepoRoot, getConfigPath, getDoraDir } from "../utils/paths.ts";
 import { copyTemplates } from "../utils/templates.ts";
 
-export async function init(): Promise<void> {
-	// Find repository root
-	const root = await findRepoRoot();
+export async function init(params?: { language?: string }): Promise<void> {
+	if (params?.language) {
+		const result = LanguageSchema.safeParse(params.language);
+		if (!result.success) {
+			throw new CtxError(
+				`Invalid language: ${params.language}. Valid options are: ${LanguageSchema.options.join(", ")}`,
+			);
+		}
+	}
 
-	// Check if already initialized
+	const root = params?.language ? process.cwd() : await findRepoRoot();
+
 	if (isInitialized(root)) {
 		throw new CtxError(
 			`Repository already initialized. Config exists at ${getConfigPath(root)}`,
 		);
 	}
 
-	// Create .dora directory
 	const doraDir = getDoraDir(root);
 	await Bun.write(join(doraDir, ".gitkeep"), "");
 
-	// Copy template files (docs)
 	await copyTemplates(doraDir);
 
-	// Add .dora to .gitignore
 	await addToGitignore(root);
 
-	// Create and save initial config
-	const config = createDefaultConfig(root);
+	const config = createDefaultConfig({
+		root,
+		language: params?.language,
+	});
 	await saveConfig(config);
 
 	const result: InitResult = {
@@ -56,12 +63,10 @@ async function addToGitignore(root: string): Promise<void> {
 		content = await Bun.file(gitignorePath).text();
 	}
 
-	// Check if .dora is already in .gitignore
 	if (content.includes(".dora")) {
 		return;
 	}
 
-	// Add .dora to .gitignore
 	const newContent = content.trim()
 		? `${content.trim()}\n\n# dora code context index\n.dora/\n`
 		: `# dora code context index\n.dora/\n`;
