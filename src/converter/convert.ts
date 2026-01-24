@@ -215,12 +215,17 @@ function chunkArray<T>(array: T[], chunkSize: number): T[][] {
  * @returns Conversion statistics including mode (full/incremental), file counts, and timing
  * @throws {Error} If SCIP file cannot be parsed or database cannot be created
  */
-export async function convertToDatabase(
-  scipPath: string,
-  databasePath: string,
-  repoRoot: string,
-  options: ConversionOptions = {}
-): Promise<ConversionStats> {
+export async function convertToDatabase({
+  scipPath,
+  databasePath,
+  repoRoot,
+  options = {},
+}: {
+  scipPath: string;
+  databasePath: string;
+  repoRoot: string;
+  options?: ConversionOptions;
+}): Promise<ConversionStats> {
   const startTime = Date.now();
 
   // Parse SCIP protobuf file
@@ -334,7 +339,12 @@ export async function convertToDatabase(
   // Process documentation files
   debugConverter("Processing documentation files...");
   const { processDocuments } = await import("./documents.js");
-  const docStats = await processDocuments(db, repoRoot, mode);
+  const docStats = await processDocuments(
+    db,
+    repoRoot,
+    mode,
+    options.ignore || []
+  );
   debugConverter(
     `Documentation processing complete: ${docStats.processed} processed, ${docStats.skipped} skipped`
   );

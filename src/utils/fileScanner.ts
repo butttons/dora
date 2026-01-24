@@ -15,9 +15,13 @@ export interface DocumentFile {
 export async function scanDocumentFiles(
 	repoRoot: string,
 	extensions: string[] = [".md", ".txt"],
+	ignorePatterns: string[] = [],
 ): Promise<DocumentFile[]> {
 	debugScanner("Scanning for document files in %s", repoRoot);
 	debugScanner("Extensions: %o", extensions);
+	if (ignorePatterns.length > 0) {
+		debugScanner("User ignore patterns: %o", ignorePatterns);
+	}
 
 	// Load .gitignore patterns
 	const ig = await loadGitignorePatterns(repoRoot);
@@ -35,6 +39,12 @@ export async function scanDocumentFiles(
 		"out/",
 		"*.log",
 	]);
+
+	// Add user-provided ignore patterns
+	if (ignorePatterns.length > 0) {
+		ig.add(ignorePatterns);
+		debugScanner("Added %d user ignore patterns", ignorePatterns.length);
+	}
 
 	const documents: DocumentFile[] = [];
 	await walkDirectory(repoRoot, repoRoot, extensions, ig, documents);
