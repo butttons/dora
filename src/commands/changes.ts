@@ -20,7 +20,11 @@ export async function changes(
 
 	for (const file of changedFiles) {
 		try {
-			const rdeps = getReverseDependencies(ctx.db, file, DEFAULTS.DEPTH);
+			const rdeps = getReverseDependencies({
+				db: ctx.db,
+				relativePath: file,
+				depth: DEFAULTS.DEPTH,
+			});
 			rdeps.forEach((dep) => impacted.add(dep.path));
 		} catch {}
 	}

@@ -11,7 +11,7 @@ export async function cycles(
 ): Promise<void> {
 	const { db } = await setupCommand();
 
-	const limit = parseIntFlag(flags, "limit", 50);
+	const limit = parseIntFlag({ flags, key: "limit", defaultValue: 50 });
 
 	// Get bidirectional dependencies
 	const cyclesList = getCycles(db, limit);

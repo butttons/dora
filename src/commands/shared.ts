@@ -42,11 +42,15 @@ export async function setupCommand(): Promise<CommandContext> {
 /**
  * Parse an integer flag with a default value.
  */
-export function parseIntFlag(
-	flags: Record<string, string | boolean>,
-	key: string,
-	defaultValue: number,
-): number {
+export function parseIntFlag({
+	flags,
+	key,
+	defaultValue,
+}: {
+	flags: Record<string, string | boolean>;
+	key: string;
+	defaultValue: number;
+}): number {
 	const value = flags[key];
 	if (value === undefined || value === true) {
 		return defaultValue;
@@ -58,11 +62,15 @@ export function parseIntFlag(
 /**
  * Parse a string flag with a default value.
  */
-export function parseStringFlag(
-	flags: Record<string, string | boolean>,
-	key: string,
-	defaultValue: string,
-): string {
+export function parseStringFlag({
+	flags,
+	key,
+	defaultValue,
+}: {
+	flags: Record<string, string | boolean>;
+	key: string;
+	defaultValue: string;
+}): string {
 	const value = flags[key];
 	if (value === undefined || value === true) {
 		return defaultValue;
@@ -73,10 +81,13 @@ export function parseStringFlag(
 /**
  * Parse an optional string flag (returns undefined if not provided).
  */
-export function parseOptionalStringFlag(
-	flags: Record<string, string | boolean>,
-	key: string,
-): string | undefined {
+export function parseOptionalStringFlag({
+	flags,
+	key,
+}: {
+	flags: Record<string, string | boolean>;
+	key: string;
+}): string | undefined {
 	const value = flags[key];
 	if (value === undefined || value === true) {
 		return undefined;
@@ -93,11 +104,17 @@ export function parseOptionalStringFlag(
  * If path is a typo with suggestions, outputs suggestions and exits.
  * Otherwise throws CtxError.
  */
-export function resolveAndValidatePath(
-	ctx: CommandContext,
-	inputPath: string,
-): string {
-	const relativePath = normalizeToRelative(ctx.config.root, inputPath);
+export function resolveAndValidatePath({
+	ctx,
+	inputPath,
+}: {
+	ctx: CommandContext;
+	inputPath: string;
+}): string {
+	const relativePath = normalizeToRelative({
+		root: ctx.config.root,
+		inputPath,
+	});
 
 	if (fileExists(ctx.db, relativePath)) {
 		return relativePath;
@@ -147,8 +164,14 @@ export function resolveAndValidatePath(
 /**
  * Normalize path without validation (for cases where we want to check existence separately).
  */
-export function resolvePath(ctx: CommandContext, inputPath: string): string {
-	return normalizeToRelative(ctx.config.root, inputPath);
+export function resolvePath({
+	ctx,
+	inputPath,
+}: {
+	ctx: CommandContext;
+	inputPath: string;
+}): string {
+	return normalizeToRelative({ root: ctx.config.root, inputPath });
 }
 
 export { outputJson };

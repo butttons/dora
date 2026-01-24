@@ -8,7 +8,7 @@ import { outputJson, resolveAndValidatePath, setupCommand } from "./shared.ts";
 
 export async function file(path: string): Promise<void> {
 	const ctx = await setupCommand();
-	const relativePath = resolveAndValidatePath(ctx, path);
+	const relativePath = resolveAndValidatePath({ ctx, inputPath: path });
 
 	const symbols = getFileSymbols(ctx.db, relativePath);
 	const depends_on = getFileDependencies(ctx.db, relativePath);

@@ -29,10 +29,13 @@ async function getFileMtime(filePath: string): Promise<number> {
  * Main decision function: should we reindex?
  * Returns decision with reason and optionally a list of changed files
  */
-export async function shouldReindex(
-	config: Config,
-	force: boolean = false,
-): Promise<ReindexDecision> {
+export async function shouldReindex({
+	config,
+	force = false,
+}: {
+	config: Config;
+	force?: boolean;
+}): Promise<ReindexDecision> {
 	// Force flag bypasses all checks
 	if (force) {
 		return { shouldReindex: true, reason: "forced" };
@@ -119,8 +122,14 @@ async function mtimeBasedDetection(
 	config: Config,
 ): Promise<ReindexDecision | null> {
 	try {
-		const scipPath = resolveAbsolute(config.root, config.scip);
-		const databasePath = resolveAbsolute(config.root, config.db);
+		const scipPath = resolveAbsolute({
+			root: config.root,
+			relativePath: config.scip,
+		});
+		const databasePath = resolveAbsolute({
+			root: config.root,
+			relativePath: config.db,
+		});
 
 		// Check if files exist
 		if (!existsSync(scipPath)) {
@@ -166,19 +175,29 @@ async function mtimeBasedDetection(
  * Get current index state after indexing
  * This should be called after successful indexing to save the state
  */
-export async function getCurrentIndexState(
-	config: Config,
-	fileCount: number,
-	symbolCount: number,
-) {
+export async function getCurrentIndexState({
+	config,
+	fileCount,
+	symbolCount,
+}: {
+	config: Config;
+	fileCount: number;
+	symbolCount: number;
+}) {
 	const inGitRepo = await isGitRepo();
 
 	if (inGitRepo) {
 		try {
 			const gitCommit = await getCurrentGitCommit();
 			const gitHasUncommitted = await hasUncommittedChanges();
-			const scipPath = resolveAbsolute(config.root, config.scip);
-			const databasePath = resolveAbsolute(config.root, config.db);
+			const scipPath = resolveAbsolute({
+				root: config.root,
+				relativePath: config.scip,
+			});
+			const databasePath = resolveAbsolute({
+				root: config.root,
+				relativePath: config.db,
+			});
 
 			return {
 				gitCommit,
@@ -194,8 +213,14 @@ export async function getCurrentIndexState(
 	}
 
 	// Non-git repo or git failed
-	const scipPath = resolveAbsolute(config.root, config.scip);
-	const databasePath = resolveAbsolute(config.root, config.db);
+	const scipPath = resolveAbsolute({
+		root: config.root,
+		relativePath: config.scip,
+	});
+	const databasePath = resolveAbsolute({
+		root: config.root,
+		relativePath: config.db,
+	});
 
 	return {
 		gitCommit: "",

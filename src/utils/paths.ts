@@ -44,14 +44,26 @@ export async function findRepoRoot(
 /**
  * Resolve path to absolute from repo root
  */
-export function resolveAbsolute(root: string, relativePath: string): string {
+export function resolveAbsolute({
+	root,
+	relativePath,
+}: {
+	root: string;
+	relativePath: string;
+}): string {
 	return resolve(root, relativePath);
 }
 
 /**
  * Convert absolute path to relative from repo root
  */
-export function resolveRelative(root: string, absolutePath: string): string {
+export function resolveRelative({
+	root,
+	absolutePath,
+}: {
+	root: string;
+	absolutePath: string;
+}): string {
 	return relative(root, absolutePath);
 }
 
@@ -74,9 +86,15 @@ export function getConfigPath(root: string): string {
  * If the path is already relative, returns it unchanged.
  * If the path is absolute, converts it to relative.
  */
-export function normalizeToRelative(root: string, inputPath: string): string {
+export function normalizeToRelative({
+	root,
+	inputPath,
+}: {
+	root: string;
+	inputPath: string;
+}): string {
 	if (inputPath.startsWith("/")) {
-		return resolveRelative(root, inputPath);
+		return resolveRelative({ root, absolutePath: inputPath });
 	}
 	return inputPath;
 }

@@ -13,8 +13,12 @@ export async function symbol(
 	flags: Record<string, string | boolean> = {},
 ): Promise<void> {
 	const ctx = await setupCommand();
-	const limit = parseIntFlag(flags, "limit", DEFAULTS.SYMBOL_LIMIT);
-	const kind = parseOptionalStringFlag(flags, "kind");
+	const limit = parseIntFlag({
+		flags,
+		key: "limit",
+		defaultValue: DEFAULTS.SYMBOL_LIMIT,
+	});
+	const kind = parseOptionalStringFlag({ flags, key: "kind" });
 
 	const results = searchSymbols(ctx.db, query, { kind, limit });
 

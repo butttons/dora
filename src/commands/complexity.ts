@@ -11,7 +11,11 @@ export async function complexity(
 ): Promise<void> {
 	const { db } = await setupCommand();
 
-	const sortBy = parseStringFlag(flags, "sort", "complexity");
+	const sortBy = parseStringFlag({
+		flags,
+		key: "sort",
+		defaultValue: "complexity",
+	});
 
 	// Validate sort option
 	if (!["complexity", "symbols", "stability"].includes(sortBy)) {

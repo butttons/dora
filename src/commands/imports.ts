@@ -7,7 +7,7 @@ export async function imports(
 	_flags: Record<string, string | boolean> = {},
 ): Promise<void> {
 	const ctx = await setupCommand();
-	const relativePath = resolveAndValidatePath(ctx, path);
+	const relativePath = resolveAndValidatePath({ ctx, inputPath: path });
 
 	const importsList = getFileImports(ctx.db, relativePath);
 

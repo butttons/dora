@@ -6,11 +6,11 @@ export async function leaves(
 	flags: Record<string, string | boolean> = {},
 ): Promise<void> {
 	const ctx = await setupCommand();
-	const maxDependents = parseIntFlag(
+	const maxDependents = parseIntFlag({
 		flags,
-		"max-dependents",
-		DEFAULTS.LEAF_MAX_DEPENDENTS,
-	);
+		key: "max-dependents",
+		defaultValue: DEFAULTS.LEAF_MAX_DEPENDENTS,
+	});
 
 	const leafNodes = getLeafNodes(ctx.db, maxDependents);
 

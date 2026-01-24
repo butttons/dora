@@ -11,7 +11,7 @@ export async function coupling(
 ): Promise<void> {
 	const { db } = await setupCommand();
 
-	const threshold = parseIntFlag(flags, "threshold", 5);
+	const threshold = parseIntFlag({ flags, key: "threshold", defaultValue: 5 });
 
 	// Get coupled files
 	const coupledFiles = getCoupledFiles(db, threshold);

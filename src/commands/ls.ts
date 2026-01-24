@@ -84,8 +84,8 @@ export async function ls(
 ): Promise<void> {
 	const ctx = await setupCommand();
 
-	const limit = parseIntFlag(flags, "limit", 100);
-	const sort = parseStringFlag(flags, "sort", "path");
+	const limit = parseIntFlag({ flags, key: "limit", defaultValue: 100 });
+	const sort = parseStringFlag({ flags, key: "sort", defaultValue: "path" });
 
 	// Validate sort option
 	if (!["path", "symbols", "deps", "rdeps"].includes(sort)) {

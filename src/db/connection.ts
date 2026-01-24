@@ -14,7 +14,10 @@ let currentDbPath: string | null = null;
  * Always uses the dora database
  */
 export function getDb(config: Config): Database {
-	const dbPath = resolveAbsolute(config.root, config.db);
+	const dbPath = resolveAbsolute({
+		root: config.root,
+		relativePath: config.db,
+	});
 
 	// Check if database exists
 	if (!existsSync(dbPath)) {
@@ -40,7 +43,9 @@ export function getDb(config: Config): Database {
 		return dbInstance;
 	} catch (error) {
 		throw new CtxError(
-			`Failed to open database: ${error instanceof Error ? error.message : String(error)}`,
+			`Failed to open database: ${
+				error instanceof Error ? error.message : String(error)
+			}`,
 		);
 	}
 }

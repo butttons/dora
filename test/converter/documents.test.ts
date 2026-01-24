@@ -117,14 +117,18 @@ See src/logger.ts for implementation.
 	});
 
 	test("should process documents and extract references", async () => {
-		const stats = await processDocuments(db, testDir, "full");
+		const stats = await processDocuments({
+			db,
+			repoRoot: testDir,
+			mode: "full",
+		});
 
 		expect(stats.processed).toBe(1);
 		expect(stats.total).toBe(1);
 	});
 
 	test("should store document content", async () => {
-		await processDocuments(db, testDir, "full");
+		await processDocuments({ db, repoRoot: testDir, mode: "full" });
 
 		const doc = db
 			.query("SELECT * FROM documents WHERE path = ?")
@@ -137,7 +141,7 @@ See src/logger.ts for implementation.
 	});
 
 	test("should extract symbol references", async () => {
-		await processDocuments(db, testDir, "full");
+		await processDocuments({ db, repoRoot: testDir, mode: "full" });
 
 		const refs = db
 			.query(
@@ -157,7 +161,7 @@ See src/logger.ts for implementation.
 	});
 
 	test("should extract file references", async () => {
-		await processDocuments(db, testDir, "full");
+		await processDocuments({ db, repoRoot: testDir, mode: "full" });
 
 		const refs = db
 			.query(
@@ -177,10 +181,14 @@ See src/logger.ts for implementation.
 
 	test("should support incremental mode", async () => {
 		// First full process
-		await processDocuments(db, testDir, "full");
+		await processDocuments({ db, repoRoot: testDir, mode: "full" });
 
 		// Second incremental process (no changes)
-		const stats = await processDocuments(db, testDir, "incremental");
+		const stats = await processDocuments({
+			db,
+			repoRoot: testDir,
+			mode: "incremental",
+		});
 
 		// Should skip unchanged files
 		expect(stats.skipped).toBeGreaterThan(0);

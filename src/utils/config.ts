@@ -4,7 +4,12 @@ import { existsSync, readFileSync } from "fs";
 import { join } from "path";
 import { ZodError, z } from "zod";
 import { CtxError } from "./errors.ts";
-import { getConfigPath, getDoraDir } from "./paths.ts";
+import {
+	findRepoRoot,
+	getConfigPath,
+	getDoraDir,
+	resolveAbsolute,
+} from "./paths.ts";
 
 // Zod schemas for configuration validation
 
@@ -40,7 +45,6 @@ export type Config = z.infer<typeof ConfigSchema>;
  */
 export async function loadConfig(root?: string): Promise<Config> {
 	if (!root) {
-		const { findRepoRoot } = await import("./paths.ts");
 		root = await findRepoRoot();
 	}
 
@@ -58,7 +62,9 @@ export async function loadConfig(root?: string): Promise<Config> {
 		return validateConfig(data);
 	} catch (error) {
 		throw new CtxError(
-			`Failed to read config: ${error instanceof Error ? error.message : String(error)}`,
+			`Failed to read config: ${
+				error instanceof Error ? error.message : String(error)
+			}`,
 		);
 	}
 }
@@ -73,7 +79,9 @@ export async function saveConfig(config: Config): Promise<void> {
 		await Bun.write(configPath, JSON.stringify(config, null, 2) + "\n");
 	} catch (error) {
 		throw new CtxError(
-			`Failed to write config: ${error instanceof Error ? error.message : String(error)}`,
+			`Failed to write config: ${
+				error instanceof Error ? error.message : String(error)
+			}`,
 		);
 	}
 }
@@ -229,7 +237,9 @@ export function isInitialized(root: string): boolean {
  * Check if repository is indexed (has database file)
  */
 export async function isIndexed(config: Config): Promise<boolean> {
-	const { resolveAbsolute } = await import("./paths.ts");
-	const dbPath = resolveAbsolute(config.root, config.db);
+	const dbPath = resolveAbsolute({
+		root: config.root,
+		relativePath: config.db,
+	});
 	return existsSync(dbPath);
 }

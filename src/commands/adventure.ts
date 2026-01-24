@@ -12,8 +12,8 @@ import {
 export async function adventure(from: string, to: string): Promise<void> {
 	const ctx = await setupCommand();
 
-	const fromPath = resolveAndValidatePath(ctx, from);
-	const toPath = resolveAndValidatePath(ctx, to);
+	const fromPath = resolveAndValidatePath({ ctx, inputPath: from });
+	const toPath = resolveAndValidatePath({ ctx, inputPath: to });
 
 	// If same file, return direct path
 	if (fromPath === toPath) {
@@ -73,7 +73,7 @@ function findShortestPath(
 		}
 
 		// Get reverse dependencies from 'to' file
-		const reverseDeps = getReverseDependencies(db, to, depth);
+		const reverseDeps = getReverseDependencies({ db, relativePath: to, depth });
 		const reverseSet = new Set(reverseDeps.map((d) => d.path));
 
 		// Check if 'from' is in reverse dependencies
@@ -142,7 +142,7 @@ function reconstructPath(
 		// Get neighbors
 		const neighbors = forward
 			? getDependencies(db, current.file, 1)
-			: getReverseDependencies(db, current.file, 1);
+			: getReverseDependencies({ db, relativePath: current.file, depth: 1 });
 
 		for (const neighbor of neighbors) {
 			if (!visited.has(neighbor.path)) {
