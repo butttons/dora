@@ -17,8 +17,16 @@ export async function graph(
 	flags: Record<string, string | boolean> = {},
 ): Promise<void> {
 	const ctx = await setupCommand();
-	const depth = parseIntFlag(flags, "depth", DEFAULTS.DEPTH);
-	const direction = parseStringFlag(flags, "direction", "both");
+	const depth = parseIntFlag({
+		flags,
+		key: "depth",
+		defaultValue: DEFAULTS.DEPTH,
+	});
+	const direction = parseStringFlag({
+		flags,
+		key: "direction",
+		defaultValue: "both",
+	});
 
 	if (
 		!VALID_DIRECTIONS.includes(direction as (typeof VALID_DIRECTIONS)[number])
@@ -28,7 +36,7 @@ export async function graph(
 		);
 	}
 
-	const relativePath = resolveAndValidatePath(ctx, path);
+	const relativePath = resolveAndValidatePath({ ctx, inputPath: path });
 
 	// Build graph
 	const nodes = new Set<string>();
@@ -45,7 +53,7 @@ export async function graph(
 	}
 
 	if (direction === "rdeps" || direction === "both") {
-		const rdeps = getReverseDependencies(ctx.db, relativePath, depth);
+		const rdeps = getReverseDependencies({ db: ctx.db, relativePath, depth });
 		rdeps.forEach((rdep) => {
 			nodes.add(rdep.path);
 			edges.push({ from: rdep.path, to: relativePath });

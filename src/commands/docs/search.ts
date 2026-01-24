@@ -9,7 +9,11 @@ export async function docsSearch(
 ): Promise<void> {
 	const ctx = await setupCommand();
 	const db = ctx.db;
-	const limit = parseIntFlag(flags, "limit", DEFAULT_LIMIT);
+	const limit = parseIntFlag({
+		flags,
+		key: "limit",
+		defaultValue: DEFAULT_LIMIT,
+	});
 
 	if (limit <= 0) {
 		throw new Error("Limit must be a positive number");

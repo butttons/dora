@@ -23,19 +23,20 @@ export async function index(options: IndexOptions = {}): Promise<void> {
 		`Config loaded: root=${config.root}, scip=${config.scip}, db=${config.db}`,
 	);
 
-	const ignorePatterns = [
-		...(config.ignore || []),
-		...(options.ignore || []),
-	];
+	const ignorePatterns = [...(config.ignore || []), ...(options.ignore || [])];
 
 	if (ignorePatterns.length > 0) {
-		debugIndex(
-			`Ignore patterns configured: ${ignorePatterns.join(", ")}`,
-		);
+		debugIndex(`Ignore patterns configured: ${ignorePatterns.join(", ")}`);
 	}
 
-	const scipPath = resolveAbsolute(config.root, config.scip);
-	const databasePath = resolveAbsolute(config.root, config.db);
+	const scipPath = resolveAbsolute({
+		root: config.root,
+		relativePath: config.scip,
+	});
+	const databasePath = resolveAbsolute({
+		root: config.root,
+		relativePath: config.db,
+	});
 	debugIndex(
 		`Resolved paths: scipPath=${scipPath}, databasePath=${databasePath}`,
 	);

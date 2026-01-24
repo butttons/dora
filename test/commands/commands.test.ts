@@ -1,6 +1,13 @@
 // Integration tests for commands
 
-import { afterAll, beforeAll, describe, expect, test } from "bun:test";
+import {
+	afterAll,
+	afterEach,
+	beforeAll,
+	describe,
+	expect,
+	test,
+} from "bun:test";
 import { existsSync, mkdirSync, rmSync, writeFileSync } from "fs";
 import { join } from "path";
 import { init } from "../../src/commands/init.ts";
@@ -90,6 +97,84 @@ describe("Commands Integration Tests", () => {
 
 			expect(error).not.toBeNull();
 			expect(error?.message).toContain("already initialized");
+		});
+	});
+
+	describe("init command with language flag", () => {
+		const langTestDir = "/tmp/ctx-lang-test-" + Date.now();
+		let savedCwd: string;
+
+		beforeAll(() => {
+			savedCwd = process.cwd();
+			mkdirSync(langTestDir, { recursive: true });
+		});
+
+		afterEach(() => {
+			process.chdir(savedCwd);
+			if (existsSync(join(langTestDir, ".dora"))) {
+				rmSync(join(langTestDir, ".dora"), { recursive: true, force: true });
+			}
+		});
+
+		afterAll(() => {
+			process.chdir(savedCwd);
+			if (existsSync(langTestDir)) {
+				rmSync(langTestDir, { recursive: true, force: true });
+			}
+		});
+
+		test("should initialize with explicit python language", async () => {
+			process.chdir(langTestDir);
+
+			captureOutput();
+			await init({ language: "python" });
+			restoreOutput();
+
+			expect(capturedOutput).toHaveProperty("success", true);
+
+			const configPath = join(langTestDir, ".dora", "config.json");
+			const config = JSON.parse(await Bun.file(configPath).text());
+
+			expect(config.language).toBe("python");
+			expect(config.commands.index).toBe(
+				"scip-python index --output .dora/index.scip",
+			);
+		});
+
+		test("should initialize with explicit rust language", async () => {
+			process.chdir(langTestDir);
+
+			captureOutput();
+			await init({ language: "rust" });
+			restoreOutput();
+
+			expect(capturedOutput).toHaveProperty("success", true);
+
+			const configPath = join(langTestDir, ".dora", "config.json");
+			const config = JSON.parse(await Bun.file(configPath).text());
+
+			expect(config.language).toBe("rust");
+			expect(config.commands.index).toBe(
+				"rust-analyzer scip . --output .dora/index.scip",
+			);
+		});
+
+		test("should fail with invalid language", async () => {
+			process.chdir(langTestDir);
+
+			captureOutput();
+
+			let error: Error | null = null;
+			try {
+				await init({ language: "invalid" as any });
+			} catch (e) {
+				error = e as Error;
+			}
+			restoreOutput();
+
+			expect(error).not.toBeNull();
+			expect(error?.message).toContain("Invalid language");
+			expect(error?.message).toContain("invalid");
 		});
 	});
 

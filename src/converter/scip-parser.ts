@@ -6,7 +6,6 @@
 import { fromBinary } from "@bufbuild/protobuf";
 import {
 	type Document,
-	Index,
 	IndexSchema,
 	type Occurrence,
 	type SymbolInformation,
@@ -256,11 +255,13 @@ export function extractReferences(doc: ParsedDocument): SymbolReference[] {
  * @param symbols Map of symbol -> ParsedSymbol (includes external symbols)
  * @returns The relative path of the file where the symbol is defined, or null if not found
  */
-export function findDefinitionFile(
-	symbol: string,
-	documents: Map<string, ParsedDocument>,
-	symbols: Map<string, ParsedSymbol>,
-): string | null {
+export function findDefinitionFile({
+	symbol,
+	documents,
+}: {
+	symbol: string;
+	documents: Map<string, ParsedDocument>;
+}): string | null {
 	// First, check if it's a local symbol (contains 'local')
 	if (symbol.includes("local")) {
 		// Local symbols are defined in the same file they're used in
@@ -353,10 +354,13 @@ export function buildLookupMaps(scipData: ScipData): {
 /**
  * Get all symbols defined in a document
  */
-export function getDocumentSymbols(
-	doc: ParsedDocument,
-	symbolsById: Map<string, ParsedSymbol>,
-): Array<{
+export function getDocumentSymbols({
+	doc,
+	symbolsById,
+}: {
+	doc: ParsedDocument;
+	symbolsById: Map<string, ParsedSymbol>;
+}): Array<{
 	symbol: string;
 	name?: string;
 	kind: number;
@@ -381,15 +385,16 @@ export function getDocumentSymbols(
  * Get file dependencies for a document
  * Returns a map of file path -> set of symbols used from that file
  */
-export function getFileDependencies(
-	doc: ParsedDocument,
-	documentsByPath: Map<string, ParsedDocument>,
-	symbolsById: Map<string, ParsedSymbol>,
+export function getFileDependencies({
+	doc,
+	definitionsBySymbol,
+}: {
+	doc: ParsedDocument;
 	definitionsBySymbol: Map<
 		string,
 		{ file: string; definition: SymbolDefinition }
-	>,
-): Map<string, Set<string>> {
+	>;
+}): Map<string, Set<string>> {
 	const references = extractReferences(doc);
 	const depsByFile = new Map<string, Set<string>>();
 

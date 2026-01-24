@@ -13,8 +13,12 @@ export async function refs(
 	flags: Record<string, string | boolean> = {},
 ): Promise<void> {
 	const ctx = await setupCommand();
-	const kind = parseOptionalStringFlag(flags, "kind");
-	const limit = parseIntFlag(flags, "limit", DEFAULTS.REFS_LIMIT);
+	const kind = parseOptionalStringFlag({ flags, key: "kind" });
+	const limit = parseIntFlag({
+		flags,
+		key: "limit",
+		defaultValue: DEFAULTS.REFS_LIMIT,
+	});
 
 	const results = getSymbolReferences(ctx.db, query, { kind, limit });
 

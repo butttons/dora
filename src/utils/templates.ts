@@ -5,7 +5,9 @@ import { join } from "path";
 
 import snippetMd from "../templates/docs/SNIPPET.md" with { type: "text" };
 import skillMd from "../templates/docs/SKILL.md" with { type: "text" };
-import cookbookIndexMd from "../templates/cookbook/index.md" with { type: "text" };
+import cookbookIndexMd from "../templates/cookbook/index.md" with {
+	type: "text",
+};
 import cookbookQuickstartMd from "../templates/cookbook/quickstart.md" with {
 	type: "text",
 };
@@ -23,10 +25,13 @@ import cookbookExportsMd from "../templates/cookbook/exports.md" with {
  * Copy a single file if it doesn't exist at target
  * @returns true if copied, false if skipped
  */
-async function copyFileIfNotExists(
-	content: string,
-	targetPath: string,
-): Promise<boolean> {
+async function copyFileIfNotExists({
+	content,
+	targetPath,
+}: {
+	content: string;
+	targetPath: string;
+}): Promise<boolean> {
 	// Check if target file already exists
 	const targetFile = Bun.file(targetPath);
 	if (await targetFile.exists()) {
@@ -72,7 +77,10 @@ export async function copyTemplates(targetDoraDir: string): Promise<void> {
 	];
 
 	// Create subdirectories
-	const subdirs = [join(targetDoraDir, "docs"), join(targetDoraDir, "cookbook")];
+	const subdirs = [
+		join(targetDoraDir, "docs"),
+		join(targetDoraDir, "cookbook"),
+	];
 
 	for (const dir of subdirs) {
 		try {
@@ -84,6 +92,6 @@ export async function copyTemplates(targetDoraDir: string): Promise<void> {
 
 	// Copy each template file
 	for (const { content, target } of templates) {
-		await copyFileIfNotExists(content, target);
+		await copyFileIfNotExists({ content, targetPath: target });
 	}
 }

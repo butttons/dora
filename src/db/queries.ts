@@ -2,47 +2,47 @@
 
 import type { Database } from "bun:sqlite";
 import type {
-  ComplexityMetric,
-  CoupledFiles,
-  Cycle,
-  DependencyNode,
-  Document,
-  DocumentDocRef,
-  DocumentFileRef,
-  DocumentSymbolRef,
-  ExportedSymbol,
-  FileDependency,
-  FileDependent,
-  FileSymbol,
-  Hotspot,
-  ImportedFile,
-  SymbolResult,
-  UnusedSymbol,
+	ComplexityMetric,
+	CoupledFiles,
+	Cycle,
+	DependencyNode,
+	Document,
+	DocumentDocRef,
+	DocumentFileRef,
+	DocumentSymbolRef,
+	ExportedSymbol,
+	FileDependency,
+	FileDependent,
+	FileSymbol,
+	Hotspot,
+	ImportedFile,
+	SymbolResult,
+	UnusedSymbol,
 } from "../types.ts";
 
 export function getFileCount(db: Database): number {
-  const result = db.query("SELECT COUNT(*) as count FROM files").get() as {
-    count: number;
-  };
-  return result.count;
+	const result = db.query("SELECT COUNT(*) as count FROM files").get() as {
+		count: number;
+	};
+	return result.count;
 }
 
 export function getSymbolCount(db: Database): number {
-  const result = db.query("SELECT COUNT(*) as count FROM symbols").get() as {
-    count: number;
-  };
-  return result.count;
+	const result = db.query("SELECT COUNT(*) as count FROM symbols").get() as {
+		count: number;
+	};
+	return result.count;
 }
 
 export function getPackages(db: Database): string[] {
-  const query = `
+	const query = `
     SELECT name
     FROM packages
     ORDER BY name
   `;
 
-  const results = db.query(query).all() as { name: string }[];
-  return results.map((r) => r.name);
+	const results = db.query(query).all() as { name: string }[];
+	return results.map((r) => r.name);
 }
 
 /**
@@ -50,10 +50,10 @@ export function getPackages(db: Database): string[] {
  * Leaf nodes are files that few things depend on, but which have their own dependencies
  */
 export function getLeafNodes(
-  db: Database,
-  maxDependents: number = 0
+	db: Database,
+	maxDependents: number = 0,
 ): string[] {
-  const query = `
+	const query = `
     SELECT
       f.path,
       COUNT(DISTINCT d_out.to_file_id) as dependencies_count,
@@ -78,15 +78,15 @@ export function getLeafNodes(
     LIMIT 100
   `;
 
-  const results = db.query(query).all(maxDependents) as { path: string }[];
-  return results.map((r) => r.path);
+	const results = db.query(query).all(maxDependents) as { path: string }[];
+	return results.map((r) => r.path);
 }
 
 export function getFileSymbols(
-  db: Database,
-  relativePath: string
+	db: Database,
+	relativePath: string,
 ): FileSymbol[] {
-  const query = `
+	const query = `
     SELECT
       s.name,
       s.kind,
@@ -98,25 +98,25 @@ export function getFileSymbols(
     ORDER BY s.start_line
   `;
 
-  const results = db.query(query).all(relativePath) as {
-    name: string;
-    kind: string;
-    start_line: number;
-    end_line: number;
-  }[];
+	const results = db.query(query).all(relativePath) as {
+		name: string;
+		kind: string;
+		start_line: number;
+		end_line: number;
+	}[];
 
-  return results.map((r) => ({
-    name: r.name,
-    kind: r.kind,
-    lines: [r.start_line, r.end_line] as [number, number],
-  }));
+	return results.map((r) => ({
+		name: r.name,
+		kind: r.kind,
+		lines: [r.start_line, r.end_line] as [number, number],
+	}));
 }
 
 export function getFileDependencies(
-  db: Database,
-  relativePath: string
+	db: Database,
+	relativePath: string,
 ): FileDependency[] {
-  const query = `
+	const query = `
     SELECT
       f.path as depends_on,
       d.symbols as symbols_used
@@ -126,22 +126,22 @@ export function getFileDependencies(
     ORDER BY f.path
   `;
 
-  const results = db.query(query).all(relativePath) as {
-    depends_on: string;
-    symbols_used: string | null;
-  }[];
+	const results = db.query(query).all(relativePath) as {
+		depends_on: string;
+		symbols_used: string | null;
+	}[];
 
-  return results.map((r) => ({
-    path: r.depends_on,
-    symbols: r.symbols_used ? JSON.parse(r.symbols_used) : undefined,
-  }));
+	return results.map((r) => ({
+		path: r.depends_on,
+		symbols: r.symbols_used ? JSON.parse(r.symbols_used) : undefined,
+	}));
 }
 
 export function getFileDependents(
-  db: Database,
-  relativePath: string
+	db: Database,
+	relativePath: string,
 ): FileDependent[] {
-  const query = `
+	const query = `
     SELECT
       f.path as dependent,
       d.symbol_count as ref_count
@@ -151,26 +151,26 @@ export function getFileDependents(
     ORDER BY d.symbol_count DESC
   `;
 
-  const results = db.query(query).all(relativePath) as {
-    dependent: string;
-    ref_count: number;
-  }[];
+	const results = db.query(query).all(relativePath) as {
+		dependent: string;
+		ref_count: number;
+	}[];
 
-  return results.map((r) => ({
-    path: r.dependent,
-    refs: r.ref_count,
-  }));
+	return results.map((r) => ({
+		path: r.dependent,
+		refs: r.ref_count,
+	}));
 }
 
 export function searchSymbols(
-  db: Database,
-  searchQuery: string,
-  options: { kind?: string; limit?: number } = {}
+	db: Database,
+	searchQuery: string,
+	options: { kind?: string; limit?: number } = {},
 ): SymbolResult[] {
-  const limit = options.limit || 20;
-  const kindFilter = options.kind !== undefined ? "AND s.kind = ?" : "";
+	const limit = options.limit || 20;
+	const kindFilter = options.kind !== undefined ? "AND s.kind = ?" : "";
 
-  const query = `
+	const query = `
     SELECT
       s.name,
       s.kind,
@@ -185,50 +185,50 @@ export function searchSymbols(
     LIMIT ?
   `;
 
-  const params =
-    options.kind !== undefined
-      ? [`%${searchQuery}%`, options.kind, limit]
-      : [`%${searchQuery}%`, limit];
+	const params =
+		options.kind !== undefined
+			? [`%${searchQuery}%`, options.kind, limit]
+			: [`%${searchQuery}%`, limit];
 
-  const results = db.query(query).all(...params) as {
-    name: string;
-    kind: string;
-    path: string;
-    start_line: number;
-    end_line: number;
-  }[];
+	const results = db.query(query).all(...params) as {
+		name: string;
+		kind: string;
+		path: string;
+		start_line: number;
+		end_line: number;
+	}[];
 
-  return results.map((r) => ({
-    name: r.name,
-    kind: r.kind,
-    path: r.path,
-    lines: [r.start_line, r.end_line] as [number, number],
-  }));
+	return results.map((r) => ({
+		name: r.name,
+		kind: r.kind,
+		path: r.path,
+		lines: [r.start_line, r.end_line] as [number, number],
+	}));
 }
 
 export interface SymbolReferencesResult {
-  symbol_id: number;
-  name: string;
-  kind: string;
-  definition: {
-    path: string;
-    line: number;
-  };
-  references: string[];
+	symbol_id: number;
+	name: string;
+	kind: string;
+	definition: {
+		path: string;
+		line: number;
+	};
+	references: string[];
 }
 
 /**
  * Get all references to a symbol by name
  */
 export function getSymbolReferences(
-  db: Database,
-  symbolName: string,
-  options: { kind?: string; limit?: number } = {}
+	db: Database,
+	symbolName: string,
+	options: { kind?: string; limit?: number } = {},
 ): SymbolReferencesResult[] {
-  const limit = options.limit || 100;
-  const kindFilter = options.kind !== undefined ? "AND s.kind = ?" : "";
+	const limit = options.limit || 100;
+	const kindFilter = options.kind !== undefined ? "AND s.kind = ?" : "";
 
-  const query = `
+	const query = `
     SELECT
       s.id,
       s.name,
@@ -250,39 +250,39 @@ export function getSymbolReferences(
     LIMIT ?
   `;
 
-  const params =
-    options.kind !== undefined
-      ? [`%${symbolName}%`, options.kind, limit]
-      : [`%${symbolName}%`, limit];
+	const params =
+		options.kind !== undefined
+			? [`%${symbolName}%`, options.kind, limit]
+			: [`%${symbolName}%`, limit];
 
-  const rows = db.query(query).all(...params) as {
-    id: number;
-    name: string;
-    kind: string;
-    def_path: string;
-    def_line: number;
-    reference_count: number;
-    ref_paths: string | null;
-  }[];
+	const rows = db.query(query).all(...params) as {
+		id: number;
+		name: string;
+		kind: string;
+		def_path: string;
+		def_line: number;
+		reference_count: number;
+		ref_paths: string | null;
+	}[];
 
-  return rows.map((row) => ({
-    symbol_id: row.id,
-    name: row.name,
-    kind: row.kind,
-    definition: {
-      path: row.def_path,
-      line: row.def_line,
-    },
-    references: row.ref_paths ? row.ref_paths.split(",") : [],
-  }));
+	return rows.map((row) => ({
+		symbol_id: row.id,
+		name: row.name,
+		kind: row.kind,
+		definition: {
+			path: row.def_path,
+			line: row.def_line,
+		},
+		references: row.ref_paths ? row.ref_paths.split(",") : [],
+	}));
 }
 
 export function getDependencies(
-  db: Database,
-  relativePath: string,
-  depth: number
+	db: Database,
+	relativePath: string,
+	depth: number,
 ): DependencyNode[] {
-  const query = `
+	const query = `
     WITH RECURSIVE dep_tree AS (
       -- Base case: start with the target file
       SELECT id, path, 0 as depth
@@ -305,23 +305,23 @@ export function getDependencies(
     ORDER BY depth, path
   `;
 
-  const results = db.query(query).all(relativePath, depth) as {
-    path: string;
-    depth: number;
-  }[];
+	const results = db.query(query).all(relativePath, depth) as {
+		path: string;
+		depth: number;
+	}[];
 
-  return results.map((r) => ({
-    path: r.path,
-    depth: r.depth,
-  }));
+	return results.map((r) => ({
+		path: r.path,
+		depth: r.depth,
+	}));
 }
 
 export function getReverseDependencies(
-  db: Database,
-  relativePath: string,
-  depth: number
+	db: Database,
+	relativePath: string,
+	depth: number,
 ): DependencyNode[] {
-  const query = `
+	const query = `
     WITH RECURSIVE rdep_tree AS (
       -- Base case: start with the target file
       SELECT id, path, 0 as depth
@@ -344,42 +344,42 @@ export function getReverseDependencies(
     ORDER BY depth, path
   `;
 
-  const results = db.query(query).all(relativePath, depth) as {
-    path: string;
-    depth: number;
-  }[];
+	const results = db.query(query).all(relativePath, depth) as {
+		path: string;
+		depth: number;
+	}[];
 
-  return results.map((r) => ({
-    path: r.path,
-    depth: r.depth,
-  }));
+	return results.map((r) => ({
+		path: r.path,
+		depth: r.depth,
+	}));
 }
 
 /**
  * Check if a file exists in the database
  */
 export function fileExists(db: Database, relativePath: string): boolean {
-  const query = "SELECT 1 FROM files WHERE path = ? LIMIT 1";
-  const result = db.query(query).get(relativePath);
-  return result !== null;
+	const query = "SELECT 1 FROM files WHERE path = ? LIMIT 1";
+	const result = db.query(query).get(relativePath);
+	return result !== null;
 }
 
 /**
  * Get files in a directory (or matching a path prefix)
  */
 export function getFilesInDirectory(
-  db: Database,
-  directoryPath: string,
-  options: { limit?: number; exactMatch?: boolean } = {}
+	db: Database,
+	directoryPath: string,
+	options: { limit?: number; exactMatch?: boolean } = {},
 ): string[] {
-  const limit = options.limit || 50;
+	const limit = options.limit || 50;
 
-  // For exact directory matching, look for files like "dir/%" but not "dir-other/%"
-  const pattern = options.exactMatch
-    ? `${directoryPath}/%`
-    : `${directoryPath}%`;
+	// For exact directory matching, look for files like "dir/%" but not "dir-other/%"
+	const pattern = options.exactMatch
+		? `${directoryPath}/%`
+		: `${directoryPath}%`;
 
-  const query = `
+	const query = `
     SELECT path
     FROM files
     WHERE path LIKE ?
@@ -387,8 +387,8 @@ export function getFilesInDirectory(
     LIMIT ?
   `;
 
-  const results = db.query(query).all(pattern, limit) as { path: string }[];
-  return results.map((r) => r.path);
+	const results = db.query(query).all(pattern, limit) as { path: string }[];
+	return results.map((r) => r.path);
 }
 
 /**
@@ -397,41 +397,41 @@ export function getFilesInDirectory(
  * Returns the path if found, or null if not found.
  */
 export function findIndexFile(
-  db: Database,
-  directoryPath: string
+	db: Database,
+	directoryPath: string,
 ): string | null {
-  // Common index file patterns (order matters - prefer TypeScript)
-  const indexPatterns = [
-    `${directoryPath}/index.ts`,
-    `${directoryPath}/index.tsx`,
-    `${directoryPath}/index.js`,
-    `${directoryPath}/index.jsx`,
-    `${directoryPath}/index.mts`,
-    `${directoryPath}/index.mjs`,
-    `${directoryPath}/index.cjs`,
-    `${directoryPath}/index.py`,
-    `${directoryPath}/index.go`,
-    `${directoryPath}/mod.rs`, // Rust uses mod.rs
-    `${directoryPath}/lib.rs`, // Rust lib crates
-  ];
+	// Common index file patterns (order matters - prefer TypeScript)
+	const indexPatterns = [
+		`${directoryPath}/index.ts`,
+		`${directoryPath}/index.tsx`,
+		`${directoryPath}/index.js`,
+		`${directoryPath}/index.jsx`,
+		`${directoryPath}/index.mts`,
+		`${directoryPath}/index.mjs`,
+		`${directoryPath}/index.cjs`,
+		`${directoryPath}/index.py`,
+		`${directoryPath}/index.go`,
+		`${directoryPath}/mod.rs`, // Rust uses mod.rs
+		`${directoryPath}/lib.rs`, // Rust lib crates
+	];
 
-  // Try each pattern in order
-  for (const pattern of indexPatterns) {
-    const query = "SELECT path FROM files WHERE path = ? LIMIT 1";
-    const result = db.query(query).get(pattern) as { path: string } | null;
-    if (result) {
-      return result.path;
-    }
-  }
+	// Try each pattern in order
+	for (const pattern of indexPatterns) {
+		const query = "SELECT path FROM files WHERE path = ? LIMIT 1";
+		const result = db.query(query).get(pattern) as { path: string } | null;
+		if (result) {
+			return result.path;
+		}
+	}
 
-  return null;
+	return null;
 }
 
 export function getFileExports(
-  db: Database,
-  relativePath: string
+	db: Database,
+	relativePath: string,
 ): ExportedSymbol[] {
-  const query = `
+	const query = `
     SELECT
       s.name,
       s.kind,
@@ -446,25 +446,25 @@ export function getFileExports(
     ORDER BY start_line
   `;
 
-  const results = db.query(query).all(relativePath) as {
-    name: string;
-    kind: string;
-    start_line: number;
-    end_line: number;
-  }[];
+	const results = db.query(query).all(relativePath) as {
+		name: string;
+		kind: string;
+		start_line: number;
+		end_line: number;
+	}[];
 
-  return results.map((r) => ({
-    name: r.name,
-    kind: r.kind,
-    lines: [r.start_line, r.end_line] as [number, number],
-  }));
+	return results.map((r) => ({
+		name: r.name,
+		kind: r.kind,
+		lines: [r.start_line, r.end_line] as [number, number],
+	}));
 }
 
 export function getPackageExports(
-  db: Database,
-  packageName: string
+	db: Database,
+	packageName: string,
 ): ExportedSymbol[] {
-  const query = `
+	const query = `
     SELECT
       s.name,
       s.kind,
@@ -480,27 +480,27 @@ export function getPackageExports(
     ORDER BY f.path, start_line
   `;
 
-  const results = db.query(query).all(packageName) as {
-    name: string;
-    kind: string;
-    file: string;
-    start_line: number;
-    end_line: number;
-  }[];
+	const results = db.query(query).all(packageName) as {
+		name: string;
+		kind: string;
+		file: string;
+		start_line: number;
+		end_line: number;
+	}[];
 
-  return results.map((r) => ({
-    name: r.name,
-    kind: r.kind,
-    file: r.file,
-    lines: [r.start_line, r.end_line] as [number, number],
-  }));
+	return results.map((r) => ({
+		name: r.name,
+		kind: r.kind,
+		file: r.file,
+		lines: [r.start_line, r.end_line] as [number, number],
+	}));
 }
 
 export function getFileImports(
-  db: Database,
-  relativePath: string
+	db: Database,
+	relativePath: string,
 ): ImportedFile[] {
-  const query = `
+	const query = `
     SELECT
       f.path as file,
       d.symbols
@@ -510,19 +510,19 @@ export function getFileImports(
     ORDER BY f.path
   `;
 
-  const results = db.query(query).all(relativePath) as {
-    file: string;
-    symbols: string | null;
-  }[];
+	const results = db.query(query).all(relativePath) as {
+		file: string;
+		symbols: string | null;
+	}[];
 
-  return results.map((r) => ({
-    file: r.file,
-    symbols: r.symbols ? JSON.parse(r.symbols) : [],
-  }));
+	return results.map((r) => ({
+		file: r.file,
+		symbols: r.symbols ? JSON.parse(r.symbols) : [],
+	}));
 }
 
 export function getUnusedSymbols(db: Database, limit: number): UnusedSymbol[] {
-  const query = `
+	const query = `
     SELECT
       s.name,
       s.kind,
@@ -539,24 +539,24 @@ export function getUnusedSymbols(db: Database, limit: number): UnusedSymbol[] {
     LIMIT ?
   `;
 
-  const results = db.query(query).all(limit) as {
-    name: string;
-    kind: string;
-    file: string;
-    start_line: number;
-    end_line: number;
-  }[];
+	const results = db.query(query).all(limit) as {
+		name: string;
+		kind: string;
+		file: string;
+		start_line: number;
+		end_line: number;
+	}[];
 
-  return results.map((r) => ({
-    name: r.name,
-    file: r.file,
-    lines: [r.start_line, r.end_line] as [number, number],
-    kind: r.kind,
-  }));
+	return results.map((r) => ({
+		name: r.name,
+		file: r.file,
+		lines: [r.start_line, r.end_line] as [number, number],
+		kind: r.kind,
+	}));
 }
 
 export function getMostReferencedFiles(db: Database, limit: number): Hotspot[] {
-  const query = `
+	const query = `
     SELECT
       f.path as file,
       f.dependent_count as referenced_by
@@ -566,19 +566,19 @@ export function getMostReferencedFiles(db: Database, limit: number): Hotspot[] {
     LIMIT ?
   `;
 
-  const results = db.query(query).all(limit) as {
-    file: string;
-    referenced_by: number;
-  }[];
+	const results = db.query(query).all(limit) as {
+		file: string;
+		referenced_by: number;
+	}[];
 
-  return results.map((r) => ({
-    file: r.file,
-    count: r.referenced_by,
-  }));
+	return results.map((r) => ({
+		file: r.file,
+		count: r.referenced_by,
+	}));
 }
 
 export function getMostDependentFiles(db: Database, limit: number): Hotspot[] {
-  const query = `
+	const query = `
     SELECT
       f.path as file,
       f.dependency_count as depends_on
@@ -588,19 +588,19 @@ export function getMostDependentFiles(db: Database, limit: number): Hotspot[] {
     LIMIT ?
   `;
 
-  const results = db.query(query).all(limit) as {
-    file: string;
-    depends_on: number;
-  }[];
+	const results = db.query(query).all(limit) as {
+		file: string;
+		depends_on: number;
+	}[];
 
-  return results.map((r) => ({
-    file: r.file,
-    count: r.depends_on,
-  }));
+	return results.map((r) => ({
+		file: r.file,
+		count: r.depends_on,
+	}));
 }
 
 export function getCycles(db: Database, limit: number = 50): Cycle[] {
-  const query = `
+	const query = `
 		SELECT
 			f1.path as path1,
 			f2.path as path2
@@ -614,22 +614,22 @@ export function getCycles(db: Database, limit: number = 50): Cycle[] {
 		LIMIT ?
 	`;
 
-  const results = db.query(query).all(limit) as {
-    path1: string;
-    path2: string;
-  }[];
+	const results = db.query(query).all(limit) as {
+		path1: string;
+		path2: string;
+	}[];
 
-  return results.map((r) => ({
-    files: [r.path1, r.path2, r.path1],
-    length: 2,
-  }));
+	return results.map((r) => ({
+		files: [r.path1, r.path2, r.path1],
+		length: 2,
+	}));
 }
 
 export function getCoupledFiles(
-  db: Database,
-  threshold: number = 5
+	db: Database,
+	threshold: number = 5,
 ): CoupledFiles[] {
-  const query = `
+	const query = `
     SELECT
       f1.path as file1,
       f2.path as file2,
@@ -646,21 +646,21 @@ export function getCoupledFiles(
     ORDER BY total_coupling DESC
   `;
 
-  return db.query(query).all(threshold) as CoupledFiles[];
+	return db.query(query).all(threshold) as CoupledFiles[];
 }
 
 export function getComplexityMetrics(
-  db: Database,
-  sortBy: string = "complexity"
+	db: Database,
+	sortBy: string = "complexity",
 ): ComplexityMetric[] {
-  const orderByClause =
-    sortBy === "symbols"
-      ? "f.symbol_count DESC"
-      : sortBy === "stability"
-      ? "stability_ratio DESC"
-      : "complexity_score DESC";
+	const orderByClause =
+		sortBy === "symbols"
+			? "f.symbol_count DESC"
+			: sortBy === "stability"
+				? "stability_ratio DESC"
+				: "complexity_score DESC";
 
-  const query = `
+	const query = `
     SELECT
       f.path,
       f.symbol_count,
@@ -673,17 +673,17 @@ export function getComplexityMetrics(
     LIMIT 20
   `;
 
-  return db.query(query).all() as ComplexityMetric[];
+	return db.query(query).all() as ComplexityMetric[];
 }
 
 /**
  * Get documents referencing a symbol
  */
 export function getDocumentsForSymbol(
-  db: Database,
-  symbolId: number
+	db: Database,
+	symbolId: number,
 ): Document[] {
-  const query = `
+	const query = `
     SELECT d.path, d.type
     FROM documents d
     JOIN document_symbol_refs dsr ON dsr.document_id = d.id
@@ -691,14 +691,14 @@ export function getDocumentsForSymbol(
     ORDER BY d.path
   `;
 
-  return db.query(query).all(symbolId) as Document[];
+	return db.query(query).all(symbolId) as Document[];
 }
 
 /**
  * Get documents referencing a file
  */
 export function getDocumentsForFile(db: Database, fileId: number): Document[] {
-  const query = `
+	const query = `
     SELECT d.path, d.type
     FROM documents d
     JOIN document_file_refs dfr ON dfr.document_id = d.id
@@ -706,22 +706,22 @@ export function getDocumentsForFile(db: Database, fileId: number): Document[] {
     ORDER BY d.path
   `;
 
-  return db.query(query).all(fileId) as Document[];
+	return db.query(query).all(fileId) as Document[];
 }
 
 /**
  * Get symbols and files referenced by a document with line numbers
  */
 export function getDocumentReferences(
-  db: Database,
-  docPath: string
+	db: Database,
+	docPath: string,
 ): {
-  symbols: DocumentSymbolRef[];
-  files: DocumentFileRef[];
-  documents: DocumentDocRef[];
+	symbols: DocumentSymbolRef[];
+	files: DocumentFileRef[];
+	documents: DocumentDocRef[];
 } {
-  // Get symbols with aggregated line numbers
-  const symbolQuery = `
+	// Get symbols with aggregated line numbers
+	const symbolQuery = `
     SELECT
       s.name,
       s.kind,
@@ -737,8 +737,8 @@ export function getDocumentReferences(
     ORDER BY s.name
   `;
 
-  // Get files with aggregated line numbers
-  const fileQuery = `
+	// Get files with aggregated line numbers
+	const fileQuery = `
     SELECT
       f.path,
       GROUP_CONCAT(dfr.line) as lines
@@ -750,8 +750,8 @@ export function getDocumentReferences(
     ORDER BY f.path
   `;
 
-  // Get documents with aggregated line numbers
-  const docQuery = `
+	// Get documents with aggregated line numbers
+	const docQuery = `
     SELECT
       d2.path,
       GROUP_CONCAT(ddr.line) as lines
@@ -763,115 +763,115 @@ export function getDocumentReferences(
     ORDER BY d2.path
   `;
 
-  const symbolRows = db.query(symbolQuery).all(docPath) as Array<{
-    name: string;
-    kind: string;
-    path: string;
-    start_line: number;
-    lines: string;
-  }>;
+	const symbolRows = db.query(symbolQuery).all(docPath) as Array<{
+		name: string;
+		kind: string;
+		path: string;
+		start_line: number;
+		lines: string;
+	}>;
 
-  const fileRows = db.query(fileQuery).all(docPath) as Array<{
-    path: string;
-    lines: string;
-  }>;
+	const fileRows = db.query(fileQuery).all(docPath) as Array<{
+		path: string;
+		lines: string;
+	}>;
 
-  const docRows = db.query(docQuery).all(docPath) as Array<{
-    path: string;
-    lines: string;
-  }>;
+	const docRows = db.query(docQuery).all(docPath) as Array<{
+		path: string;
+		lines: string;
+	}>;
 
-  const symbols = symbolRows.map((row) => ({
-    name: row.name,
-    kind: row.kind,
-    path: row.path,
-    start_line: row.start_line,
-    lines: row.lines.split(",").map((l) => parseInt(l, 10)),
-  }));
+	const symbols = symbolRows.map((row) => ({
+		name: row.name,
+		kind: row.kind,
+		path: row.path,
+		start_line: row.start_line,
+		lines: row.lines.split(",").map((l) => parseInt(l, 10)),
+	}));
 
-  const files = fileRows.map((row) => ({
-    path: row.path,
-    lines: row.lines.split(",").map((l) => parseInt(l, 10)),
-  }));
+	const files = fileRows.map((row) => ({
+		path: row.path,
+		lines: row.lines.split(",").map((l) => parseInt(l, 10)),
+	}));
 
-  const documents = docRows.map((row) => ({
-    path: row.path,
-    lines: row.lines.split(",").map((l) => parseInt(l, 10)),
-  }));
+	const documents = docRows.map((row) => ({
+		path: row.path,
+		lines: row.lines.split(",").map((l) => parseInt(l, 10)),
+	}));
 
-  return { symbols, files, documents };
+	return { symbols, files, documents };
 }
 
 /**
  * Get document content and metadata
  */
 export function getDocumentContent(
-  db: Database,
-  docPath: string
+	db: Database,
+	docPath: string,
 ): {
-  path: string;
-  type: string;
-  content: string;
-  symbol_count: number;
-  file_count: number;
-  document_count: number;
+	path: string;
+	type: string;
+	content: string;
+	symbol_count: number;
+	file_count: number;
+	document_count: number;
 } | null {
-  const query = `
+	const query = `
     SELECT path, type, content, symbol_count, file_count, document_count
     FROM documents
     WHERE path = ?
   `;
 
-  return db.query(query).get(docPath) as {
-    path: string;
-    type: string;
-    content: string;
-    symbol_count: number;
-    file_count: number;
-    document_count: number;
-  } | null;
+	return db.query(query).get(docPath) as {
+		path: string;
+		type: string;
+		content: string;
+		symbol_count: number;
+		file_count: number;
+		document_count: number;
+	} | null;
 }
 
 /**
  * Get document count
  */
 export function getDocumentCount(db: Database): number {
-  const result = db.query("SELECT COUNT(*) as count FROM documents").get() as {
-    count: number;
-  };
-  return result.count;
+	const result = db.query("SELECT COUNT(*) as count FROM documents").get() as {
+		count: number;
+	};
+	return result.count;
 }
 
 /**
  * Get document counts by type
  */
 export function getDocumentCountsByType(
-  db: Database
+	db: Database,
 ): Array<{ type: string; count: number }> {
-  const query = `
+	const query = `
     SELECT type, COUNT(*) as count
     FROM documents
     GROUP BY type
     ORDER BY count DESC
   `;
 
-  return db.query(query).all() as Array<{ type: string; count: number }>;
+	return db.query(query).all() as Array<{ type: string; count: number }>;
 }
 
 /**
  * Search documents by content (case-insensitive LIKE search)
  */
 export function searchDocumentContent(
-  db: Database,
-  searchQuery: string,
-  limit: number = 20
+	db: Database,
+	searchQuery: string,
+	limit: number = 20,
 ): Array<{
-  path: string;
-  type: string;
-  symbol_count: number;
-  file_count: number;
+	path: string;
+	type: string;
+	symbol_count: number;
+	file_count: number;
 }> {
-  const query = `
+	const query = `
     SELECT path, type, symbol_count, file_count
     FROM documents
     WHERE content LIKE ?
@@ -879,10 +879,10 @@ export function searchDocumentContent(
     LIMIT ?
   `;
 
-  return db.query(query).all(`%${searchQuery}%`, limit) as Array<{
-    path: string;
-    type: string;
-    symbol_count: number;
-    file_count: number;
-  }>;
+	return db.query(query).all(`%${searchQuery}%`, limit) as Array<{
+		path: string;
+		type: string;
+		symbol_count: number;
+		file_count: number;
+	}>;
 }

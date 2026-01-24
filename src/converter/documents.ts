@@ -37,17 +37,27 @@ interface DocumentReference {
 /**
  * Process documentation files and index them in the database
  */
-export async function processDocuments(
-	db: Database,
-	repoRoot: string,
-	mode: "full" | "incremental",
-): Promise<DocumentProcessingStats> {
+export async function processDocuments({
+	db,
+	repoRoot,
+	mode,
+	ignorePatterns = [],
+}: {
+	db: Database;
+	repoRoot: string;
+	mode: "full" | "incremental";
+	ignorePatterns?: string[];
+}): Promise<DocumentProcessingStats> {
 	debugDocs("Starting document processing in %s mode", mode);
 
 	const startTime = Date.now();
 
 	// Scan for document files
-	const scannedDocs = await scanDocumentFiles(repoRoot);
+	const scannedDocs = await scanDocumentFiles({
+		repoRoot,
+		extensions: [".md", ".txt"],
+		ignorePatterns,
+	});
 	debugDocs("Scanned %d document files", scannedDocs.length);
 
 	let docsToProcess: DocumentFile[];
@@ -65,7 +75,7 @@ export async function processDocuments(
 		}
 
 		// Filter to only changed documents
-		docsToProcess = filterChangedDocuments(existingDocs, scannedDocs);
+		docsToProcess = filterChangedDocuments({ existingDocs, scannedDocs });
 		debugDocs("Incremental mode: %d documents changed", docsToProcess.length);
 
 		// Remove documents that no longer exist
@@ -98,22 +108,9 @@ export async function processDocuments(
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `);
 
-	const insertSymRefStmt = db.prepare(`
-    INSERT INTO document_symbol_refs (document_id, symbol_id, line)
-    VALUES (?, ?, ?)
-  `);
-
-	const insertFileRefStmt = db.prepare(`
-    INSERT INTO document_file_refs (document_id, file_id, line)
-    VALUES (?, ?, ?)
-  `);
-
-	const insertDocRefStmt = db.prepare(`
-    INSERT INTO document_document_refs (document_id, referenced_document_id, line)
-    VALUES (?, ?, ?)
-  `);
-
 	const getDocIdStmt = db.prepare("SELECT id FROM documents WHERE path = ?");
+
+	const BATCH_SIZE = 500;
 
 	for (const doc of docsToProcess) {
 		try {
@@ -121,7 +118,7 @@ export async function processDocuments(
 			const content = await Bun.file(fullPath).text();
 
 			// Extract references from content
-			const refs = extractReferences(content, db);
+			const refs = extractReferences({ content, db });
 
 			// Insert document
 			const now = Date.now();
@@ -154,20 +151,29 @@ export async function processDocuments(
 				docRow.id,
 			]);
 
-			// Insert symbol references
-			for (const symRef of refs.symbolRefs) {
-				insertSymRefStmt.run(docRow.id, symRef.symbolId, symRef.line);
-			}
+			batchInsert({
+				db,
+				table: "document_symbol_refs",
+				columns: ["document_id", "symbol_id", "line"],
+				rows: refs.symbolRefs.map((r) => [docRow.id, r.symbolId, r.line]),
+				batchSize: BATCH_SIZE,
+			});
 
-			// Insert file references
-			for (const fileRef of refs.fileRefs) {
-				insertFileRefStmt.run(docRow.id, fileRef.fileId, fileRef.line);
-			}
+			batchInsert({
+				db,
+				table: "document_file_refs",
+				columns: ["document_id", "file_id", "line"],
+				rows: refs.fileRefs.map((r) => [docRow.id, r.fileId, r.line]),
+				batchSize: BATCH_SIZE,
+			});
 
-			// Insert document references
-			for (const docRef of refs.docRefs) {
-				insertDocRefStmt.run(docRow.id, docRef.docId, docRef.line);
-			}
+			batchInsert({
+				db,
+				table: "document_document_refs",
+				columns: ["document_id", "referenced_document_id", "line"],
+				rows: refs.docRefs.map((r) => [docRow.id, r.docId, r.line]),
+				batchSize: BATCH_SIZE,
+			});
 
 			processed++;
 		} catch (error) {
@@ -193,7 +199,13 @@ export async function processDocuments(
 /**
  * Extract references to symbols and files from document content with line numbers
  */
-function extractReferences(content: string, db: Database): DocumentReference {
+function extractReferences({
+	content,
+	db,
+}: {
+	content: string;
+	db: Database;
+}): DocumentReference {
 	const symbolRefs: SymbolReference[] = [];
 	const fileRefs: FileReference[] = [];
 	const docRefs: DocReference[] = [];
@@ -207,12 +219,14 @@ function extractReferences(content: string, db: Database): DocumentReference {
 	// Get eligible symbols (non-local, specific kinds only)
 	// Order by name length DESC to match longer names first (e.g., "AuthService" before "Auth")
 	const symbols = db
-		.query(`
+		.query(
+			`
     SELECT id, name FROM symbols
     WHERE is_local = 0
       AND kind IN ('class', 'function', 'interface', 'method', 'type', 'type_alias', 'enum')
     ORDER BY LENGTH(name) DESC
-  `)
+  `,
+		)
 		.all() as Array<{ id: number; name: string }>;
 
 	// Get all indexed files
@@ -221,22 +235,42 @@ function extractReferences(content: string, db: Database): DocumentReference {
 		path: string;
 	}>;
 
-	// Process each line
+	const filePathMap = new Map<string, number>();
+	for (const file of files) {
+		filePathMap.set(file.path, file.id);
+	}
+
+	const docPathMap = new Map<string, number>();
+	const docs = db.query("SELECT id, path FROM documents").all() as Array<{
+		id: number;
+		path: string;
+	}>;
+	for (const doc of docs) {
+		docPathMap.set(doc.path, doc.id);
+	}
+
+	const allContent = content;
+	for (const sym of symbols) {
+		const escapedName = escapeRegex(sym.name);
+		const regex = new RegExp(`\\b${escapedName}\\b`, "gm");
+		let match;
+
+		while ((match = regex.exec(allContent)) !== null) {
+			const lineNumber = allContent
+				.substring(0, match.index)
+				.split("\n").length;
+
+			if (!symbolRefsMap.has(sym.id)) {
+				symbolRefsMap.set(sym.id, new Set());
+			}
+			symbolRefsMap.get(sym.id)!.add(lineNumber);
+		}
+	}
+
+	// Process each line for file path matching
 	for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
 		const lineContent = lines[lineIndex];
 		const lineNumber = lineIndex + 1; // 1-indexed
-
-		// Match symbol names with word boundaries
-		for (const sym of symbols) {
-			const escapedName = escapeRegex(sym.name);
-			const regex = new RegExp(`\\b${escapedName}\\b`);
-			if (regex.test(lineContent)) {
-				if (!symbolRefsMap.has(sym.id)) {
-					symbolRefsMap.set(sym.id, new Set());
-				}
-				symbolRefsMap.get(sym.id)!.add(lineNumber);
-			}
-		}
 
 		// Match file paths (direct mentions)
 		for (const file of files) {
@@ -262,29 +296,21 @@ function extractReferences(content: string, db: Database): DocumentReference {
 			// Normalize path
 			const normalized = normalizePath(linkPath);
 
-			// Check if it's a code file
-			const fileRow = db
-				.query("SELECT id FROM files WHERE path = ?")
-				.get(normalized) as { id: number } | null;
-
-			if (fileRow) {
-				if (!fileRefsMap.has(fileRow.id)) {
-					fileRefsMap.set(fileRow.id, new Set());
+			const fileId = filePathMap.get(normalized);
+			if (fileId !== undefined) {
+				if (!fileRefsMap.has(fileId)) {
+					fileRefsMap.set(fileId, new Set());
 				}
-				fileRefsMap.get(fileRow.id)!.add(lineNumber);
+				fileRefsMap.get(fileId)!.add(lineNumber);
 				continue;
 			}
 
-			// Check if it's a document file
-			const docRow = db
-				.query("SELECT id FROM documents WHERE path = ?")
-				.get(normalized) as { id: number } | null;
-
-			if (docRow) {
-				if (!docRefsMap.has(docRow.id)) {
-					docRefsMap.set(docRow.id, new Set());
+			const docId = docPathMap.get(normalized);
+			if (docId !== undefined) {
+				if (!docRefsMap.has(docId)) {
+					docRefsMap.set(docId, new Set());
 				}
-				docRefsMap.get(docRow.id)!.add(lineNumber);
+				docRefsMap.get(docId)!.add(lineNumber);
 			}
 		}
 	}
@@ -355,4 +381,39 @@ function normalizePath(path: string): string {
 	}
 
 	return path;
+}
+
+/**
+ * Insert rows in batches for better performance
+ */
+function batchInsert({
+	db,
+	table,
+	columns,
+	rows,
+	batchSize,
+}: {
+	db: Database;
+	table: string;
+	columns: string[];
+	rows: Array<Array<string | number>>;
+	batchSize: number;
+}): void {
+	if (rows.length === 0) {
+		return;
+	}
+
+	const columnList = columns.join(", ");
+
+	for (let i = 0; i < rows.length; i += batchSize) {
+		const batch = rows.slice(i, i + batchSize);
+		const valuePlaceholders = batch
+			.map(() => `(${columns.map(() => "?").join(", ")})`)
+			.join(", ");
+
+		const sql = `INSERT INTO ${table} (${columnList}) VALUES ${valuePlaceholders}`;
+		const flatValues = batch.flat();
+
+		db.run(sql, flatValues);
+	}
 }

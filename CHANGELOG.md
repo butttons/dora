@@ -1,5 +1,13 @@
 # @butttons/dora
 
+## 1.4.5
+
+### Patch Changes
+
+- Add `--language` flag to `dora init` for explicit language specification (typescript, javascript, python, rust, go, java)
+- Optimize document processing performance and fix `--ignore` flag handling
+- Refactor multi-parameter functions to use object parameters for better readability and maintainability
+
 ## 1.4.4
 
 ### Patch Changes

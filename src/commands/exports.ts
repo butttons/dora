@@ -14,9 +14,9 @@ export async function exports(
 	const ctx = await setupCommand();
 
 	// Try as file path first
-	const relativePath = resolvePath(ctx, target);
+	const relativePath = resolvePath({ ctx: { ctx, inputPath: target } });
 
-	if (fileExists(ctx.db, relativePath)) {
+	if (fileExists({ db: ctx.db, relativePath })) {
 		const exportedSymbols = getFileExports(ctx.db, relativePath);
 		if (exportedSymbols.length > 0) {
 			const result: ExportsResult = {

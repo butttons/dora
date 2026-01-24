@@ -12,12 +12,20 @@ export interface DocumentFile {
 /**
  * Scan for documentation files in the repository with .gitignore support
  */
-export async function scanDocumentFiles(
-	repoRoot: string,
-	extensions: string[] = [".md", ".txt"],
-): Promise<DocumentFile[]> {
+export async function scanDocumentFiles({
+	repoRoot,
+	extensions = [".md", ".txt"],
+	ignorePatterns = [],
+}: {
+	repoRoot: string;
+	extensions?: string[];
+	ignorePatterns?: string[];
+}): Promise<DocumentFile[]> {
 	debugScanner("Scanning for document files in %s", repoRoot);
 	debugScanner("Extensions: %o", extensions);
+	if (ignorePatterns.length > 0) {
+		debugScanner("User ignore patterns: %o", ignorePatterns);
+	}
 
 	// Load .gitignore patterns
 	const ig = await loadGitignorePatterns(repoRoot);
@@ -35,6 +43,12 @@ export async function scanDocumentFiles(
 		"out/",
 		"*.log",
 	]);
+
+	// Add user-provided ignore patterns
+	if (ignorePatterns.length > 0) {
+		ig.add(ignorePatterns);
+		debugScanner("Added %d user ignore patterns", ignorePatterns.length);
+	}
 
 	const documents: DocumentFile[] = [];
 	await walkDirectory(repoRoot, repoRoot, extensions, ig, documents);
@@ -121,10 +135,13 @@ async function walkDirectory(
 /**
  * Filter documents based on modification time (for incremental indexing)
  */
-export function filterChangedDocuments(
-	existingDocs: Map<string, number>, // path -> mtime
-	scannedDocs: DocumentFile[],
-): DocumentFile[] {
+export function filterChangedDocuments({
+	existingDocs,
+	scannedDocs,
+}: {
+	existingDocs: Map<string, number>;
+	scannedDocs: DocumentFile[];
+}): DocumentFile[] {
 	return scannedDocs.filter((doc) => {
 		const existingMtime = existingDocs.get(doc.path);
 		if (!existingMtime) {

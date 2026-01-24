@@ -6,7 +6,11 @@ export async function lost(
 	flags: Record<string, string | boolean> = {},
 ): Promise<void> {
 	const ctx = await setupCommand();
-	const limit = parseIntFlag(flags, "limit", DEFAULTS.UNUSED_LIMIT);
+	const limit = parseIntFlag({
+		flags,
+		key: "limit",
+		defaultValue: DEFAULTS.UNUSED_LIMIT,
+	});
 
 	const unusedSymbols = getUnusedSymbols(ctx.db, limit);
 

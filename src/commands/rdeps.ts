@@ -13,8 +13,12 @@ export async function rdeps(
 	flags: Record<string, string | boolean> = {},
 ): Promise<void> {
 	const ctx = await setupCommand();
-	const depth = parseIntFlag(flags, "depth", DEFAULTS.DEPTH);
-	const relativePath = resolveAndValidatePath(ctx, path);
+	const depth = parseIntFlag({
+		flags,
+		key: "depth",
+		defaultValue: DEFAULTS.DEPTH,
+	});
+	const relativePath = resolveAndValidatePath({ ctx, inputPath: path });
 
 	const dependents = getReverseDependencies(ctx.db, relativePath, depth);
 

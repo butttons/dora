@@ -109,6 +109,70 @@ export function getDependencies(db: Database, path: string): DependencyNode[] {
 
 **Note:** Generated files (like `scip_pb.ts`) are exempt from these rules.
 
+### Function Parameters
+
+Functions with more than one parameter must use a single object parameter instead of multiple positional parameters.
+
+**Rules:**
+
+1. **Single parameter functions** - Can use a simple parameter type
+2. **Multiple parameters** - Must use a single object parameter with named properties
+
+**Good:**
+
+```typescript
+// Single parameter - OK
+function getSymbol(id: number): Symbol {
+  // Implementation
+}
+
+// Multiple parameters - use object
+function createDocument(params: {
+  path: string;
+  type: string;
+  content: string;
+  mtime: number;
+}): Document {
+  // Implementation
+}
+
+// Better with type alias
+type CreateDocumentParams = {
+  path: string;
+  type: string;
+  content: string;
+  mtime: number;
+};
+
+function createDocument(params: CreateDocumentParams): Document {
+  // Implementation
+}
+```
+
+**Bad:**
+
+```typescript
+// BAD - Multiple positional parameters
+function createDocument(
+  path: string,
+  type: string,
+  content: string,
+  mtime: number,
+): Document {
+  // Implementation
+}
+
+// BAD - Two or more parameters
+function batchInsert(
+  db: Database,
+  table: string,
+  columns: string[],
+  rows: Array<Array<string | number>>,
+): void {
+  // Implementation
+}
+```
+
 ## Directory Structure
 
 Note: Example scip files in `example` folder
