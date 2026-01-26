@@ -1,5 +1,12 @@
 # @butttons/dora
 
+## 1.4.6
+
+### Patch Changes
+
+- Fix indexer crash: update convertToDatabase call to use object parameters instead of positional arguments
+- Fix database lock error during full rebuild by closing existing connections and removing database file before reindexing
+
 ## 1.4.5
 
 ### Patch Changes
