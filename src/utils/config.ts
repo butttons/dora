@@ -145,8 +145,7 @@ function detectWorkspaceType(root: string): "bun" | "pnpm" | "yarn" | null {
 			if (packageJson.workspaces) {
 				return "yarn";
 			}
-		} catch {
-		}
+		} catch {}
 	}
 
 	return null;

@@ -75,24 +75,24 @@ export async function index(options: IndexOptions = {}): Promise<void> {
 	}
 	debugIndex("SCIP file verified");
 
+	debugIndex("Closing any existing database connection...");
+	closeDb();
+
 	debugIndex(
 		`Starting conversion to database (mode: ${options.full ? "full" : "auto"})`,
 	);
-	const conversionStats = await convertToDatabase(
+	const conversionStats = await convertToDatabase({
 		scipPath,
 		databasePath,
-		config.root,
-		{
+		repoRoot: config.root,
+		options: {
 			force: options.full,
 			ignore: ignorePatterns,
 		},
-	);
+	});
 	debugIndex(
 		`Conversion completed: ${conversionStats.mode} mode, ${conversionStats.total_files} files, ${conversionStats.total_symbols} symbols`,
 	);
-
-	debugIndex("Closing database connection...");
-	closeDb();
 
 	debugIndex("Updating config with last indexed timestamp...");
 	config.lastIndexed = new Date().toISOString();
