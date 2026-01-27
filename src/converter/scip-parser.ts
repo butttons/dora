@@ -151,10 +151,10 @@ function parseOccurrence(occ: Occurrence): ParsedOccurrence {
 	let range: [number, number, number, number];
 	if (occ.range.length === 3) {
 		// [startLine, startChar, endChar] - same line
-		range = [occ.range[0], occ.range[1], occ.range[0], occ.range[2]];
+		range = [occ.range[0]!, occ.range[1]!, occ.range[0]!, occ.range[2]!];
 	} else if (occ.range.length === 4) {
 		// [startLine, startChar, endLine, endChar]
-		range = [occ.range[0], occ.range[1], occ.range[2], occ.range[3]];
+		range = [occ.range[0]!, occ.range[1]!, occ.range[2]!, occ.range[3]!];
 	} else {
 		throw new Error(`Invalid range format: ${occ.range}`);
 	}
@@ -164,17 +164,17 @@ function parseOccurrence(occ: Occurrence): ParsedOccurrence {
 	if (occ.enclosingRange && occ.enclosingRange.length > 0) {
 		if (occ.enclosingRange.length === 3) {
 			enclosingRange = [
-				occ.enclosingRange[0],
-				occ.enclosingRange[1],
-				occ.enclosingRange[0],
-				occ.enclosingRange[2],
+				occ.enclosingRange[0]!,
+				occ.enclosingRange[1]!,
+				occ.enclosingRange[0]!,
+				occ.enclosingRange[2]!,
 			];
 		} else if (occ.enclosingRange.length === 4) {
 			enclosingRange = [
-				occ.enclosingRange[0],
-				occ.enclosingRange[1],
-				occ.enclosingRange[2],
-				occ.enclosingRange[3],
+				occ.enclosingRange[0]!,
+				occ.enclosingRange[1]!,
+				occ.enclosingRange[2]!,
+				occ.enclosingRange[3]!,
 			];
 		}
 	}

@@ -161,19 +161,19 @@ export function extractPackageFromScip(
 
 	// NPM packages
 	const npmMatch = scipSymbol.match(/npm\s+(@?[\w\-@/.]+)\s+/);
-	if (npmMatch) {
+	if (npmMatch && npmMatch[1]) {
 		return npmMatch[1];
 	}
 
 	// Maven packages
 	const mavenMatch = scipSymbol.match(/maven\s+([\w.-]+)\s+([\w.-]+)\s+/);
-	if (mavenMatch) {
+	if (mavenMatch && mavenMatch[1] && mavenMatch[2]) {
 		return `${mavenMatch[1]}:${mavenMatch[2]}`;
 	}
 
 	// Go packages
 	const goMatch = scipSymbol.match(/go\s+([\w.\-/]+)\s+/);
-	if (goMatch) {
+	if (goMatch && goMatch[1]) {
 		return goMatch[1];
 	}
 
@@ -191,13 +191,14 @@ export function extractNameFromScip(scipSymbol: string): string {
 
 	// Extract the last segment after the last `/` and before `#`
 	const match = scipSymbol.match(/\/([^/`]+)#/);
-	if (match) {
+	if (match && match[1]) {
 		return match[1];
 	}
 
 	// Fallback: return last segment
 	const segments = scipSymbol.split("/");
 	const lastSegment = segments[segments.length - 1];
+	if (!lastSegment) return "unknown";
 	return lastSegment.replace(/#.*$/, "");
 }
 
@@ -260,11 +261,11 @@ export function extractKindFromDocumentation(
 	const lines = cleanedDoc.split("\n").filter((l) => l.trim().length > 0);
 	if (lines.length === 0) return "unknown";
 
-	const firstLine = lines[0].trim();
+	const firstLine = lines[0]!.trim();
 
 	// Match patterns in parentheses: "(property)", "(method)", "(parameter)", etc.
 	const parenMatch = firstLine.match(/^\(([^)]+)\)/);
-	if (parenMatch) {
+	if (parenMatch && parenMatch[1]) {
 		const kind = parenMatch[1].toLowerCase();
 		// Handle compound kinds like "enum member"
 		if (kind.includes("enum member")) return "enum_member";
