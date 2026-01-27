@@ -2,9 +2,14 @@ import type { Database } from "bun:sqlite";
 import { getDependencies, getReverseDependencies } from "../db/queries.ts";
 import type { PathResult } from "../types.ts";
 import { CtxError } from "../utils/errors.ts";
-import { DEFAULTS, resolveAndValidatePath, setupCommand } from "./shared.ts";
+import {
+  DEFAULTS,
+  outputJson,
+  resolveAndValidatePath,
+  setupCommand,
+} from "./shared.ts";
 
-export async function adventure(from: string, to: string): Promise<PathResult> {
+export async function adventure(from: string, to: string): Promise<void> {
   const ctx = await setupCommand();
 
   const fromPath = resolveAndValidatePath({ ctx, inputPath: from });
@@ -12,12 +17,14 @@ export async function adventure(from: string, to: string): Promise<PathResult> {
 
   // If same file, return direct path
   if (fromPath === toPath) {
-    return {
+    const result: PathResult = {
       from: fromPath,
       to: toPath,
       path: [fromPath],
       distance: 0,
     };
+    outputJson(result);
+    return;
   }
 
   // Use BFS to find shortest path
@@ -27,12 +34,14 @@ export async function adventure(from: string, to: string): Promise<PathResult> {
     throw new CtxError(`No path found from ${fromPath} to ${toPath}`);
   }
 
-  return {
+  const result: PathResult = {
     from: fromPath,
     to: toPath,
     path: foundPath,
     distance: foundPath.length - 1,
   };
+
+  outputJson(result);
 }
 
 /**

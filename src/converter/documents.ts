@@ -270,6 +270,7 @@ function extractReferences({
 	// Process each line for file path matching
 	for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
 		const lineContent = lines[lineIndex];
+		if (!lineContent) continue;
 		const lineNumber = lineIndex + 1; // 1-indexed
 
 		// Match file paths (direct mentions)
@@ -287,6 +288,7 @@ function extractReferences({
 		let match;
 		while ((match = linkRegex.exec(lineContent)) !== null) {
 			const linkPath = match[2];
+			if (!linkPath) continue;
 
 			// Skip URLs
 			if (linkPath.startsWith("http://") || linkPath.startsWith("https://")) {
@@ -295,6 +297,7 @@ function extractReferences({
 
 			// Normalize path
 			const normalized = normalizePath(linkPath);
+			if (!normalized) continue;
 
 			const fileId = filePathMap.get(normalized);
 			if (fileId !== undefined) {

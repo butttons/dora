@@ -105,6 +105,9 @@ export function validateConfig(data: unknown): Config {
 	if (!result.success) {
 		// Convert Zod errors to more user-friendly messages
 		const firstError = result.error.issues[0];
+		if (!firstError) {
+			throw new CtxError("Invalid config: unknown validation error");
+		}
 		const field = firstError.path.join(".");
 		throw new CtxError(
 			`Invalid config: ${field ? `field '${field}' ` : ""}${firstError.message}`,
@@ -270,7 +273,14 @@ export function createDefaultConfig(params: {
 		root: params.root,
 		scip: ".dora/index.scip",
 		db: ".dora/dora.db",
-		language: params.language,
+		language: params.language as
+			| "typescript"
+			| "javascript"
+			| "python"
+			| "rust"
+			| "go"
+			| "java"
+			| undefined,
 		commands: {
 			index: indexCommand,
 		},

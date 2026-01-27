@@ -32,7 +32,7 @@ export async function symbol(
 
 		const symbolRow = ctx.db
 			.query(symbolIdQuery)
-			.get(result.name, result.path, result.lines?.[0]) as {
+			.get(result.name, result.path, result.lines?.[0] ?? 0) as {
 			id: number;
 		} | null;
 

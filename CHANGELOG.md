@@ -1,5 +1,11 @@
 # @butttons/dora
 
+## 1.5.0
+
+### Patch Changes
+
+- Fix TypeScript strict errors.
+
 ## 1.4.6
 
 ### Patch Changes
