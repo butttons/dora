@@ -2,7 +2,6 @@ import { getDependencies } from "../db/queries.ts";
 import type { DepsResult } from "../types.ts";
 import {
 	DEFAULTS,
-	outputJson,
 	parseIntFlag,
 	resolveAndValidatePath,
 	setupCommand,
@@ -11,7 +10,7 @@ import {
 export async function deps(
 	path: string,
 	flags: Record<string, string | boolean> = {},
-): Promise<void> {
+): Promise<DepsResult> {
 	const ctx = await setupCommand();
 	const depth = parseIntFlag({
 		flags,
@@ -22,11 +21,9 @@ export async function deps(
 
 	const dependencies = getDependencies(ctx.db, relativePath, depth);
 
-	const result: DepsResult = {
+	return {
 		path: relativePath,
 		depth,
 		dependencies,
 	};
-
-	outputJson(result);
 }

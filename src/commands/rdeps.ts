@@ -2,7 +2,6 @@ import { getReverseDependencies } from "../db/queries.ts";
 import type { RDepsResult } from "../types.ts";
 import {
 	DEFAULTS,
-	outputJson,
 	parseIntFlag,
 	resolveAndValidatePath,
 	setupCommand,
@@ -11,7 +10,7 @@ import {
 export async function rdeps(
 	path: string,
 	flags: Record<string, string | boolean> = {},
-): Promise<void> {
+): Promise<RDepsResult> {
 	const ctx = await setupCommand();
 	const depth = parseIntFlag({
 		flags,
@@ -22,11 +21,9 @@ export async function rdeps(
 
 	const dependents = getReverseDependencies(ctx.db, relativePath, depth);
 
-	const result: RDepsResult = {
+	return {
 		path: relativePath,
 		depth,
 		dependents,
 	};
-
-	outputJson(result);
 }

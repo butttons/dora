@@ -4,11 +4,11 @@
 
 import { getCycles } from "../db/queries.ts";
 import type { CyclesResult } from "../types.ts";
-import { outputJson, parseIntFlag, setupCommand } from "./shared.ts";
+import { parseIntFlag, setupCommand } from "./shared.ts";
 
 export async function cycles(
 	flags: Record<string, string | boolean> = {},
-): Promise<void> {
+): Promise<CyclesResult> {
 	const { db } = await setupCommand();
 
 	const limit = parseIntFlag({ flags, key: "limit", defaultValue: 50 });
@@ -16,9 +16,7 @@ export async function cycles(
 	// Get bidirectional dependencies
 	const cyclesList = getCycles(db, limit);
 
-	const result: CyclesResult = {
+	return {
 		cycles: cyclesList,
 	};
-
-	outputJson(result);
 }

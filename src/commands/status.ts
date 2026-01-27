@@ -9,7 +9,7 @@ import type { StatusResult } from "../types.ts";
 import { isIndexed, loadConfig } from "../utils/config.ts";
 import { outputJson } from "./shared.ts";
 
-export async function status(): Promise<void> {
+export async function status(): Promise<StatusResult> {
 	const config = await loadConfig();
 
 	// Check if indexed
@@ -40,5 +40,5 @@ export async function status(): Promise<void> {
 		}
 	}
 
-	outputJson(result);
+	return result;
 }

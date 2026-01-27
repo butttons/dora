@@ -1,10 +1,10 @@
 import { getUnusedSymbols } from "../db/queries.ts";
 import type { UnusedResult } from "../types.ts";
-import { DEFAULTS, outputJson, parseIntFlag, setupCommand } from "./shared.ts";
+import { DEFAULTS, parseIntFlag, setupCommand } from "./shared.ts";
 
 export async function lost(
 	flags: Record<string, string | boolean> = {},
-): Promise<void> {
+): Promise<UnusedResult> {
 	const ctx = await setupCommand();
 	const limit = parseIntFlag({
 		flags,
@@ -14,9 +14,7 @@ export async function lost(
 
 	const unusedSymbols = getUnusedSymbols(ctx.db, limit);
 
-	const result: UnusedResult = {
+	return {
 		unused: unusedSymbols,
 	};
-
-	outputJson(result);
 }

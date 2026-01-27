@@ -72,12 +72,18 @@ program
 program
 	.command("status")
 	.description("Show index status and statistics")
-	.action(wrapCommand(status));
+	.action(wrapCommand(async () => {
+		const result = await status();
+		console.log(JSON.stringify(result, null, 2));
+	}));
 
 program
 	.command("map")
 	.description("Show high-level codebase map")
-	.action(wrapCommand(map));
+	.action(wrapCommand(async () => {
+		const result = await map();
+		console.log(JSON.stringify(result, null, 2));
+	}));
 
 program
 	.command("ls")
@@ -94,7 +100,10 @@ program
 	.command("file")
 	.description("Analyze a specific file with symbols and dependencies")
 	.argument("<path>", "File path to analyze")
-	.action(wrapCommand(file));
+	.action(wrapCommand(async (path: string) => {
+		const result = await file(path);
+		console.log(JSON.stringify(result, null, 2));
+	}));
 
 program
 	.command("symbol")

@@ -1,10 +1,10 @@
 import { getLeafNodes } from "../db/queries.ts";
 import type { LeavesResult } from "../types.ts";
-import { DEFAULTS, outputJson, parseIntFlag, setupCommand } from "./shared.ts";
+import { DEFAULTS, parseIntFlag, setupCommand } from "./shared.ts";
 
 export async function leaves(
 	flags: Record<string, string | boolean> = {},
-): Promise<void> {
+): Promise<LeavesResult> {
 	const ctx = await setupCommand();
 	const maxDependents = parseIntFlag({
 		flags,
@@ -14,10 +14,8 @@ export async function leaves(
 
 	const leafNodes = getLeafNodes(ctx.db, maxDependents);
 
-	const result: LeavesResult = {
+	return {
 		max_dependents: maxDependents,
 		leaves: leafNodes,
 	};
-
-	outputJson(result);
 }

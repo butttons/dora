@@ -4,11 +4,11 @@
 
 import { getComplexityMetrics } from "../db/queries.ts";
 import type { ComplexityResult } from "../types.ts";
-import { outputJson, parseStringFlag, setupCommand } from "./shared.ts";
+import { parseStringFlag, setupCommand } from "./shared.ts";
 
 export async function complexity(
 	flags: Record<string, string | boolean> = {},
-): Promise<void> {
+): Promise<ComplexityResult> {
 	const { db } = await setupCommand();
 
 	const sortBy = parseStringFlag({
@@ -27,10 +27,8 @@ export async function complexity(
 	// Get complexity metrics
 	const files = getComplexityMetrics(db, sortBy);
 
-	const result: ComplexityResult = {
+	return {
 		sort_by: sortBy,
 		files,
 	};
-
-	outputJson(result);
 }

@@ -5,12 +5,12 @@ import {
 } from "../db/queries.ts";
 import type { ExportsResult } from "../types.ts";
 import { CtxError } from "../utils/errors.ts";
-import { outputJson, resolvePath, setupCommand } from "./shared.ts";
+import { resolvePath, setupCommand } from "./shared.ts";
 
 export async function exports(
 	target: string,
 	_flags: Record<string, string | boolean> = {},
-): Promise<void> {
+): Promise<ExportsResult> {
 	const ctx = await setupCommand();
 
 	// Try as file path first
@@ -19,24 +19,20 @@ export async function exports(
 	if (fileExists({ db: ctx.db, relativePath })) {
 		const exportedSymbols = getFileExports(ctx.db, relativePath);
 		if (exportedSymbols.length > 0) {
-			const result: ExportsResult = {
+			return {
 				target: relativePath,
 				exports: exportedSymbols,
 			};
-			outputJson(result);
-			return;
 		}
 	}
 
 	// Try as package name
 	const packageExports = getPackageExports(ctx.db, target);
 	if (packageExports.length > 0) {
-		const result: ExportsResult = {
+		return {
 			target,
 			exports: packageExports,
 		};
-		outputJson(result);
-		return;
 	}
 
 	throw new CtxError(`No exports found for '${target}'`);

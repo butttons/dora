@@ -2,7 +2,6 @@ import { searchSymbols } from "../db/queries.ts";
 import type { SymbolSearchResult } from "../types.ts";
 import {
 	DEFAULTS,
-	outputJson,
 	parseIntFlag,
 	parseOptionalStringFlag,
 	setupCommand,
@@ -11,7 +10,7 @@ import {
 export async function symbol(
 	query: string,
 	flags: Record<string, string | boolean> = {},
-): Promise<void> {
+): Promise<SymbolSearchResult> {
 	const ctx = await setupCommand();
 	const limit = parseIntFlag({
 		flags,
@@ -63,10 +62,8 @@ export async function symbol(
 		return result;
 	});
 
-	const output: SymbolSearchResult = {
+	return {
 		query,
 		results: enhancedResults,
 	};
-
-	outputJson(output);
 }

@@ -5,7 +5,6 @@ import type { IndexResult } from "../types.ts";
 import { loadConfig, saveConfig } from "../utils/config.ts";
 import { CtxError } from "../utils/errors.ts";
 import { debugIndex } from "../utils/logger.ts";
-import { outputJson } from "../utils/output.ts";
 import { resolveAbsolute } from "../utils/paths.ts";
 
 export interface IndexOptions {
@@ -14,7 +13,7 @@ export interface IndexOptions {
 	ignore?: string[];
 }
 
-export async function index(options: IndexOptions = {}): Promise<void> {
+export async function index(options: IndexOptions = {}): Promise<IndexResult> {
 	const startTime = Date.now();
 
 	debugIndex("Loading configuration...");
@@ -100,7 +99,9 @@ export async function index(options: IndexOptions = {}): Promise<void> {
 
 	const time_ms = Date.now() - startTime;
 
-	const result: IndexResult = {
+	debugIndex(`Indexing completed successfully in ${time_ms}ms`);
+
+	return {
 		success: true,
 		file_count: conversionStats.total_files,
 		symbol_count: conversionStats.total_symbols,
@@ -108,9 +109,6 @@ export async function index(options: IndexOptions = {}): Promise<void> {
 		mode: conversionStats.mode,
 		changed_files: conversionStats.changed_files,
 	};
-
-	debugIndex(`Indexing completed successfully in ${time_ms}ms`);
-	outputJson(result);
 }
 
 /**
