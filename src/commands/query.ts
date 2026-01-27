@@ -19,7 +19,7 @@ export async function query(sql: string) {
 		const rows = stmt.all() as Array<Record<string, unknown>>;
 
 		// Extract column names from first row
-		const columns = rows.length > 0 ? Object.keys(rows[0]) : [];
+		const columns = rows.length > 0 ? Object.keys(rows[0]!) : [];
 
 		const result: QueryResult = {
 			query: sql,

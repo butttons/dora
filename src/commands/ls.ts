@@ -94,7 +94,10 @@ export async function ls(
 		);
 	}
 
-	const result = getDirectoryFiles(ctx.db, directory, { limit, sort });
+	const result = getDirectoryFiles(ctx.db, directory, {
+		limit,
+		sort: sort as "path" | "symbols" | "deps" | "rdeps",
+	});
 
 	outputJson(result);
 }
