@@ -17,6 +17,7 @@ import {
   type ParsedSymbol,
   parseScipFile,
   type ScipData,
+  type SymbolDefinition,
 } from "./scip-parser";
 
 // Batch size for processing documents to avoid memory exhaustion
@@ -415,7 +416,7 @@ async function processBatches({
   debugConverter("Building lightweight global definition map...");
   const globalDefinitionsBySymbol = new Map<
     string,
-    { file: string; definition: any }
+    { file: string; definition: SymbolDefinition }
   >();
   const externalSymbols = scipData.externalSymbols;
 
@@ -861,7 +862,7 @@ async function convertFiles(
 async function updateDependencies(
   documentsByPath: Map<string, ParsedDocument>,
   symbolsById: Map<string, ParsedSymbol>,
-  definitionsBySymbol: Map<string, { file: string; definition: any }>,
+  definitionsBySymbol: Map<string, { file: string; definition: SymbolDefinition }>,
   db: Database,
   changedFiles: ChangedFile[]
 ): Promise<void> {

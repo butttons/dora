@@ -14,7 +14,7 @@
   "license": "MIT",
   "scripts": {
     "test": "bun test ./test/",
-    "tsc": "tsc",
+    "type-check": "tsc",
     "build": "bun build src/index.ts --compile --outfile dist/dora",
     "generate-proto": "protoc --plugin=./node_modules/.bin/protoc-gen-es --es_out=src/converter --es_opt=target=ts --proto_path=src/proto src/proto/scip.proto",
     "biome:format": "biome format --write ./src",

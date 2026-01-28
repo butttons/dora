@@ -113,7 +113,7 @@ describe("Batch Processing - Duplicate File Paths", () => {
     }>;
 
     expect(indexes.length).toBeGreaterThan(0);
-    expect(indexes[0].sql).toContain("UNIQUE");
+    expect(indexes[0]!.sql).toContain("UNIQUE");
 
     db.close();
   });

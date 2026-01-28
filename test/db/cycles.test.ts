@@ -221,7 +221,7 @@ describe("getCycles - Circular Dependency Detection", () => {
 			);
 
 			const cycles = getCycles(db, 50);
-			const cycle = cycles[0];
+			const cycle = cycles[0]!;
 
 			// Length should be 2 (number of edges in the cycle)
 			expect(cycle.length).toBe(2);

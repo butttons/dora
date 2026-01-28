@@ -237,8 +237,8 @@ Also see [README](README.md) for an overview.
 
 		expect(refs.documents).toBeDefined();
 		expect(refs.documents.length).toBe(1);
-		expect(refs.documents[0].path).toBe("docs/api.md");
-		expect(refs.documents[0].lines).toEqual([5]);
+		expect(refs.documents[0]!.path).toBe("docs/api.md");
+		expect(refs.documents[0]!.lines).toEqual([5]);
 	});
 
 	test("docs show logic should handle multiple document references", () => {

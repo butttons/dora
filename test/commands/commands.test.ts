@@ -274,7 +274,7 @@ describe("Query Commands - Integration Tests", () => {
 		// Use a file we know exists
 		const testFile = "src/index.ts";
 
-		const result = await deps(testFile, { depth: 1 });
+		const result = await deps(testFile, { depth: "1" });
 
 		expect(result).toHaveProperty("path", testFile);
 		expect(result).toHaveProperty("depth", 1);
@@ -300,7 +300,7 @@ describe("Query Commands - Integration Tests", () => {
 		// Use a commonly imported file
 		const testFile = "src/utils/config.ts";
 
-		const result = await rdeps(testFile, { depth: 1 });
+		const result = await rdeps(testFile, { depth: "1" });
 
 		expect(result).toHaveProperty("path", testFile);
 		expect(result).toHaveProperty("depth", 1);
@@ -319,7 +319,7 @@ describe("Query Commands - Integration Tests", () => {
 
 		const { cycles } = await import("../../src/commands/cycles.ts");
 
-		const result = await cycles({ limit: 10 });
+		const result = await cycles({ limit: "10" });
 
 		expect(result).toHaveProperty("cycles");
 		expect(Array.isArray(result.cycles)).toBe(true);
@@ -328,8 +328,8 @@ describe("Query Commands - Integration Tests", () => {
 		if (result.cycles.length > 0) {
 			const cycle = result.cycles[0];
 			expect(cycle).toHaveProperty("files");
-			expect(Array.isArray(cycle.files)).toBe(true);
-			expect(cycle.length).toBe(2); // 2-node cycles only
+			expect(Array.isArray(cycle?.files)).toBe(true);
+			expect(cycle?.length).toBe(2); // 2-node cycles only
 		}
 	});
 
@@ -341,7 +341,7 @@ describe("Query Commands - Integration Tests", () => {
 
 		const { treasure } = await import("../../src/commands/treasure.ts");
 
-		const result = await treasure({ limit: 5 });
+		const result = await treasure({ limit: "5" });
 
 		expect(result).toHaveProperty("most_referenced");
 		expect(result).toHaveProperty("most_dependencies");
@@ -352,7 +352,7 @@ describe("Query Commands - Integration Tests", () => {
 			const hotspot = result.most_referenced[0];
 			expect(hotspot).toHaveProperty("file");
 			expect(hotspot).toHaveProperty("count");
-			expect(hotspot.count).toBeGreaterThan(0);
+			expect(hotspot?.count).toBeGreaterThan(0);
 		}
 	});
 
@@ -364,7 +364,7 @@ describe("Query Commands - Integration Tests", () => {
 
 		const { lost } = await import("../../src/commands/lost.ts");
 
-		const result = await lost({ limit: 10 });
+		const result = await lost({ limit: "10" });
 
 		expect(result).toHaveProperty("unused");
 		expect(Array.isArray(result.unused)).toBe(true);

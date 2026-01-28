@@ -165,20 +165,20 @@ describe("Query Command - Read-Only Enforcement", () => {
 			expect(output.rows).toBeDefined();
 			expect(output.row_count).toBe(2);
 			expect(output.columns).toContain("path");
-			expect(output.rows[0].path).toBe("test.ts");
+			expect(output.rows[0]!.path).toBe("test.ts");
 		});
 
 		test("should execute SELECT with WHERE", async () => {
 			const output = await query("SELECT path FROM files WHERE id = 2");
 
 			expect(output.rows.length).toBe(1);
-			expect(output.rows[0].path).toBe("other.ts");
+			expect(output.rows[0]!.path).toBe("other.ts");
 		});
 
 		test("should execute COUNT aggregate", async () => {
 			const output = await query("SELECT COUNT(*) as count FROM files");
 
-			expect(output.rows[0].count).toBe(2);
+			expect(output.rows[0]!.count).toBe(2);
 		});
 	});
 });
