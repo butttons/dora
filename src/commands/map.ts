@@ -9,9 +9,11 @@ export async function map(): Promise<OverviewResult> {
 	const file_count = getFileCount(db);
 	const symbol_count = getSymbolCount(db);
 
-	return {
+	const result: OverviewResult = {
 		packages,
 		file_count,
 		symbol_count,
 	};
+
+	return result;
 }

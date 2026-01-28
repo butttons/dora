@@ -14,7 +14,9 @@ export async function lost(
 
 	const unusedSymbols = getUnusedSymbols(ctx.db, limit);
 
-	return {
+	const result: UnusedResult = {
 		unused: unusedSymbols,
 	};
+
+	return result;
 }

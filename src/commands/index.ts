@@ -101,7 +101,7 @@ export async function index(options: IndexOptions = {}): Promise<IndexResult> {
 
 	debugIndex(`Indexing completed successfully in ${time_ms}ms`);
 
-	return {
+	const result: IndexResult = {
 		success: true,
 		file_count: conversionStats.total_files,
 		symbol_count: conversionStats.total_symbols,
@@ -109,6 +109,8 @@ export async function index(options: IndexOptions = {}): Promise<IndexResult> {
 		mode: conversionStats.mode,
 		changed_files: conversionStats.changed_files,
 	};
+
+	return result;
 }
 
 /**

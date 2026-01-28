@@ -16,7 +16,9 @@ export async function cycles(
 	// Get bidirectional dependencies
 	const cyclesList = getCycles(db, limit);
 
-	return {
+	const result: CyclesResult = {
 		cycles: cyclesList,
 	};
+
+	return result;
 }

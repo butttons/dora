@@ -42,11 +42,13 @@ export async function init(params?: { language?: string }): Promise<InitResult> 
 	});
 	await saveConfig(config);
 
-	return {
+	const result: InitResult = {
 		success: true,
 		root,
 		message: "Initialized dora in .dora/",
 	};
+
+	return result;
 }
 
 /**

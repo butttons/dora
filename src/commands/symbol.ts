@@ -62,8 +62,10 @@ export async function symbol(
 		return result;
 	});
 
-	return {
+	const finalResult: SymbolSearchResult = {
 		query,
 		results: enhancedResults,
 	};
+
+	return finalResult;
 }

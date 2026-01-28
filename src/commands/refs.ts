@@ -29,5 +29,7 @@ export async function refs(
 		total_references: result.references.length,
 	}));
 
-	return { query, results: output };
+	const finalResult: RefsSearchResult = { query, results: output };
+
+	return finalResult;
 }

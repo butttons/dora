@@ -21,9 +21,11 @@ export async function rdeps(
 
 	const dependents = getReverseDependencies(ctx.db, relativePath, depth);
 
-	return {
+	const result: RDepsResult = {
 		path: relativePath,
 		depth,
 		dependents,
 	};
+
+	return result;
 }

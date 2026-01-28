@@ -27,8 +27,10 @@ export async function complexity(
 	// Get complexity metrics
 	const files = getComplexityMetrics(db, sortBy);
 
-	return {
+	const result: ComplexityResult = {
 		sort_by: sortBy,
 		files,
 	};
+
+	return result;
 }

@@ -14,8 +14,10 @@ export async function leaves(
 
 	const leafNodes = getLeafNodes(ctx.db, maxDependents);
 
-	return {
+	const result: LeavesResult = {
 		max_dependents: maxDependents,
 		leaves: leafNodes,
 	};
+
+	return result;
 }

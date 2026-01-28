@@ -11,8 +11,10 @@ export async function imports(
 
 	const importsList = getFileImports(ctx.db, relativePath);
 
-	return {
+	const result: ImportsResult = {
 		path: relativePath,
 		imports: importsList,
 	};
+
+	return result;
 }

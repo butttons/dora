@@ -21,9 +21,11 @@ export async function deps(
 
 	const dependencies = getDependencies(ctx.db, relativePath, depth);
 
-	return {
+	const result: DepsResult = {
 		path: relativePath,
 		depth,
 		dependencies,
 	};
+
+	return result;
 }

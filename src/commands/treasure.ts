@@ -18,8 +18,10 @@ export async function treasure(
 	const mostReferenced = getMostReferencedFiles(ctx.db, limit);
 	const mostDependencies = getMostDependentFiles(ctx.db, limit);
 
-	return {
+	const result: HotspotsResult = {
 		most_referenced: mostReferenced,
 		most_dependencies: mostDependencies,
 	};
+
+	return result;
 }

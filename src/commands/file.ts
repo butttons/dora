@@ -39,11 +39,13 @@ export async function file(path: string): Promise<FileResult> {
 		}
 	}
 
-	return {
+	const result: FileResult = {
 		path: relativePath,
 		symbols,
 		depends_on,
 		depended_by,
 		...(documented_in && { documented_in }),
 	};
+
+	return result;
 }

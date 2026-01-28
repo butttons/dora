@@ -16,8 +16,10 @@ export async function coupling(
 	// Get coupled files
 	const coupledFiles = getCoupledFiles(db, threshold);
 
-	return {
+	const result: CouplingResult = {
 		threshold,
 		coupled_files: coupledFiles,
 	};
+
+	return result;
 }
