@@ -89,6 +89,54 @@ scip-typescript --help
 
 For other languages, see [SCIP Indexers](#scip-indexers).
 
+## MCP Server
+
+dora can run as an MCP (Model Context Protocol) server, enabling AI assistants like Claude Desktop to query your codebase directly.
+
+### Quick Start
+
+```bash
+# Start MCP server (runs in foreground)
+dora mcp
+```
+
+### Claude Code
+
+Add the MCP server with one command:
+
+```bash
+claude mcp add --transport stdio dora -- dora mcp
+```
+
+### Other MCP Clients
+
+Add to your MCP client configuration:
+
+```json
+{
+  "mcpServers": {
+    "dora": {
+      "type": "stdio",
+      "command": "dora",
+      "args": ["mcp"],
+      "env": {}
+    }
+  }
+}
+```
+
+### What You Get
+
+All dora commands are available as MCP tools:
+- `dora_status` - Check index health
+- `dora_map` - Get codebase overview
+- `dora_symbol` - Search for symbols
+- `dora_file` - Analyze files with dependencies
+- `dora_deps` / `dora_rdeps` - Explore dependencies
+- And all other dora commands
+
+Claude can now explore your codebase structure without reading files.
+
 ## AI Agent Integration
 
 **→ See [AGENTS.md](AGENTS.md) for complete integration guides** for:

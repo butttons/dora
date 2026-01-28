@@ -57,6 +57,37 @@ dora index
 dora symbol Logger
 ```
 
+## MCP Server
+
+dora can run as an MCP (Model Context Protocol) server for AI assistants:
+
+```bash
+dora mcp
+```
+
+**Claude Code:**
+
+```bash
+claude mcp add --transport stdio dora -- dora mcp
+```
+
+**Other MCP Clients:**
+
+```json
+{
+  "mcpServers": {
+    "dora": {
+      "type": "stdio",
+      "command": "dora",
+      "args": ["mcp"],
+      "env": {}
+    }
+  }
+}
+```
+
+All dora commands become available as MCP tools (dora_status, dora_map, dora_symbol, dora_file, etc.).
+
 ## Claude Code Integration
 
 Add these files to enable auto-indexing and pre-approved permissions:
