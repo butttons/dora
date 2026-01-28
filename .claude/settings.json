@@ -1,6 +1,6 @@
 {
   "permissions": {
-    "allow": ["Bash(dora:*)", "Skill(dora)"],
+    "allow": ["Bash(dora:*)", "Skill(dora)", "mcp__dora__*"],
     "ask": ["Bash(dora init:*)"]
   },
   "hooks": {
