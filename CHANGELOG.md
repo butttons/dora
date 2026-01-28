@@ -1,5 +1,21 @@
 # @butttons/dora
 
+## 1.6.0
+
+### Minor Changes
+
+- Add MCP (Model Context Protocol) server via `dora mcp` command
+- All 29 dora commands available as MCP tools for AI assistants
+- Simple setup for Claude Code: `claude mcp add --transport stdio dora -- dora mcp`
+- Add Zod schema validation for all command results
+- Refactor type system with dedicated `src/schemas/` directory
+
+### Patch Changes
+
+- Fix TypeScript strict mode errors across codebase
+- Add type checking to CI workflow
+- Standardize command output patterns for better consistency
+
 ## 1.5.0
 
 ### Patch Changes
