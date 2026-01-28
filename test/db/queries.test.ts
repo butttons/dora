@@ -171,9 +171,9 @@ describe("Database Queries", () => {
       // logger.ts is used by other files, so should have dependents
       expect(dependents.length).toBeGreaterThan(0);
 
-      expect(dependents[0]).toHaveProperty("path");
-      expect(dependents[0]).toHaveProperty("refs");
-      expect(typeof dependents[0].refs).toBe("number");
+      expect(dependents[0]!).toHaveProperty("path");
+      expect(dependents[0]!).toHaveProperty("refs");
+      expect(typeof dependents[0]!.refs).toBe("number");
     });
   });
 
@@ -215,9 +215,9 @@ describe("Database Queries", () => {
       expect(deps.length).toBeGreaterThan(0);
 
       if (deps.length > 0) {
-        expect(deps[0]).toHaveProperty("path");
-        expect(deps[0]).toHaveProperty("depth");
-        expect(deps[0].depth).toBe(1);
+        expect(deps[0]!).toHaveProperty("path");
+        expect(deps[0]!).toHaveProperty("depth");
+        expect(deps[0]!.depth).toBe(1);
       }
     });
 
@@ -239,9 +239,9 @@ describe("Database Queries", () => {
       expect(Array.isArray(rdeps)).toBe(true);
       expect(rdeps.length).toBeGreaterThan(0);
 
-      expect(rdeps[0]).toHaveProperty("path");
-      expect(rdeps[0]).toHaveProperty("depth");
-      expect(rdeps[0].depth).toBe(1);
+      expect(rdeps[0]!).toHaveProperty("path");
+      expect(rdeps[0]!).toHaveProperty("depth");
+      expect(rdeps[0]!.depth).toBe(1);
     });
 
     test("getDependencies should return empty array for file with no deps", () => {

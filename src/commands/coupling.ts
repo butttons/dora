@@ -4,11 +4,11 @@
 
 import { getCoupledFiles } from "../db/queries.ts";
 import type { CouplingResult } from "../types.ts";
-import { outputJson, parseIntFlag, setupCommand } from "./shared.ts";
+import { parseIntFlag, setupCommand } from "./shared.ts";
 
 export async function coupling(
 	flags: Record<string, string | boolean> = {},
-): Promise<void> {
+): Promise<CouplingResult> {
 	const { db } = await setupCommand();
 
 	const threshold = parseIntFlag({ flags, key: "threshold", defaultValue: 5 });
@@ -21,5 +21,5 @@ export async function coupling(
 		coupled_files: coupledFiles,
 	};
 
-	outputJson(result);
+	return result;
 }

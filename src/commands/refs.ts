@@ -1,8 +1,7 @@
 import { getSymbolReferences } from "../db/queries.ts";
-import type { RefsResult } from "../types.ts";
+import type { RefsResult, RefsSearchResult } from "../types.ts";
 import {
 	DEFAULTS,
-	outputJson,
 	parseIntFlag,
 	parseOptionalStringFlag,
 	setupCommand,
@@ -11,7 +10,7 @@ import {
 export async function refs(
 	query: string,
 	flags: Record<string, string | boolean> = {},
-): Promise<void> {
+): Promise<RefsSearchResult> {
 	const ctx = await setupCommand();
 	const kind = parseOptionalStringFlag({ flags, key: "kind" });
 	const limit = parseIntFlag({
@@ -30,10 +29,7 @@ export async function refs(
 		total_references: result.references.length,
 	}));
 
-	// If only one result, simplify output
-	if (output.length === 1) {
-		outputJson(output[0]);
-	} else {
-		outputJson({ query, results: output });
-	}
+	const finalResult: RefsSearchResult = { query, results: output };
+
+	return finalResult;
 }

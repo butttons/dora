@@ -2,12 +2,12 @@ import { getReverseDependencies } from "../db/queries.ts";
 import type { ChangesResult } from "../types.ts";
 import { CtxError } from "../utils/errors.ts";
 import { getChangedFiles, isGitRepo } from "../utils/git.ts";
-import { DEFAULTS, outputJson, setupCommand } from "./shared.ts";
+import { DEFAULTS, setupCommand } from "./shared.ts";
 
 export async function changes(
   ref: string,
   _flags: Record<string, string | boolean> = {}
-): Promise<void> {
+): Promise<ChangesResult> {
   if (!(await isGitRepo())) {
     throw new CtxError("Not a git repository");
   }
@@ -34,5 +34,5 @@ export async function changes(
     total_impacted: impacted.size,
   };
 
-  outputJson(result);
+  return result;
 }

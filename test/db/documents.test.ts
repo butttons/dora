@@ -135,16 +135,16 @@ describe("Document Queries", () => {
 		const docs = getDocumentsForFile(db, 1); // src/auth.ts
 
 		expect(docs.length).toBe(1);
-		expect(docs[0].path).toBe("docs/auth.md");
+		expect(docs[0]!.path).toBe("docs/auth.md");
 	});
 
 	test("getDocumentReferences should return symbols and files referenced by a document", () => {
 		const refs = getDocumentReferences(db, "docs/auth.md");
 
 		expect(refs.symbols.length).toBe(1);
-		expect(refs.symbols[0].name).toBe("AuthService");
+		expect(refs.symbols[0]!.name).toBe("AuthService");
 		expect(refs.files.length).toBe(1);
-		expect(refs.files[0].path).toBe("src/auth.ts");
+		expect(refs.files[0]!.path).toBe("src/auth.ts");
 		expect(refs.documents).toBeDefined();
 		expect(refs.documents.length).toBe(0); // No document references in this test data
 	});
@@ -190,8 +190,8 @@ describe("Document Queries", () => {
 
 		// Document with more symbols should come first
 		if (results.length > 1) {
-			expect(results[0].symbol_count).toBeGreaterThanOrEqual(
-				results[results.length - 1].symbol_count,
+			expect(results[0]!.symbol_count).toBeGreaterThanOrEqual(
+				results[results.length - 1]!.symbol_count,
 			);
 		}
 	});

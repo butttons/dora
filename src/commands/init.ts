@@ -8,11 +8,10 @@ import {
 	saveConfig,
 } from "../utils/config.ts";
 import { CtxError } from "../utils/errors.ts";
-import { outputJson } from "../utils/output.ts";
 import { findRepoRoot, getConfigPath, getDoraDir } from "../utils/paths.ts";
 import { copyTemplates } from "../utils/templates.ts";
 
-export async function init(params?: { language?: string }): Promise<void> {
+export async function init(params?: { language?: string }): Promise<InitResult> {
 	if (params?.language) {
 		const result = LanguageSchema.safeParse(params.language);
 		if (!result.success) {
@@ -49,7 +48,7 @@ export async function init(params?: { language?: string }): Promise<void> {
 		message: "Initialized dora in .dora/",
 	};
 
-	outputJson(result);
+	return result;
 }
 
 /**

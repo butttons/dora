@@ -1,11 +1,11 @@
 import { getFileImports } from "../db/queries.ts";
 import type { ImportsResult } from "../types.ts";
-import { outputJson, resolveAndValidatePath, setupCommand } from "./shared.ts";
+import { resolveAndValidatePath, setupCommand } from "./shared.ts";
 
 export async function imports(
 	path: string,
 	_flags: Record<string, string | boolean> = {},
-): Promise<void> {
+): Promise<ImportsResult> {
 	const ctx = await setupCommand();
 	const relativePath = resolveAndValidatePath({ ctx, inputPath: path });
 
@@ -16,5 +16,5 @@ export async function imports(
 		imports: importsList,
 	};
 
-	outputJson(result);
+	return result;
 }

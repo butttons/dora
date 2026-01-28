@@ -159,50 +159,26 @@ describe("Query Command - Read-Only Enforcement", () => {
 
 	describe("Valid SELECT queries work", () => {
 		test("should execute simple SELECT", async () => {
-			let output: any = null;
-			const originalLog = console.log;
-			console.log = (data: string) => {
-				output = JSON.parse(data);
-			};
-
-			await query("SELECT * FROM files ORDER BY id");
-
-			console.log = originalLog;
+			const output = await query("SELECT * FROM files ORDER BY id");
 
 			expect(output).not.toBeNull();
 			expect(output.rows).toBeDefined();
 			expect(output.row_count).toBe(2);
 			expect(output.columns).toContain("path");
-			expect(output.rows[0].path).toBe("test.ts");
+			expect(output.rows[0]!.path).toBe("test.ts");
 		});
 
 		test("should execute SELECT with WHERE", async () => {
-			let output: any = null;
-			const originalLog = console.log;
-			console.log = (data: string) => {
-				output = JSON.parse(data);
-			};
-
-			await query("SELECT path FROM files WHERE id = 2");
-
-			console.log = originalLog;
+			const output = await query("SELECT path FROM files WHERE id = 2");
 
 			expect(output.rows.length).toBe(1);
-			expect(output.rows[0].path).toBe("other.ts");
+			expect(output.rows[0]!.path).toBe("other.ts");
 		});
 
 		test("should execute COUNT aggregate", async () => {
-			let output: any = null;
-			const originalLog = console.log;
-			console.log = (data: string) => {
-				output = JSON.parse(data);
-			};
+			const output = await query("SELECT COUNT(*) as count FROM files");
 
-			await query("SELECT COUNT(*) as count FROM files");
-
-			console.log = originalLog;
-
-			expect(output.rows[0].count).toBe(2);
+			expect(output.rows[0]!.count).toBe(2);
 		});
 	});
 });

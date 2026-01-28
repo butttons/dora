@@ -397,6 +397,85 @@ dora index</code></pre>
             </div>
         </div>
 
+        <!-- MCP Server -->
+        <div class="mb-16">
+            <h2 class="text-2xl font-bold mb-6 text-blue-400">MCP Server</h2>
+            <p class="text-zinc-300 mb-6">
+                dora can run as an MCP (Model Context Protocol) server.
+            </p>
+
+            <h3 class="text-xl font-semibold mb-4 text-blue-300">Quick Start</h3>
+            <div
+                class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm mb-6 overflow-x-auto"
+            >
+                <div>
+                    <span class="text-zinc-500">$</span>
+                    <span class="text-zinc-300">dora mcp</span><span
+                        class="text-zinc-500 ml-2"
+                        ># Start MCP server (runs in foreground)</span
+                    >
+                </div>
+            </div>
+
+            <h3 class="text-xl font-semibold mb-4 text-blue-300">
+                Claude Code
+            </h3>
+            <p class="text-zinc-300 mb-4">
+                Add the MCP server with one command:
+            </p>
+            <div
+                class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm mb-6 overflow-x-auto"
+            >
+                <div>
+                    <span class="text-zinc-500">$</span>
+                    <span class="text-zinc-300"
+                        >claude mcp add --transport stdio dora -- dora mcp</span
+                    >
+                </div>
+            </div>
+
+            <h3 class="text-xl font-semibold mb-4 text-blue-300">
+                Other MCP Clients
+            </h3>
+            <p class="text-zinc-300 mb-4">
+                Add to your MCP client configuration:
+            </p>
+            <div
+                class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm mb-6 overflow-x-auto"
+            >
+                <pre class="text-zinc-300">{JSON.stringify(
+                    {
+                        mcpServers: {
+                            dora: {
+                                type: "stdio",
+                                command: "dora",
+                                args: ["mcp"]
+                            }
+                        }
+                    },
+                    null,
+                    2
+                )}</pre>
+            </div>
+
+            <div class="bg-blue-950/20 border border-blue-900/50 rounded-lg p-6">
+                <h4 class="text-lg font-semibold mb-3 text-blue-300">
+                    What You Get
+                </h4>
+                <p class="text-zinc-300 mb-3">
+                    All dora commands become available as MCP tools:
+                </p>
+                <ul class="space-y-2 text-zinc-300 ml-4">
+                    <li>• <code class="text-blue-400">dora_status</code> - Check index health</li>
+                    <li>• <code class="text-blue-400">dora_map</code> - Get codebase overview</li>
+                    <li>• <code class="text-blue-400">dora_symbol</code> - Search for symbols</li>
+                    <li>• <code class="text-blue-400">dora_file</code> - Analyze files with dependencies</li>
+                    <li>• <code class="text-blue-400">dora_deps</code> / <code class="text-blue-400">dora_rdeps</code> - Explore dependencies</li>
+                    <li>• And all other dora commands</li>
+                </ul>
+            </div>
+        </div>
+
         <!-- Quick Start -->
         <div class="mb-16">
             <h2 class="text-2xl font-bold mb-6 text-blue-400">Quick Start</h2>

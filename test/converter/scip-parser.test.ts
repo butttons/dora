@@ -71,7 +71,7 @@ describe("SCIP Parser", () => {
       return;
     }
 
-    const occ = sampleDoc.occurrences[0];
+    const occ = sampleDoc.occurrences[0]!;
     expect(occ).toHaveProperty("range");
     expect(occ).toHaveProperty("symbol");
     expect(occ).toHaveProperty("symbolRoles");
@@ -102,7 +102,7 @@ describe("SCIP Parser", () => {
     expect(Array.isArray(definitions)).toBe(true);
 
     if (definitions.length > 0) {
-      const def = definitions[0];
+      const def = definitions[0]!;
       expect(def).toHaveProperty("symbol");
       expect(def).toHaveProperty("range");
       expect(def.range.length).toBe(4);
@@ -128,7 +128,7 @@ describe("SCIP Parser", () => {
     expect(Array.isArray(references)).toBe(true);
 
     if (references.length > 0) {
-      const ref = references[0];
+      const ref = references[0]!;
       expect(ref).toHaveProperty("symbol");
       expect(ref).toHaveProperty("range");
       expect(ref).toHaveProperty("line");
@@ -218,11 +218,10 @@ describe("SCIP Parser", () => {
     const definitions = extractDefinitions(sampleDoc);
 
     if (definitions.length > 0) {
-      const def = definitions[0];
+      const def = definitions[0]!;
       const defFile = findDefinitionFile({
         symbol: def.symbol,
         documents: maps.documentsByPath,
-        symbols: maps.symbolsById,
       });
 
       // Should find the file (or null for external symbols)
@@ -253,7 +252,7 @@ describe("SCIP Parser", () => {
     expect(Array.isArray(docSymbols)).toBe(true);
 
     if (docSymbols.length > 0) {
-      const sym = docSymbols[0];
+      const sym = docSymbols[0]!;
       expect(sym).toHaveProperty("symbol");
       expect(sym).toHaveProperty("kind");
       expect(sym).toHaveProperty("range");
@@ -280,8 +279,6 @@ describe("SCIP Parser", () => {
     const maps = buildLookupMaps(scipData);
     const deps = getFileDependencies({
       doc: sampleDoc,
-      documentsByPath: maps.documentsByPath,
-      symbolsById: maps.symbolsById,
       definitionsBySymbol: maps.definitionsBySymbol,
     });
 
@@ -333,7 +330,7 @@ describe("SCIP Parser", () => {
     expect(Array.isArray(scipData.externalSymbols)).toBe(true);
 
     if (scipData.externalSymbols.length > 0) {
-      const extSym = scipData.externalSymbols[0];
+      const extSym = scipData.externalSymbols[0]!;
       expect(extSym).toHaveProperty("symbol");
       expect(extSym).toHaveProperty("kind");
       expect(typeof extSym.symbol).toBe("string");
@@ -362,7 +359,6 @@ describe("SCIP Parser", () => {
           const defFile = findDefinitionFile({
             symbol: def.symbol,
             documents: maps.documentsByPath,
-            symbols: maps.symbolsById,
           });
 
           // Should find in current document or return null
@@ -405,8 +401,6 @@ describe("SCIP Parser", () => {
 
     const deps = getFileDependencies({
       doc: emptyDoc,
-      documentsByPath: maps.documentsByPath,
-      symbolsById: maps.symbolsById,
       definitionsBySymbol: maps.definitionsBySymbol,
     });
     expect(deps.size).toBe(0);

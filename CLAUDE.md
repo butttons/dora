@@ -29,6 +29,18 @@ The `docs/` directory contains the documentation website for dora, built with As
 
 See `docs/CLAUDE.md` for detailed documentation-specific guidance on maintaining and updating the website.
 
+## MCP Server
+
+dora includes an MCP (Model Context Protocol) server that exposes all dora commands as tools for AI assistants like Claude Desktop.
+
+- **Command:** `dora mcp`
+- **Implementation:** `src/mcp.ts` - Uses @modelcontextprotocol/sdk
+- **Transport:** stdio (foreground process)
+- **Tool handlers:** `src/mcp/handlers.ts` - Routes MCP tool calls to dora commands
+- **Metadata:** `src/mcp/metadata.ts` - Tool definitions and schemas
+
+The MCP server runs in the foreground and communicates via stdin/stdout. It cannot be daemonized because MCP requires active stdio communication with the client.
+
 ## Code Style Guidelines
 
 ### Comments

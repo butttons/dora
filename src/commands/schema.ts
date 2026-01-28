@@ -1,4 +1,4 @@
-import { outputJson, setupCommand } from "./shared.ts";
+import { setupCommand } from "./shared.ts";
 
 export interface SchemaInfo {
 	tables: Array<{
@@ -13,7 +13,7 @@ export interface SchemaInfo {
 	}>;
 }
 
-export async function schema() {
+export async function schema(): Promise<SchemaInfo> {
 	const { db } = await setupCommand();
 
 	// Get all tables
@@ -65,5 +65,5 @@ export async function schema() {
 		});
 	}
 
-	outputJson(result);
+	return result;
 }

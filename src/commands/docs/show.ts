@@ -1,11 +1,11 @@
 import { getDocumentContent, getDocumentReferences } from "../../db/queries.ts";
 import type { DocResult } from "../../types.ts";
-import { outputJson, setupCommand } from "../shared.ts";
+import { setupCommand } from "../shared.ts";
 
 export async function docsShow(
 	path: string,
 	flags: Record<string, string | boolean> = {},
-): Promise<void> {
+): Promise<DocResult> {
 	const ctx = await setupCommand();
 	const db = ctx.db;
 
@@ -17,7 +17,7 @@ export async function docsShow(
 
 	const refs = getDocumentReferences(db, path);
 
-	const result: DocResult = {
+	return {
 		path: doc.path,
 		type: doc.type,
 		symbol_refs: refs.symbols,
@@ -25,6 +25,4 @@ export async function docsShow(
 		document_refs: refs.documents,
 		...(flags.content && { content: doc.content }),
 	};
-
-	outputJson(result);
 }

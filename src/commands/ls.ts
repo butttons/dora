@@ -1,6 +1,5 @@
 import type { Database } from "bun:sqlite";
 import {
-	outputJson,
 	parseIntFlag,
 	parseStringFlag,
 	setupCommand,
@@ -81,7 +80,7 @@ function getDirectoryFiles(
 export async function ls(
 	directory: string = "",
 	flags: Record<string, string | boolean> = {},
-): Promise<void> {
+): Promise<LsResult> {
 	const ctx = await setupCommand();
 
 	const limit = parseIntFlag({ flags, key: "limit", defaultValue: 100 });
@@ -99,5 +98,5 @@ export async function ls(
 		sort: sort as "path" | "symbols" | "deps" | "rdeps",
 	});
 
-	outputJson(result);
+	return result;
 }

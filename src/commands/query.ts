@@ -1,4 +1,4 @@
-import { outputJson, setupCommand } from "./shared.ts";
+import { setupCommand } from "./shared.ts";
 
 export interface QueryResult {
 	query: string;
@@ -7,7 +7,7 @@ export interface QueryResult {
 	columns: string[];
 }
 
-export async function query(sql: string) {
+export async function query(sql: string): Promise<QueryResult> {
 	const { db } = await setupCommand();
 
 	// Note: The database connection is opened in read-only mode (see db/connection.ts)
@@ -28,7 +28,7 @@ export async function query(sql: string) {
 			columns,
 		};
 
-		outputJson(result);
+		return result;
 	} catch (error) {
 		throw new Error(
 			`SQL query failed: ${error instanceof Error ? error.message : String(error)}`,

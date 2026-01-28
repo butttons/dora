@@ -3,11 +3,11 @@ import {
 	getMostReferencedFiles,
 } from "../db/queries.ts";
 import type { HotspotsResult } from "../types.ts";
-import { DEFAULTS, outputJson, parseIntFlag, setupCommand } from "./shared.ts";
+import { DEFAULTS, parseIntFlag, setupCommand } from "./shared.ts";
 
 export async function treasure(
 	flags: Record<string, string | boolean> = {},
-): Promise<void> {
+): Promise<HotspotsResult> {
 	const ctx = await setupCommand();
 	const limit = parseIntFlag({
 		flags,
@@ -23,5 +23,5 @@ export async function treasure(
 		most_dependencies: mostDependencies,
 	};
 
-	outputJson(result);
+	return result;
 }

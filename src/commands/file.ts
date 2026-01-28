@@ -4,9 +4,9 @@ import {
 	getFileSymbols,
 } from "../db/queries.ts";
 import type { FileResult } from "../types.ts";
-import { outputJson, resolveAndValidatePath, setupCommand } from "./shared.ts";
+import { resolveAndValidatePath, setupCommand } from "./shared.ts";
 
-export async function file(path: string): Promise<void> {
+export async function file(path: string): Promise<FileResult> {
 	const ctx = await setupCommand();
 	const relativePath = resolveAndValidatePath({ ctx, inputPath: path });
 
@@ -14,7 +14,6 @@ export async function file(path: string): Promise<void> {
 	const depends_on = getFileDependencies(ctx.db, relativePath);
 	const depended_by = getFileDependents(ctx.db, relativePath);
 
-	// Get file ID
 	const fileIdQuery = "SELECT id FROM files WHERE path = ?";
 	const fileRow = ctx.db.query(fileIdQuery).get(relativePath) as {
 		id: number;
@@ -23,7 +22,6 @@ export async function file(path: string): Promise<void> {
 	let documented_in: string[] | undefined;
 
 	if (fileRow) {
-		// Get documents referencing this file
 		const docsQuery = `
       SELECT d.path
       FROM documents d
@@ -49,5 +47,5 @@ export async function file(path: string): Promise<void> {
 		...(documented_in && { documented_in }),
 	};
 
-	outputJson(result);
+	return result;
 }

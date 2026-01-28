@@ -5,12 +5,12 @@ import {
 } from "../db/queries.ts";
 import type { ExportsResult } from "../types.ts";
 import { CtxError } from "../utils/errors.ts";
-import { outputJson, resolvePath, setupCommand } from "./shared.ts";
+import { resolvePath, setupCommand } from "./shared.ts";
 
 export async function exports(
   target: string,
   _flags: Record<string, string | boolean> = {}
-): Promise<void> {
+): Promise<ExportsResult> {
   const ctx = await setupCommand();
 
   // Try as file path first
@@ -23,8 +23,7 @@ export async function exports(
         target: relativePath,
         exports: exportedSymbols,
       };
-      outputJson(result);
-      return;
+      return result;
     }
   }
 
@@ -35,8 +34,7 @@ export async function exports(
       target,
       exports: packageExports,
     };
-    outputJson(result);
-    return;
+    return result;
   }
 
   throw new CtxError(`No exports found for '${target}'`);

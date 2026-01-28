@@ -100,7 +100,7 @@ describe("Output Format Optimization", () => {
 
 		test("symbols should have clean structure", () => {
 			const symbols = getFileSymbols(db, "src/index.ts");
-			const firstSymbol = symbols[0];
+			const firstSymbol = symbols[0]!;
 
 			// Should only have: name, kind, lines
 			expect(firstSymbol).toHaveProperty("name");
@@ -116,7 +116,7 @@ describe("Output Format Optimization", () => {
 
 			expect(deps.length).toBeGreaterThan(0);
 
-			const dep = deps[0];
+			const dep = deps[0]!;
 			expect(dep.symbols).toBeDefined();
 			expect(dep.symbols!.length).toBeGreaterThan(0);
 
@@ -155,7 +155,7 @@ describe("Output Format Optimization", () => {
 
 		test("searched symbols should have clean structure", () => {
 			const results = searchSymbols(db, "MyClass", { limit: 5 });
-			const firstResult = results[0];
+			const firstResult = results[0]!;
 
 			// Should only have: name, kind, path, lines
 			expect(firstResult).toHaveProperty("name");

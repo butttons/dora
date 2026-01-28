@@ -33,7 +33,7 @@ function handleError(error: unknown): never {
 /**
  * Wrap a command function with error handling
  */
-export function wrapCommand<T extends (...args: any[]) => Promise<void>>(
+export function wrapCommand<T extends (...args: any[]) => Promise<any>>(
 	fn: T,
 ): T {
 	return (async (...args: any[]) => {

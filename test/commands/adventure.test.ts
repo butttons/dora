@@ -88,8 +88,8 @@ describe("Adventure Command - Pathfinding Algorithm", () => {
       const deps = getDependencies(db, "a.ts", 1);
 
       expect(deps).toHaveLength(1);
-      expect(deps[0].path).toBe("b.ts");
-      expect(deps[0].depth).toBe(1);
+      expect(deps[0]!.path).toBe("b.ts");
+      expect(deps[0]!.depth).toBe(1);
     });
 
     test("should find multiple direct dependencies", () => {
@@ -135,8 +135,8 @@ describe("Adventure Command - Pathfinding Algorithm", () => {
       const rdeps = getReverseDependencies(db, "b.ts", 1);
 
       expect(rdeps).toHaveLength(1);
-      expect(rdeps[0].path).toBe("a.ts");
-      expect(rdeps[0].depth).toBe(1);
+      expect(rdeps[0]!.path).toBe("a.ts");
+      expect(rdeps[0]!.depth).toBe(1);
     });
 
     test("should find multi-hop reverse dependencies", () => {
@@ -192,7 +192,7 @@ describe("Adventure Command - Pathfinding Algorithm", () => {
 
       // Should only get direct dependency (B), not transitive ones
       expect(deps).toHaveLength(1);
-      expect(deps[0].path).toBe("b.ts");
+      expect(deps[0]!.path).toBe("b.ts");
 
       // Should not include C, D, E, F
       const paths = deps.map((d) => d.path);

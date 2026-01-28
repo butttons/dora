@@ -17,6 +17,7 @@ import {
   type ParsedSymbol,
   parseScipFile,
   type ScipData,
+  type SymbolDefinition,
 } from "./scip-parser";
 
 // Batch size for processing documents to avoid memory exhaustion
@@ -415,7 +416,7 @@ async function processBatches({
   debugConverter("Building lightweight global definition map...");
   const globalDefinitionsBySymbol = new Map<
     string,
-    { file: string; definition: any }
+    { file: string; definition: SymbolDefinition }
   >();
   const externalSymbols = scipData.externalSymbols;
 
@@ -577,7 +578,12 @@ function optimizeDatabaseForWrites(db: Database): void {
   db.run("PRAGMA synchronous = OFF");
 
   // Use memory for journal (faster than disk)
-  db.run("PRAGMA journal_mode = MEMORY");
+  // This can fail if database is in WAL mode or file locks aren't fully released
+  try {
+    db.run("PRAGMA journal_mode = MEMORY");
+  } catch (error) {
+    debugConverter(`Note: Could not set journal_mode to MEMORY, continuing with default: ${error}`);
+  }
 
   // Increase cache size (10MB)
   db.run("PRAGMA cache_size = -10000");
@@ -595,7 +601,12 @@ function restoreDatabaseSettings(db: Database): void {
   db.run("PRAGMA synchronous = FULL");
 
   // Switch back to WAL mode
-  db.run("PRAGMA journal_mode = WAL");
+  // This can fail if database is being closed or file locks are active
+  try {
+    db.run("PRAGMA journal_mode = WAL");
+  } catch (error) {
+    debugConverter(`Note: Could not set journal_mode to WAL, continuing: ${error}`);
+  }
 
   debugConverter("Database settings restored");
 }
@@ -851,7 +862,7 @@ async function convertFiles(
 async function updateDependencies(
   documentsByPath: Map<string, ParsedDocument>,
   symbolsById: Map<string, ParsedSymbol>,
-  definitionsBySymbol: Map<string, { file: string; definition: any }>,
+  definitionsBySymbol: Map<string, { file: string; definition: SymbolDefinition }>,
   db: Database,
   changedFiles: ChangedFile[]
 ): Promise<void> {
