@@ -1,8 +1,19 @@
-import { outputJson, setupCommand } from "../shared.ts";
+import { setupCommand } from "../shared.ts";
+
+export type DocsListResult = {
+	documents: Array<{
+		path: string;
+		type: string;
+		symbol_refs: number;
+		file_refs: number;
+		document_refs: number;
+	}>;
+	total: number;
+};
 
 export async function docsList(
 	flags: Record<string, string | boolean> = {},
-): Promise<void> {
+): Promise<DocsListResult> {
 	const ctx = await setupCommand();
 	const db = ctx.db;
 
@@ -21,7 +32,7 @@ export async function docsList(
 		document_count: number;
 	}>;
 
-	const output = {
+	return {
 		documents: docs.map((d) => ({
 			path: d.path,
 			type: d.type,
@@ -31,6 +42,4 @@ export async function docsList(
 		})),
 		total: docs.length,
 	};
-
-	outputJson(output);
 }

@@ -3,7 +3,6 @@ import type { GraphEdge, GraphResult } from "../types.ts";
 import { CtxError } from "../utils/errors.ts";
 import {
   DEFAULTS,
-  outputJson,
   parseIntFlag,
   parseStringFlag,
   resolveAndValidatePath,
@@ -15,7 +14,7 @@ const VALID_DIRECTIONS = ["deps", "rdeps", "both"] as const;
 export async function graph(
   path: string,
   flags: Record<string, string | boolean> = {}
-): Promise<void> {
+): Promise<GraphResult> {
   const ctx = await setupCommand();
   const depth = parseIntFlag({
     flags,
@@ -68,5 +67,5 @@ export async function graph(
     edges,
   };
 
-  outputJson(result);
+  return result;
 }

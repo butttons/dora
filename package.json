@@ -6,8 +6,7 @@
   "private": true,
   "description": "Fast code intelligence for AI agents. Query symbols, dependencies, and references without reading files.",
   "bin": {
-    "dora": "./src/index.ts",
-    "dora-mcp": "./src/mcp.ts"
+    "dora": "./src/index.ts"
   },
   "author": {
     "name": "butttons"

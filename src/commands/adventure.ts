@@ -4,12 +4,11 @@ import type { PathResult } from "../types.ts";
 import { CtxError } from "../utils/errors.ts";
 import {
   DEFAULTS,
-  outputJson,
   resolveAndValidatePath,
   setupCommand,
 } from "./shared.ts";
 
-export async function adventure(from: string, to: string): Promise<void> {
+export async function adventure(from: string, to: string): Promise<PathResult> {
   const ctx = await setupCommand();
 
   const fromPath = resolveAndValidatePath({ ctx, inputPath: from });
@@ -23,8 +22,7 @@ export async function adventure(from: string, to: string): Promise<void> {
       path: [fromPath],
       distance: 0,
     };
-    outputJson(result);
-    return;
+    return result;
   }
 
   // Use BFS to find shortest path
@@ -41,7 +39,7 @@ export async function adventure(from: string, to: string): Promise<void> {
     distance: foundPath.length - 1,
   };
 
-  outputJson(result);
+  return result;
 }
 
 /**

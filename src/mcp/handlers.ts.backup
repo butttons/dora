@@ -26,6 +26,7 @@ import { schema } from "../commands/schema.ts";
 import { status } from "../commands/status.ts";
 import { symbol } from "../commands/symbol.ts";
 import { treasure } from "../commands/treasure.ts";
+import { captureJsonOutput } from "./captureOutput.ts";
 
 export async function handleToolCall(
 	name: string,
@@ -33,14 +34,16 @@ export async function handleToolCall(
 ): Promise<any> {
 	return match(name)
 		.with("dora_init", async () => {
-			return await init({ language: args.language });
+			return await captureJsonOutput(() => init({ language: args.language }));
 		})
 		.with("dora_index", async () => {
-			return await index({
-				full: args.full,
-				skipScip: args.skipScip,
-				ignore: args.ignore ? [args.ignore].flat() : undefined,
-			});
+			return await captureJsonOutput(() =>
+				index({
+					full: args.full,
+					skipScip: args.skipScip,
+					ignore: args.ignore ? [args.ignore].flat() : undefined,
+				}),
+			);
 		})
 		.with("dora_status", async () => {
 			return await status();
@@ -49,54 +52,68 @@ export async function handleToolCall(
 			return await map();
 		})
 		.with("dora_ls", async () => {
-			return await ls(args.directory, {
-				limit: args.limit,
-				sort: args.sort,
-			});
+			return await captureJsonOutput(() =>
+				ls(args.directory, {
+					limit: args.limit,
+					sort: args.sort,
+				}),
+			);
 		})
 		.with("dora_file", async () => {
 			return await file(args.path);
 		})
 		.with("dora_symbol", async () => {
-			return await symbol(args.query, {
-				limit: args.limit,
-				kind: args.kind,
-			});
+			return await captureJsonOutput(() =>
+				symbol(args.query, {
+					limit: args.limit,
+					kind: args.kind,
+				}),
+			);
 		})
 		.with("dora_refs", async () => {
-			return await refs(args.symbol, {
-				kind: args.kind,
-				limit: args.limit,
-			});
+			return await captureJsonOutput(() =>
+				refs(args.symbol, {
+					kind: args.kind,
+					limit: args.limit,
+				}),
+			);
 		})
 		.with("dora_deps", async () => {
-			return await deps(args.path, {
-				depth: args.depth,
-			});
+			return await captureJsonOutput(() =>
+				deps(args.path, {
+					depth: args.depth,
+				}),
+			);
 		})
 		.with("dora_rdeps", async () => {
-			return await rdeps(args.path, {
-				depth: args.depth,
-			});
+			return await captureJsonOutput(() =>
+				rdeps(args.path, {
+					depth: args.depth,
+				}),
+			);
 		})
 		.with("dora_adventure", async () => {
-			return await adventure(args.from, args.to);
+			return await captureJsonOutput(() => adventure(args.from, args.to));
 		})
 		.with("dora_leaves", async () => {
-			return await leaves({
-				maxDependents: args.maxDependents,
-			});
+			return await captureJsonOutput(() =>
+				leaves({
+					maxDependents: args.maxDependents,
+				}),
+			);
 		})
 		.with("dora_exports", async () => {
-			return await exports(args.target);
+			return await captureJsonOutput(() => exports(args.target));
 		})
 		.with("dora_imports", async () => {
-			return await imports(args.path);
+			return await captureJsonOutput(() => imports(args.path));
 		})
 		.with("dora_lost", async () => {
-			return await lost({
-				limit: args.limit,
-			});
+			return await captureJsonOutput(() =>
+				lost({
+					limit: args.limit,
+				}),
+			);
 		})
 		.with("dora_treasure", async () => {
 			return await treasure({
@@ -104,13 +121,15 @@ export async function handleToolCall(
 			});
 		})
 		.with("dora_changes", async () => {
-			return await changes(args.ref);
+			return await captureJsonOutput(() => changes(args.ref));
 		})
 		.with("dora_graph", async () => {
-			return await graph(args.path, {
-				depth: args.depth,
-				direction: args.direction,
-			});
+			return await captureJsonOutput(() =>
+				graph(args.path, {
+					depth: args.depth,
+					direction: args.direction,
+				}),
+			);
 		})
 		.with("dora_cycles", async () => {
 			return await cycles({
@@ -128,35 +147,45 @@ export async function handleToolCall(
 			});
 		})
 		.with("dora_schema", async () => {
-			return await schema();
+			return await captureJsonOutput(() => schema());
 		})
 		.with("dora_query", async () => {
-			return await query(args.sql);
+			return await captureJsonOutput(() => query(args.sql));
 		})
 		.with("dora_cookbook_list", async () => {
-			return await cookbookList({
-				format: args.format,
-			});
+			return await captureJsonOutput(() =>
+				cookbookList({
+					format: args.format,
+				}),
+			);
 		})
 		.with("dora_cookbook_show", async () => {
-			return await cookbookShow(args.recipe, {
-				format: args.format,
-			});
+			return await captureJsonOutput(() =>
+				cookbookShow(args.recipe, {
+					format: args.format,
+				}),
+			);
 		})
 		.with("dora_docs_list", async () => {
-			return await docsList({
-				type: args.type,
-			});
+			return await captureJsonOutput(() =>
+				docsList({
+					type: args.type,
+				}),
+			);
 		})
 		.with("dora_docs_search", async () => {
-			return await docsSearch(args.query, {
-				limit: args.limit,
-			});
+			return await captureJsonOutput(() =>
+				docsSearch(args.query, {
+					limit: args.limit,
+				}),
+			);
 		})
 		.with("dora_docs_show", async () => {
-			return await docsShow(args.path, {
-				content: args.content,
-			});
+			return await captureJsonOutput(() =>
+				docsShow(args.path, {
+					content: args.content,
+				}),
+			);
 		})
 		.otherwise(() => {
 			throw new Error(`Unknown tool: ${name}`);

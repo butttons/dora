@@ -7,7 +7,7 @@ import { DEFAULTS, setupCommand } from "./shared.ts";
 export async function changes(
   ref: string,
   _flags: Record<string, string | boolean> = {}
-): Promise<void> {
+): Promise<ChangesResult> {
   if (!(await isGitRepo())) {
     throw new CtxError("Not a git repository");
   }
@@ -34,5 +34,5 @@ export async function changes(
     total_impacted: impacted.size,
   };
 
-  outputJson(result);
+  return result;
 }

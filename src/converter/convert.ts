@@ -577,7 +577,12 @@ function optimizeDatabaseForWrites(db: Database): void {
   db.run("PRAGMA synchronous = OFF");
 
   // Use memory for journal (faster than disk)
-  db.run("PRAGMA journal_mode = MEMORY");
+  // This can fail if database is in WAL mode or file locks aren't fully released
+  try {
+    db.run("PRAGMA journal_mode = MEMORY");
+  } catch (error) {
+    debugConverter(`Note: Could not set journal_mode to MEMORY, continuing with default: ${error}`);
+  }
 
   // Increase cache size (10MB)
   db.run("PRAGMA cache_size = -10000");
@@ -595,7 +600,12 @@ function restoreDatabaseSettings(db: Database): void {
   db.run("PRAGMA synchronous = FULL");
 
   // Switch back to WAL mode
-  db.run("PRAGMA journal_mode = WAL");
+  // This can fail if database is being closed or file locks are active
+  try {
+    db.run("PRAGMA journal_mode = WAL");
+  } catch (error) {
+    debugConverter(`Note: Could not set journal_mode to WAL, continuing: ${error}`);
+  }
 
   debugConverter("Database settings restored");
 }

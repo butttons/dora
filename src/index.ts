@@ -29,6 +29,7 @@ import { status } from "./commands/status.ts";
 import { symbol } from "./commands/symbol.ts";
 import { treasure } from "./commands/treasure.ts";
 import { wrapCommand } from "./utils/errors.ts";
+import { outputJson } from "./utils/output.ts";
 
 import packageJson from "../package.json";
 
@@ -40,13 +41,26 @@ program
 	.version(packageJson.version);
 
 program
+	.command("mcp")
+	.description("Start MCP (Model Context Protocol) server")
+	.action(async () => {
+		const { startMcpServer } = await import("./mcp.ts");
+		await startMcpServer();
+	});
+
+program
 	.command("init")
 	.description("Initialize dora in the current repository")
 	.option(
 		"-l, --language <language>",
 		"Project language (typescript, javascript, python, rust, go, java)",
 	)
-	.action(wrapCommand((options) => init({ language: options.language })));
+	.action(
+		wrapCommand(async (options) => {
+			const result = await init({ language: options.language });
+			outputJson(result);
+		}),
+	);
 
 program
 	.command("index")
@@ -61,11 +75,12 @@ program
 	)
 	.action(
 		wrapCommand(async (options) => {
-			await index({
+			const result = await index({
 				full: options.full,
 				skipScip: options.skipScip,
 				ignore: options.ignore,
 			});
+			outputJson(result);
 		}),
 	);
 
@@ -74,7 +89,7 @@ program
 	.description("Show index status and statistics")
 	.action(wrapCommand(async () => {
 		const result = await status();
-		console.log(JSON.stringify(result, null, 2));
+		outputJson(result);
 	}));
 
 program
@@ -82,7 +97,7 @@ program
 	.description("Show high-level codebase map")
 	.action(wrapCommand(async () => {
 		const result = await map();
-		console.log(JSON.stringify(result, null, 2));
+		outputJson(result);
 	}));
 
 program
@@ -94,7 +109,10 @@ program
 		"--sort <field>",
 		"Sort by: path, symbols, deps, or rdeps (default: path)",
 	)
-	.action(wrapCommand(ls));
+	.action(wrapCommand(async (directory, options) => {
+		const result = await ls(directory, options);
+		outputJson(result);
+	}));
 
 program
 	.command("file")
@@ -102,7 +120,7 @@ program
 	.argument("<path>", "File path to analyze")
 	.action(wrapCommand(async (path: string) => {
 		const result = await file(path);
-		console.log(JSON.stringify(result, null, 2));
+		outputJson(result);
 	}));
 
 program
@@ -114,7 +132,10 @@ program
 		"--kind <type>",
 		"Filter by symbol kind (type, class, function, interface)",
 	)
-	.action(wrapCommand(symbol));
+	.action(wrapCommand(async (query, options) => {
+		const result = await symbol(query, options);
+		outputJson(result);
+	}));
 
 program
 	.command("refs")
@@ -122,28 +143,42 @@ program
 	.argument("<symbol>", "Symbol name to find references for")
 	.option("--kind <type>", "Filter by symbol kind")
 	.option("--limit <number>", "Maximum number of results")
-	.action(wrapCommand(refs));
+	.action(wrapCommand(async (symbol, options) => {
+		const result = await refs(symbol, options);
+		outputJson(result);
+	}));
 
 program
 	.command("deps")
 	.description("Show file dependencies")
 	.argument("<path>", "File path to analyze")
 	.option("--depth <number>", "Recursion depth (default: 1)")
-	.action(wrapCommand(deps));
+	.action(wrapCommand(async (path, options) => {
+		const result = await deps(path, options);
+		outputJson(result);
+	}));
 
 program
 	.command("rdeps")
 	.description("Show reverse dependencies (what depends on this file)")
 	.argument("<path>", "File path to analyze")
 	.option("--depth <number>", "Recursion depth (default: 1)")
-	.action(wrapCommand(rdeps));
+	.action(wrapCommand(async (path, options) => {
+		const result = await rdeps(path, options);
+		outputJson(result);
+	}));
 
 program
 	.command("adventure")
 	.description("Find shortest adventure between two files")
 	.argument("<from>", "Source file path")
 	.argument("<to>", "Target file path")
-	.action(wrapCommand(adventure));
+	.action(
+		wrapCommand(async (from, to) => {
+			const result = await adventure(from, to);
+			outputJson(result);
+		}),
+	);
 
 program
 	.command("leaves")
@@ -152,37 +187,59 @@ program
 		"--max-dependents <number>",
 		"Maximum number of dependents (default: 0)",
 	)
-	.action(wrapCommand(leaves));
+	.action(wrapCommand(async (options) => {
+		const result = await leaves(options);
+		outputJson(result);
+	}));
 
 program
 	.command("exports")
 	.description("List exported symbols from a file or package")
 	.argument("<target>", "File path or package name")
-	.action(wrapCommand(exports));
+	.action(
+		wrapCommand(async (target) => {
+			const result = await exports(target);
+			outputJson(result);
+		}),
+	);
 
 program
 	.command("imports")
 	.description("Show what a file imports (direct dependencies)")
 	.argument("<path>", "File path to analyze")
-	.action(wrapCommand(imports));
+	.action(wrapCommand(async (path, options) => {
+		const result = await imports(path, options);
+		outputJson(result);
+	}));
 
 program
 	.command("lost")
 	.description("Find lost symbols (potentially unused)")
 	.option("--limit <number>", "Maximum number of results (default: 50)")
-	.action(wrapCommand(lost));
+	.action(wrapCommand(async (options) => {
+		const result = await lost(options);
+		outputJson(result);
+	}));
 
 program
 	.command("treasure")
 	.description("Find treasure (most referenced files and largest dependencies)")
 	.option("--limit <number>", "Maximum number of results (default: 10)")
-	.action(wrapCommand(treasure));
+	.action(wrapCommand(async (options) => {
+		const result = await treasure(options);
+		outputJson(result);
+	}));
 
 program
 	.command("changes")
 	.description("Show files changed since git ref and their impact")
 	.argument("<ref>", "Git ref to compare against (e.g., main, HEAD~5)")
-	.action(wrapCommand(changes));
+	.action(
+		wrapCommand(async (ref) => {
+			const result = await changes(ref);
+			outputJson(result);
+		}),
+	);
 
 program
 	.command("graph")
@@ -193,19 +250,30 @@ program
 		"--direction <type>",
 		"Graph direction: deps, rdeps, or both (default: both)",
 	)
-	.action(wrapCommand(graph));
+	.action(
+		wrapCommand(async (path, options) => {
+			const result = await graph(path, options);
+			outputJson(result);
+		}),
+	);
 
 program
 	.command("cycles")
 	.description("Find bidirectional dependencies (A imports B, B imports A)")
 	.option("--limit <number>", "Maximum number of results (default: 50)")
-	.action(wrapCommand(cycles));
+	.action(wrapCommand(async (options) => {
+		const result = await cycles(options);
+		outputJson(result);
+	}));
 
 program
 	.command("coupling")
 	.description("Find tightly coupled file pairs")
 	.option("--threshold <number>", "Minimum total coupling score (default: 5)")
-	.action(wrapCommand(coupling));
+	.action(wrapCommand(async (options) => {
+		const result = await coupling(options);
+		outputJson(result);
+	}));
 
 program
 	.command("complexity")
@@ -214,18 +282,27 @@ program
 		"--sort <metric>",
 		"Sort by: complexity, symbols, or stability (default: complexity)",
 	)
-	.action(wrapCommand(complexity));
+	.action(wrapCommand(async (options) => {
+		const result = await complexity(options);
+		outputJson(result);
+	}));
 
 program
 	.command("schema")
 	.description("Show database schema (tables, columns, indexes)")
-	.action(wrapCommand(schema));
+	.action(wrapCommand(async () => {
+		const result = await schema();
+		outputJson(result);
+	}));
 
 program
 	.command("query")
 	.description("Execute raw SQL query (read-only)")
 	.argument("<sql>", "SQL query to execute")
-	.action(wrapCommand(query));
+	.action(wrapCommand(async (sql) => {
+		const result = await query(sql);
+		outputJson(result);
+	}));
 
 const cookbook = program
 	.command("cookbook")
@@ -235,7 +312,21 @@ cookbook
 	.command("list")
 	.description("List all available recipes")
 	.option("-f, --format <format>", "Output format: json or markdown", "json")
-	.action(wrapCommand(cookbookList));
+	.action(
+		wrapCommand(async (options) => {
+			const result = await cookbookList(options);
+			if (options.format === "markdown") {
+				console.log("Available recipes:\n");
+				for (const r of result.recipes) {
+					console.log(`  - ${r}`);
+				}
+				console.log("\nView a recipe: dora cookbook show <recipe>");
+				console.log("Example: dora cookbook show quickstart");
+			} else {
+				outputJson(result);
+			}
+		}),
+	);
 
 cookbook
 	.command("show")
@@ -245,26 +336,50 @@ cookbook
 	)
 	.description("Show a recipe or index")
 	.option("-f, --format <format>", "Output format: json or markdown", "json")
-	.action(wrapCommand(cookbookShow));
+	.action(
+		wrapCommand(async (recipe, options) => {
+			const result = await cookbookShow(recipe, options);
+			if (options.format === "markdown") {
+				console.log(result.content);
+			} else {
+				outputJson(result);
+			}
+		}),
+	);
 
 const docs = program
 	.command("docs")
 	.description("List, search, and view documentation files")
 	.option("-t, --type <type>", "Filter by document type (md, txt)")
-	.action(wrapCommand((options) => docsList(options)));
+	.action(
+		wrapCommand(async (options) => {
+			const result = await docsList(options);
+			outputJson(result);
+		}),
+	);
 
 docs
 	.command("search")
 	.argument("<query>", "Text to search for in documentation")
 	.option("-l, --limit <number>", "Maximum number of results (default: 20)")
 	.description("Search through documentation content")
-	.action(wrapCommand(docsSearch));
+	.action(
+		wrapCommand(async (query, options) => {
+			const result = await docsSearch(query, options);
+			outputJson(result);
+		}),
+	);
 
 docs
 	.command("show")
 	.argument("<path>", "Document path")
 	.option("-c, --content", "Include full document content")
 	.description("Show document metadata and references")
-	.action(wrapCommand(docsShow));
+	.action(
+		wrapCommand(async (path, options) => {
+			const result = await docsShow(path, options);
+			outputJson(result);
+		}),
+	);
 
 program.parse();

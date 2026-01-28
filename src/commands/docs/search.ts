@@ -1,12 +1,24 @@
 import { searchDocumentContent } from "../../db/queries.ts";
-import { outputJson, parseIntFlag, setupCommand } from "../shared.ts";
+import { parseIntFlag, setupCommand } from "../shared.ts";
 
 const DEFAULT_LIMIT = 20;
+
+export type DocsSearchResult = {
+	query: string;
+	limit: number;
+	results: Array<{
+		path: string;
+		type: string;
+		symbol_refs: number;
+		file_refs: number;
+	}>;
+	total: number;
+};
 
 export async function docsSearch(
 	query: string,
 	flags: Record<string, string | boolean> = {},
-): Promise<void> {
+): Promise<DocsSearchResult> {
 	const ctx = await setupCommand();
 	const db = ctx.db;
 	const limit = parseIntFlag({
@@ -21,7 +33,7 @@ export async function docsSearch(
 
 	const results = searchDocumentContent(db, query, limit);
 
-	const output = {
+	return {
 		query,
 		limit,
 		results: results.map((r) => ({
@@ -32,6 +44,4 @@ export async function docsSearch(
 		})),
 		total: results.length,
 	};
-
-	outputJson(output);
 }
