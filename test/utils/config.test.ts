@@ -288,6 +288,18 @@ describe("Config Management", () => {
 			);
 		});
 
+		test("should use csharp indexer when language is csharp", async () => {
+			const config = createDefaultConfig({
+				root: tempDir,
+				language: "csharp",
+			});
+
+			expect(config.language).toBe("csharp");
+			expect(config.commands?.index).toBe(
+				"scip-csharp index --output .dora/index.scip",
+			);
+		});
+
 		test("should use go indexer when language is go", async () => {
 			const config = createDefaultConfig({
 				root: tempDir,

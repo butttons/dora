@@ -2,7 +2,7 @@
 
 import { existsSync, readFileSync } from "fs";
 import { join } from "path";
-import { ZodError, z } from "zod";
+import { z } from "zod";
 import { CtxError } from "./errors.ts";
 import {
 	findRepoRoot,
@@ -29,6 +29,7 @@ export const LanguageSchema = z.enum([
 	"rust",
 	"go",
 	"java",
+  "csharp",
 ]);
 
 const ConfigSchema = z.object({
@@ -197,6 +198,8 @@ function detectIndexerCommand(params: {
 				return "scip-go --output .dora/index.scip";
 			case "java":
 				return "scip-java index --output .dora/index.scip";
+      case "csharp":
+				return "scip-csharp index --output .dora/index.scip";
 			default:
 				return "scip-typescript index --output .dora/index.scip";
 		}

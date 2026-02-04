@@ -53,7 +53,7 @@ program
 	.description("Initialize dora in the current repository")
 	.option(
 		"-l, --language <language>",
-		"Project language (typescript, javascript, python, rust, go, java)",
+		"Project language (typescript, javascript, python, rust, go, java, csharp)",
 	)
 	.action(
 		wrapCommand(async (options) => {
