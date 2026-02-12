@@ -25,7 +25,7 @@ export const toolsMetadata: ToolMetadata[] = [
 				name: "language",
 				type: "string",
 				description:
-					"Project language (typescript, javascript, python, rust, go, java)",
+					"Project language (typescript, javascript, python, rust, go, java, scala, kotlin, dart, ruby, c, cpp, php, csharp, visualbasic)",
 				required: false,
 			},
 		],

@@ -2,7 +2,7 @@
 
 import { existsSync, readFileSync } from "fs";
 import { join } from "path";
-import { ZodError, z } from "zod";
+import { z } from "zod";
 import { CtxError } from "./errors.ts";
 import {
 	findRepoRoot,
@@ -29,7 +29,18 @@ export const LanguageSchema = z.enum([
 	"rust",
 	"go",
 	"java",
+	"scala",
+	"kotlin",
+	"dart",
+	"ruby",
+	"c",
+	"cpp",
+	"php",
+	"csharp",
+	"visualbasic",
 ]);
+
+export type Language = z.infer<typeof LanguageSchema>;
 
 const ConfigSchema = z.object({
 	root: z.string().min(1),
@@ -110,7 +121,9 @@ export function validateConfig(data: unknown): Config {
 		}
 		const field = firstError.path.join(".");
 		throw new CtxError(
-			`Invalid config: ${field ? `field '${field}' ` : ""}${firstError.message}`,
+			`Invalid config: ${field ? `field '${field}' ` : ""}${
+				firstError.message
+			}`,
 		);
 	}
 
@@ -196,7 +209,21 @@ function detectIndexerCommand(params: {
 			case "go":
 				return "scip-go --output .dora/index.scip";
 			case "java":
+			case "scala":
+			case "kotlin":
 				return "scip-java index --output .dora/index.scip";
+			case "dart":
+				return "scip-dart index --output .dora/index.scip";
+			case "ruby":
+				return "scip-ruby index --output .dora/index.scip";
+			case "c":
+			case "cpp":
+				return "scip-clang index --output .dora/index.scip";
+			case "php":
+				return "scip-php index --output .dora/index.scip";
+			case "csharp":
+			case "visualbasic":
+				return "scip-csharp index --output .dora/index.scip";
 			default:
 				return "scip-typescript index --output .dora/index.scip";
 		}
@@ -273,14 +300,7 @@ export function createDefaultConfig(params: {
 		root: params.root,
 		scip: ".dora/index.scip",
 		db: ".dora/dora.db",
-		language: params.language as
-			| "typescript"
-			| "javascript"
-			| "python"
-			| "rust"
-			| "go"
-			| "java"
-			| undefined,
+		language: params.language as Language | undefined,
 		commands: {
 			index: indexCommand,
 		},

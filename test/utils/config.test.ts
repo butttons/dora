@@ -288,6 +288,114 @@ describe("Config Management", () => {
 			);
 		});
 
+		test("should use csharp indexer when language is csharp", async () => {
+			const config = createDefaultConfig({
+				root: tempDir,
+				language: "csharp",
+			});
+
+			expect(config.language).toBe("csharp");
+			expect(config.commands?.index).toBe(
+				"scip-csharp index --output .dora/index.scip",
+			);
+		});
+
+		test("should use csharp indexer when language is visualbasic", async () => {
+			const config = createDefaultConfig({
+				root: tempDir,
+				language: "visualbasic",
+			});
+
+			expect(config.language).toBe("visualbasic");
+			expect(config.commands?.index).toBe(
+				"scip-csharp index --output .dora/index.scip",
+			);
+		});
+
+		test("should use java indexer when language is java", async () => {
+			const config = createDefaultConfig({
+				root: tempDir,
+				language: "java",
+			});
+
+			expect(config.language).toBe("java");
+			expect(config.commands?.index).toBe(
+				"scip-java index --output .dora/index.scip",
+			);
+		});
+
+		test("should use java indexer when language is kotlin", async () => {
+			const config = createDefaultConfig({
+				root: tempDir,
+				language: "kotlin",
+			});
+
+			expect(config.language).toBe("kotlin");
+			expect(config.commands?.index).toBe(
+				"scip-java index --output .dora/index.scip",
+			);
+		});
+
+		test("should use java indexer when language is scala", async () => {
+			const config = createDefaultConfig({
+				root: tempDir,
+				language: "scala",
+			});
+
+			expect(config.language).toBe("scala");
+			expect(config.commands?.index).toBe(
+				"scip-java index --output .dora/index.scip",
+			);
+		});
+
+		test("should use ruby indexer when language is ruby", async () => {
+			const config = createDefaultConfig({
+				root: tempDir,
+				language: "ruby",
+			});
+
+			expect(config.language).toBe("ruby");
+			expect(config.commands?.index).toBe(
+				"scip-ruby index --output .dora/index.scip",
+			);
+		});
+
+		test("should use dart indexer when language is dart", async () => {
+			const config = createDefaultConfig({
+				root: tempDir,
+				language: "dart",
+			});
+
+			expect(config.language).toBe("dart");
+			expect(config.commands?.index).toBe(
+				"scip-dart index --output .dora/index.scip",
+			);
+		});
+
+		test("should use clang indexer when language is c", async () => {
+			const config = createDefaultConfig({
+				root: tempDir,
+				language: "c",
+			});
+
+			expect(config.language).toBe("c");
+			expect(config.commands?.index).toBe(
+				"scip-clang index --output .dora/index.scip",
+			);
+		});
+
+		test("should use clang indexer when language is cpp", async () => {
+			const config = createDefaultConfig({
+				root: tempDir,
+				language: "cpp",
+			});
+
+			expect(config.language).toBe("cpp");
+			expect(config.commands?.index).toBe(
+				"scip-clang index --output .dora/index.scip",
+			);
+		});
+
 		test("should use go indexer when language is go", async () => {
 			const config = createDefaultConfig({
 				root: tempDir,
