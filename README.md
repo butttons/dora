@@ -91,7 +91,7 @@ For other languages, see [SCIP Indexers](#scip-indexers).
 
 ## AI Agent Integration
 
-**→ See [AGENTS.md](AGENTS.md) for complete integration guides** for:
+**→ See [AGENTS_SETUP.md](AGENTS_SETUP.md) for complete integration guides** for:
 
 - **Claude Code** - Skills, hooks, auto-indexing
 - **OpenCode** - Agent system integration
@@ -519,7 +519,7 @@ MIT
 
 ## Links
 
-- **AI Agent Integration**: [AGENTS.md](./AGENTS.md) - Integration guides for Claude Code, OpenCode, Cursor, Windsurf
+- **AI Agent Integration**: [AGENTS_SETUP.md](./AGENTS_SETUP.md) - Integration guides for Claude Code, OpenCode, Cursor, Windsurf
 - **GitHub**: [https://github.com/butttons/dora](https://github.com/butttons/dora)
 - **SCIP Protocol**: [https://github.com/sourcegraph/scip](https://github.com/sourcegraph/scip)
 - **Claude Code**: [https://claude.ai/code](https://claude.ai/code)
