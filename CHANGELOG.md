@@ -1,5 +1,15 @@
 # @butttons/dora
 
+## 1.6.1
+
+### Patch Changes
+
+- Add `agent-setup` cookbook recipe with setup instructions for Claude Code, pi, OpenCode, Cursor, Windsurf, and MCP
+- Add pi integration guide to AGENTS documentation with project-local extensions and plan mode support
+- Rename AGENTS.md to AGENTS.README.md for clarity
+- Update docs site with pi references and agent-setup cookbook tips
+- Add missing languages as valid options for `dora init`
+
 ## 1.6.0
 
 ### Minor Changes
