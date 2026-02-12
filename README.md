@@ -103,8 +103,8 @@ Quick start for any agent:
 
 ```bash
 dora init && dora index    # Initialize and index your codebase
+dora cookbook show agent-setup --format markdown  # Get setup instructions for your agent
 dora status                # Verify index is ready
-dora map                   # See codebase overview
 ```
 
 ## Claude Code Integration

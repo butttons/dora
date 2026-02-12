@@ -1180,6 +1180,7 @@ Show query pattern cookbook with examples and tips for common SQL patterns.
 - `methods` - Finding class methods by name, finding all methods in a class, counting method usages
 - `references` - Tracking symbol usage, finding most referenced symbols, identifying dead code
 - `exports` - Distinguishing exported symbols from internal ones, finding public API functions/types
+- `agent-setup` - Setting up dora hooks, extensions, and skills for AI agents (Claude Code, pi, OpenCode, Cursor, Windsurf)
 
 **Output:**
 

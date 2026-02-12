@@ -268,6 +268,13 @@ import Layout from "../layouts/Layout.astro";
                 </div>
                 <div>
                     <span class="text-zinc-500">$</span>
+                    <span class="text-zinc-300">dora cookbook show agent-setup --format markdown</span
+                    ><span class="text-zinc-500 ml-2"
+                        ># Get setup instructions for your agent</span
+                    >
+                </div>
+                <div>
+                    <span class="text-zinc-500">$</span>
                     <span class="text-zinc-300">dora status</span><span
                         class="text-zinc-500 ml-2"># Verify index is ready</span
                     >
@@ -279,6 +286,11 @@ import Layout from "../layouts/Layout.astro";
                     >
                 </div>
             </div>
+            <p class="text-zinc-400 text-sm mb-8">
+                <strong>Tip:</strong> After <code class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded">dora init</code>,
+                run <code class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded">dora cookbook show agent-setup --format markdown</code>
+                and feed it to your AI agent — it contains ready-to-use setup instructions for Claude Code, pi, OpenCode, Cursor, Windsurf, and more.
+            </p>
 
             <!-- Claude Code Integration -->
             <h3 class="text-xl font-semibold mb-4 text-blue-300">

@@ -12,6 +12,9 @@ dora is a language-agnostic CLI that helps AI agents understand codebases by que
 dora init
 dora index
 
+# Let your AI agent set up dora integration automatically
+dora cookbook show agent-setup --format markdown
+
 # Query the codebase
 dora status              # Check index health
 dora map                 # Show packages and stats
@@ -546,6 +549,8 @@ run dora complexity to find high-risk files
 ## Generic AI Agent Integration
 
 For AI agents and IDEs not listed above, dora provides standard integration files you can adapt.
+
+**Quickest path:** After `dora init`, run `dora cookbook show agent-setup --format markdown` and feed the output to your AI agent. It contains complete setup instructions for all supported agents.
 
 ### Setup
 

@@ -20,6 +20,9 @@ import cookbookReferencesMd from "../templates/cookbook/references.md" with {
 import cookbookExportsMd from "../templates/cookbook/exports.md" with {
 	type: "text",
 };
+import cookbookAgentSetupMd from "../templates/cookbook/agent-setup.md" with {
+	type: "text",
+};
 
 /**
  * Copy a single file if it doesn't exist at target
@@ -73,6 +76,10 @@ export async function copyTemplates(targetDoraDir: string): Promise<void> {
 		{
 			content: cookbookExportsMd,
 			target: join(targetDoraDir, "cookbook", "exports.md"),
+		},
+		{
+			content: cookbookAgentSetupMd,
+			target: join(targetDoraDir, "cookbook", "agent-setup.md"),
 		},
 	];
 
