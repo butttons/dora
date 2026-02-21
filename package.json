@@ -3,11 +3,15 @@
   "version": "1.6.1",
   "module": "src/index.ts",
   "type": "module",
-  "private": true,
   "description": "Fast code intelligence for AI agents. Query symbols, dependencies, and references without reading files.",
   "bin": {
-    "dora": "./src/index.ts"
+    "dora": "./dist/index.js"
   },
+  "files": [
+    "dist/index.js",
+    "README.md",
+    "LICENSE"
+  ],
   "author": {
     "name": "butttons"
   },
@@ -16,6 +20,7 @@
     "test": "bun test ./test/",
     "type-check": "tsc",
     "build": "bun build src/index.ts --compile --outfile dist/dora",
+    "build:npm": "bun build src/index.ts --outfile dist/index.js --target bun",
     "generate-proto": "protoc --plugin=./node_modules/.bin/protoc-gen-es --es_out=src/converter --es_opt=target=ts --proto_path=src/proto src/proto/scip.proto",
     "biome:format": "biome format --write ./src",
     "build:linux": "bun build src/index.ts --compile --target=bun-linux-x64 --outfile dist/dora-linux-x64",
