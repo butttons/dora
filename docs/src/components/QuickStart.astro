@@ -1,5 +1,9 @@
 ---
 const platformConfigs = {
+	npm: {
+		install: `# Install globally (requires Bun)
+bun install -g @butttons/dora`,
+	},
 	"macos-arm": {
 		install: `curl -L https://github.com/butttons/dora/releases/latest/download/dora-darwin-arm64 -o dora
 chmod +x dora
@@ -113,10 +117,11 @@ bundle install`,
                     id="platform-select"
                     class="w-full bg-zinc-900 border border-zinc-800 text-zinc-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors"
                 >
-                    <option value="macos-arm">macOS (ARM)</option>
-                    <option value="macos-intel">macOS (Intel)</option>
-                    <option value="linux">Linux x64</option>
-                    <option value="windows">Windows x64</option>
+                    <option value="npm">npm (requires Bun)</option>
+                    <option value="macos-arm">macOS (ARM) binary</option>
+                    <option value="macos-intel">macOS (Intel) binary</option>
+                    <option value="linux">Linux x64 binary</option>
+                    <option value="windows">Windows x64 binary</option>
                 </select>
             </div>
         </div>
@@ -193,7 +198,7 @@ bundle install`,
             return "windows";
         }
 
-        return "macos-arm";
+        return "npm";
     }
 
     function updateInstallCommands() {

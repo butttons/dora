@@ -156,7 +156,31 @@ import Layout from "../layouts/Layout.astro";
             </div>
 
             <h3 class="text-xl font-semibold mb-4 text-blue-300">
-                Option 2: Build from Source
+                Option 2: Install via npm
+            </h3>
+            <p class="text-zinc-300 mb-4">
+                Requires <a
+                    href="https://bun.sh"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-blue-400 hover:underline">Bun</a
+                > runtime installed.
+            </p>
+            <div
+                class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm space-y-2 mb-8 overflow-x-auto"
+            >
+                <div class="text-zinc-500"># Install globally</div>
+                <div class="text-zinc-300">
+                    bun install -g @butttons/dora
+                </div>
+                <div class="text-zinc-500 mt-3"># Or run without installing</div>
+                <div class="text-zinc-300">
+                    bunx @butttons/dora
+                </div>
+            </div>
+
+            <h3 class="text-xl font-semibold mb-4 text-blue-300">
+                Option 3: Build from Source
             </h3>
             <div
                 class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm space-y-2 mb-8 overflow-x-auto"

@@ -54,7 +54,21 @@ sudo mv dora /usr/local/bin/
 # Download dora-windows-x64.exe and add to PATH
 ```
 
-### Option 2: Build from Source
+### Option 2: Install via npm
+
+Requires [Bun](https://bun.sh) runtime installed.
+
+```bash
+bun install -g @butttons/dora
+```
+
+Or run without installing:
+
+```bash
+bunx @butttons/dora
+```
+
+### Option 3: Build from Source
 
 ```bash
 # Install Bun (if not already installed)
