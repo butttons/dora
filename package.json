@@ -1,6 +1,6 @@
 {
   "name": "@butttons/dora",
-  "version": "1.6.1",
+  "version": "1.7.0",
   "module": "src/index.ts",
   "type": "module",
   "description": "Fast code intelligence for AI agents. Query symbols, dependencies, and references without reading files.",

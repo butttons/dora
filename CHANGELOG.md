@@ -1,5 +1,17 @@
 # @butttons/dora
 
+## 1.7.0
+
+### Minor Changes
+
+- Default output format is now TOON (Token-Oriented Object Notation) for reduced token usage
+- Add global `--json` flag to all commands for JSON output
+- Add npm publishing to release workflow
+
+### Patch Changes
+
+- Fix agents readme file link in docs website
+
 ## 1.6.1
 
 ### Patch Changes
