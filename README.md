@@ -459,7 +459,52 @@ Quick reference for all commands with common flags:
 
 ## Output Format
 
-All commands output valid JSON to stdout. Errors go to stderr with exit code 1.
+All commands output [TOON](https://github.com/toon-format/toon) (Token-Oriented Object Notation) by default. TOON is a compact, human-readable encoding of JSON that minimizes tokens for LLM consumption. Pass `--json` to any command for JSON output.
+
+```bash
+# Default: TOON output
+dora status
+
+# JSON output
+dora --json status
+dora status --json
+```
+
+Errors always go to stderr as JSON with exit code 1.
+
+### TOON vs JSON size comparison
+
+Measured on dora's own codebase (79 files, 3167 symbols):
+
+| Command | JSON | TOON | Savings |
+|---|---|---|---|
+| `status` | 206 B | 176 B | 15% |
+| `map` | 68 B | 62 B | 9% |
+| `ls src/commands` | 2,258 B | 975 B | **57%** |
+| `ls` (all files) | 6,324 B | 2,644 B | **58%** |
+| `file src/index.ts` | 6,486 B | 6,799 B | -5% |
+| `symbol setupCommand` | 130 B | 130 B | 0% |
+| `refs wrapCommand` | 510 B | 549 B | -8% |
+| `deps (depth 2)` | 2,158 B | 1,332 B | **38%** |
+| `rdeps (depth 2)` | 1,254 B | 802 B | **36%** |
+| `adventure` | 110 B | 97 B | 12% |
+| `leaves` | 142 B | 129 B | 9% |
+| `exports` | 488 B | 511 B | -5% |
+| `imports` | 1,978 B | 1,998 B | -1% |
+| `lost` | 1,876 B | 1,987 B | -6% |
+| `treasure` | 893 B | 577 B | **35%** |
+| `cycles` | 14 B | 11 B | 21% |
+| `coupling` | 35 B | 31 B | 11% |
+| `complexity` | 2,716 B | 932 B | **66%** |
+| `schema` | 6,267 B | 4,389 B | **30%** |
+| `query` | 692 B | 464 B | **33%** |
+| `docs` | 1,840 B | 745 B | **60%** |
+| `docs search` | 277 B | 171 B | **38%** |
+| `docs show` | 820 B | 870 B | -6% |
+| `graph` | 2,434 B | 1,894 B | **22%** |
+| `changes` | 1,112 B | 1,026 B | 8% |
+
+Commands with uniform arrays of objects (ls, complexity, docs, treasure) see 35-66% reduction. Nested or non-uniform outputs (file, refs, exports) are roughly equal or slightly larger.
 
 ## Debug Logging
 
