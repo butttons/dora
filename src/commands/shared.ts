@@ -7,7 +7,7 @@ import {
 } from "../db/queries.ts";
 import { type Config, loadConfig } from "../utils/config.ts";
 import { CtxError } from "../utils/errors.ts";
-import { outputJson } from "../utils/output.ts";
+import { output, outputJson } from "../utils/output.ts";
 import { normalizeToRelative } from "../utils/paths.ts";
 
 export const DEFAULTS = {
@@ -174,4 +174,4 @@ export function resolvePath({
 	return normalizeToRelative({ root: ctx.config.root, inputPath });
 }
 
-export { outputJson };
+export { output, outputJson };

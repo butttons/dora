@@ -29,7 +29,7 @@ import { status } from "./commands/status.ts";
 import { symbol } from "./commands/symbol.ts";
 import { treasure } from "./commands/treasure.ts";
 import { wrapCommand } from "./utils/errors.ts";
-import { outputJson } from "./utils/output.ts";
+import { output } from "./utils/output.ts";
 
 import packageJson from "../package.json";
 
@@ -38,7 +38,8 @@ const program = new Command();
 program
 	.name("dora")
 	.description("Code Context CLI for AI Agents")
-	.version(packageJson.version);
+	.version(packageJson.version)
+	.option("--json", "Output in JSON format");
 
 program
 	.command("mcp")
@@ -58,7 +59,7 @@ program
 	.action(
 		wrapCommand(async (options) => {
 			const result = await init({ language: options.language });
-			outputJson(result);
+			output({ data: result, isJson: program.opts().json });
 		}),
 	);
 
@@ -80,7 +81,7 @@ program
 				skipScip: options.skipScip,
 				ignore: options.ignore,
 			});
-			outputJson(result);
+			output({ data: result, isJson: program.opts().json });
 		}),
 	);
 
@@ -89,7 +90,7 @@ program
 	.description("Show index status and statistics")
 	.action(wrapCommand(async () => {
 		const result = await status();
-		outputJson(result);
+		output({ data: result, isJson: program.opts().json });
 	}));
 
 program
@@ -97,7 +98,7 @@ program
 	.description("Show high-level codebase map")
 	.action(wrapCommand(async () => {
 		const result = await map();
-		outputJson(result);
+		output({ data: result, isJson: program.opts().json });
 	}));
 
 program
@@ -111,7 +112,7 @@ program
 	)
 	.action(wrapCommand(async (directory, options) => {
 		const result = await ls(directory, options);
-		outputJson(result);
+		output({ data: result, isJson: program.opts().json });
 	}));
 
 program
@@ -120,7 +121,7 @@ program
 	.argument("<path>", "File path to analyze")
 	.action(wrapCommand(async (path: string) => {
 		const result = await file(path);
-		outputJson(result);
+		output({ data: result, isJson: program.opts().json });
 	}));
 
 program
@@ -134,7 +135,7 @@ program
 	)
 	.action(wrapCommand(async (query, options) => {
 		const result = await symbol(query, options);
-		outputJson(result);
+		output({ data: result, isJson: program.opts().json });
 	}));
 
 program
@@ -145,7 +146,7 @@ program
 	.option("--limit <number>", "Maximum number of results")
 	.action(wrapCommand(async (symbol, options) => {
 		const result = await refs(symbol, options);
-		outputJson(result);
+		output({ data: result, isJson: program.opts().json });
 	}));
 
 program
@@ -155,7 +156,7 @@ program
 	.option("--depth <number>", "Recursion depth (default: 1)")
 	.action(wrapCommand(async (path, options) => {
 		const result = await deps(path, options);
-		outputJson(result);
+		output({ data: result, isJson: program.opts().json });
 	}));
 
 program
@@ -165,7 +166,7 @@ program
 	.option("--depth <number>", "Recursion depth (default: 1)")
 	.action(wrapCommand(async (path, options) => {
 		const result = await rdeps(path, options);
-		outputJson(result);
+		output({ data: result, isJson: program.opts().json });
 	}));
 
 program
@@ -176,7 +177,7 @@ program
 	.action(
 		wrapCommand(async (from, to) => {
 			const result = await adventure(from, to);
-			outputJson(result);
+			output({ data: result, isJson: program.opts().json });
 		}),
 	);
 
@@ -189,7 +190,7 @@ program
 	)
 	.action(wrapCommand(async (options) => {
 		const result = await leaves(options);
-		outputJson(result);
+		output({ data: result, isJson: program.opts().json });
 	}));
 
 program
@@ -199,7 +200,7 @@ program
 	.action(
 		wrapCommand(async (target) => {
 			const result = await exports(target);
-			outputJson(result);
+			output({ data: result, isJson: program.opts().json });
 		}),
 	);
 
@@ -209,7 +210,7 @@ program
 	.argument("<path>", "File path to analyze")
 	.action(wrapCommand(async (path, options) => {
 		const result = await imports(path, options);
-		outputJson(result);
+		output({ data: result, isJson: program.opts().json });
 	}));
 
 program
@@ -218,7 +219,7 @@ program
 	.option("--limit <number>", "Maximum number of results (default: 50)")
 	.action(wrapCommand(async (options) => {
 		const result = await lost(options);
-		outputJson(result);
+		output({ data: result, isJson: program.opts().json });
 	}));
 
 program
@@ -227,7 +228,7 @@ program
 	.option("--limit <number>", "Maximum number of results (default: 10)")
 	.action(wrapCommand(async (options) => {
 		const result = await treasure(options);
-		outputJson(result);
+		output({ data: result, isJson: program.opts().json });
 	}));
 
 program
@@ -237,7 +238,7 @@ program
 	.action(
 		wrapCommand(async (ref) => {
 			const result = await changes(ref);
-			outputJson(result);
+			output({ data: result, isJson: program.opts().json });
 		}),
 	);
 
@@ -253,7 +254,7 @@ program
 	.action(
 		wrapCommand(async (path, options) => {
 			const result = await graph(path, options);
-			outputJson(result);
+			output({ data: result, isJson: program.opts().json });
 		}),
 	);
 
@@ -263,7 +264,7 @@ program
 	.option("--limit <number>", "Maximum number of results (default: 50)")
 	.action(wrapCommand(async (options) => {
 		const result = await cycles(options);
-		outputJson(result);
+		output({ data: result, isJson: program.opts().json });
 	}));
 
 program
@@ -272,7 +273,7 @@ program
 	.option("--threshold <number>", "Minimum total coupling score (default: 5)")
 	.action(wrapCommand(async (options) => {
 		const result = await coupling(options);
-		outputJson(result);
+		output({ data: result, isJson: program.opts().json });
 	}));
 
 program
@@ -284,7 +285,7 @@ program
 	)
 	.action(wrapCommand(async (options) => {
 		const result = await complexity(options);
-		outputJson(result);
+		output({ data: result, isJson: program.opts().json });
 	}));
 
 program
@@ -292,7 +293,7 @@ program
 	.description("Show database schema (tables, columns, indexes)")
 	.action(wrapCommand(async () => {
 		const result = await schema();
-		outputJson(result);
+		output({ data: result, isJson: program.opts().json });
 	}));
 
 program
@@ -301,7 +302,7 @@ program
 	.argument("<sql>", "SQL query to execute")
 	.action(wrapCommand(async (sql) => {
 		const result = await query(sql);
-		outputJson(result);
+		output({ data: result, isJson: program.opts().json });
 	}));
 
 const cookbook = program
@@ -323,7 +324,7 @@ cookbook
 				console.log("\nView a recipe: dora cookbook show <recipe>");
 				console.log("Example: dora cookbook show quickstart");
 			} else {
-				outputJson(result);
+				output({ data: result, isJson: program.opts().json });
 			}
 		}),
 	);
@@ -342,7 +343,7 @@ cookbook
 			if (options.format === "markdown") {
 				console.log(result.content);
 			} else {
-				outputJson(result);
+				output({ data: result, isJson: program.opts().json });
 			}
 		}),
 	);
@@ -354,7 +355,7 @@ const docs = program
 	.action(
 		wrapCommand(async (options) => {
 			const result = await docsList(options);
-			outputJson(result);
+			output({ data: result, isJson: program.opts().json });
 		}),
 	);
 
@@ -366,7 +367,7 @@ docs
 	.action(
 		wrapCommand(async (query, options) => {
 			const result = await docsSearch(query, options);
-			outputJson(result);
+			output({ data: result, isJson: program.opts().json });
 		}),
 	);
 
@@ -378,7 +379,7 @@ docs
 	.action(
 		wrapCommand(async (path, options) => {
 			const result = await docsShow(path, options);
-			outputJson(result);
+			output({ data: result, isJson: program.opts().json });
 		}),
 	);
 
