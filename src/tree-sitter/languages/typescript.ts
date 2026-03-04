@@ -1,5 +1,5 @@
 import type Parser from "web-tree-sitter";
-import type { ClassInfo, FunctionInfo, MethodInfo } from "../types.ts";
+import type { ClassInfo, FunctionInfo, MethodInfo } from "../../schemas/treesitter.ts";
 
 export const functionQueryString = `
 (function_declaration

@@ -9,6 +9,7 @@ export const SymbolResultSchema = z.object({
 	cyclomatic_complexity: z.number().optional(),
 	parameters: z.array(ParameterInfoSchema).optional(),
 	return_type: z.string().nullable().optional(),
+	documented_in: z.array(z.string()).optional(),
 });
 
 export const SymbolSearchResultSchema = z.object({

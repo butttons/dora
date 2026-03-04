@@ -162,23 +162,32 @@ export async function handleToolCall(
 			});
 		})
 		.with("dora_fn", async () => {
-			return await fn(args.path, {
-				sort: args.sort,
-				minComplexity: args.minComplexity,
-				limit: args.limit,
+			return await fn({
+				path: args.path,
+				options: {
+					sort: args.sort,
+					minComplexity: args.minComplexity,
+					limit: args.limit,
+				},
 			});
 		})
 		.with("dora_class", async () => {
-			return await classCommand(args.path, {
-				sort: args.sort,
-				limit: args.limit,
+			return await classCommand({
+				path: args.path,
+				options: {
+					sort: args.sort,
+					limit: args.limit,
+				},
 			});
 		})
 		.with("dora_smells", async () => {
-			return await smells(args.path, {
-				complexityThreshold: args.complexityThreshold,
-				locThreshold: args.locThreshold,
-				paramsThreshold: args.paramsThreshold,
+			return await smells({
+				path: args.path,
+				options: {
+					complexityThreshold: args.complexityThreshold,
+					locThreshold: args.locThreshold,
+					paramsThreshold: args.paramsThreshold,
+				},
 			});
 		})
 		.otherwise(() => {

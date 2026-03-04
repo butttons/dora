@@ -1,6 +1,8 @@
 import { searchSymbols } from "../db/queries.ts";
-import type { SymbolResult, SymbolSearchResult } from "../types.ts";
 import { parseFunctions } from "../tree-sitter/parser.ts";
+import type { SymbolResult, SymbolSearchResult } from "../types.ts";
+import { CtxError } from "../utils/errors.ts";
+import { debugDb } from "../utils/logger.ts";
 import {
 	DEFAULTS,
 	parseIntFlag,
@@ -30,14 +32,14 @@ export async function symbol(
 	const functionKinds = new Set(["function", "method"]);
 	const fileGroups = new Map<string, FileGroupItem[]>();
 
-	for (let i = 0; i < results.length; i++) {
-		const result = results[i]!;
+	for (let index = 0; index < results.length; index++) {
+		const result = results[index]!;
 		if (functionKinds.has(result.kind)) {
 			const existing = fileGroups.get(result.path);
 			if (existing) {
-				existing.push({ index: i, result });
+				existing.push({ index, result });
 			} else {
-				fileGroups.set(result.path, [{ index: i, result }]);
+				fileGroups.set(result.path, [{ index, result }]);
 			}
 		}
 	}
@@ -60,18 +62,20 @@ export async function symbol(
 				}
 			>();
 
-			for (const fn of functions) {
-				const key = `${fn.name}:${fn.lines[0]}`;
+			for (const fnItem of functions) {
+				const key = `${fnItem.name}:${fnItem.lines[0]}`;
 				functionMap.set(key, {
-					cyclomatic_complexity: fn.cyclomatic_complexity,
-					parameters: fn.parameters,
-					return_type: fn.return_type,
+					cyclomatic_complexity: fnItem.cyclomatic_complexity,
+					parameters: fnItem.parameters,
+					return_type: fnItem.return_type,
 				});
 			}
 
 			for (const item of items) {
 				const startLine = item.result.lines?.[0];
-				if (startLine === undefined) continue;
+				if (startLine === undefined) {
+					continue;
+				}
 
 				const key = `${item.result.name}:${startLine}`;
 				const fnInfo = functionMap.get(key);
@@ -85,8 +89,10 @@ export async function symbol(
 					};
 				}
 			}
-		} catch {
-			// Gracefully skip if parsing fails or grammar unavailable
+		} catch (error) {
+			if (error instanceof CtxError) {
+				debugDb(`Tree-sitter parse failed for ${filePath}: ${error.message}`);
+			}
 		}
 	}
 
@@ -124,7 +130,7 @@ export async function symbol(
 		if (docs.length > 0) {
 			return {
 				...result,
-				documented_in: docs.map((d) => d.path),
+				documented_in: docs.map((item) => item.path),
 			};
 		}
 

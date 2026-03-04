@@ -1,9 +1,9 @@
 #!/usr/bin/env bun
 
-import { classCommand } from "./commands/class.ts";
 import { Command } from "commander";
 import { adventure } from "./commands/adventure.ts";
 import { changes } from "./commands/changes.ts";
+import { classCommand } from "./commands/class.ts";
 import { complexity } from "./commands/complexity.ts";
 import { cookbookList, cookbookShow } from "./commands/cookbook.ts";
 import { coupling } from "./commands/coupling.ts";
@@ -27,11 +27,11 @@ import { query } from "./commands/query.ts";
 import { rdeps } from "./commands/rdeps.ts";
 import { refs } from "./commands/refs.ts";
 import { schema } from "./commands/schema.ts";
+import { smells } from "./commands/smells.ts";
 import { status } from "./commands/status.ts";
 import { symbol } from "./commands/symbol.ts";
 import { treasure } from "./commands/treasure.ts";
 import { wrapCommand } from "./utils/errors.ts";
-import { smells } from "./commands/smells.ts";
 import { output } from "./utils/output.ts";
 
 import packageJson from "../package.json";
@@ -135,7 +135,7 @@ program
 	.option("--min-complexity <number>", "Filter functions below complexity threshold")
 	.option("--limit <number>", "Maximum number of results")
 	.action(wrapCommand(async (path: string, options) => {
-		const result = await fn(path, options);
+		const result = await fn({ path, options });
 		output({ data: result, isJson: program.opts().json });
 	}));
 
@@ -147,10 +147,13 @@ program
 	.option("--loc-threshold <number>", "Lines of code threshold (default: 100)", "100")
 	.option("--params-threshold <number>", "Parameter count threshold (default: 5)", "5")
 	.action(wrapCommand(async (path: string, options) => {
-		const result = await smells(path, {
-			complexityThreshold: parseInt(options.complexityThreshold, 10),
-			locThreshold: parseInt(options.locThreshold, 10),
-			paramsThreshold: parseInt(options.paramsThreshold, 10),
+		const result = await smells({
+			path,
+			options: {
+				complexityThreshold: parseInt(options.complexityThreshold, 10),
+				locThreshold: parseInt(options.locThreshold, 10),
+				paramsThreshold: parseInt(options.paramsThreshold, 10),
+			},
 		});
 		output({ data: result, isJson: program.opts().json });
 	}));
@@ -162,7 +165,7 @@ program
 	.option("--sort <metric>", "Sort by: name, methods, or complexity (default: name)")
 	.option("--limit <number>", "Maximum number of results")
 	.action(wrapCommand(async (path: string, options) => {
-		const result = await classCommand(path, options);
+		const result = await classCommand({ path, options });
 		output({ data: result, isJson: program.opts().json });
 	}));
 

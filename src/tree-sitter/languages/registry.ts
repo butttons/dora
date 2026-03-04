@@ -1,5 +1,5 @@
 import type Parser from "web-tree-sitter";
-import type { ClassInfo, FunctionInfo } from "../types.ts";
+import type { ClassInfo, FunctionInfo } from "../../schemas/treesitter.ts";
 import * as typescriptLang from "./typescript.ts";
 import * as javascriptLang from "./javascript.ts";
 

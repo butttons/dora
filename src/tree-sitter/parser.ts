@@ -8,17 +8,13 @@ import {
 	getLanguageForExtension,
 	getLanguageEntry,
 } from "./languages/registry.ts";
-import type { FunctionInfo, ClassInfo, FileMetrics } from "./types.ts";
+import type { FunctionInfo, ClassInfo, FileMetrics } from "../schemas/treesitter.ts";
 
 type ParserModule = typeof import("web-tree-sitter");
 
-const ParserPromise: Promise<ParserModule> = import("web-tree-sitter");
+const parserModulePromise: Promise<ParserModule> = import("web-tree-sitter");
 
 const languageCache = new Map<string, Parser.Language>();
-
-async function getParserModule(): Promise<ParserModule> {
-	return await ParserPromise;
-}
 
 async function getLanguage(params: {
 	grammarPath: string;
@@ -30,19 +26,16 @@ async function getLanguage(params: {
 		return cached;
 	}
 
-	const mod = await getParserModule();
+	const mod = await parserModulePromise;
 	await mod.Parser.init();
 	const language = await mod.Language.load(grammarPath);
 	languageCache.set(grammarPath, language);
 	return language;
 }
 
-async function getDbConnection(params: {
-	config: Config;
-}): Promise<Database | null> {
-	const { config } = params;
+function getDbConnection(params: { config: Config }): Database | null {
 	try {
-		return getDb(config);
+		return getDb(params.config);
 	} catch {
 		return null;
 	}
@@ -92,7 +85,7 @@ function calculateFileMetrics(params: {
 
 	let commentLines = 0;
 	let blankLines = 0;
-	let inBlockComment = false;
+	let isInBlockComment = false;
 
 	for (const line of lines) {
 		const trimmed = line.trim();
@@ -100,10 +93,10 @@ function calculateFileMetrics(params: {
 			blankLines++;
 			continue;
 		}
-		if (inBlockComment) {
+		if (isInBlockComment) {
 			commentLines++;
 			if (trimmed.endsWith("*/")) {
-				inBlockComment = false;
+				isInBlockComment = false;
 			}
 			continue;
 		}
@@ -114,7 +107,7 @@ function calculateFileMetrics(params: {
 		if (trimmed.startsWith("/*")) {
 			commentLines++;
 			if (!trimmed.endsWith("*/")) {
-				inBlockComment = true;
+				isInBlockComment = true;
 			}
 			continue;
 		}
@@ -141,35 +134,33 @@ function calculateFileMetrics(params: {
 	};
 }
 
-export async function parseFunctions(params: {
+type ParsedFile = {
+	functions: FunctionInfo[];
+	classes: ClassInfo[];
+	metrics: FileMetrics;
+};
+
+async function parseFile(params: {
 	filePath: string;
 	config: Config;
-}): Promise<{ functions: FunctionInfo[]; metrics: FileMetrics }> {
+}): Promise<ParsedFile> {
 	const { filePath, config } = params;
 
-	const extension = filePath.includes(".") ? filePath.split(".").pop() || "" : "";
-	const extWithDot = extension ? `.${extension}` : "";
-	const languageKey = getLanguageForExtension({ extension: extWithDot });
+	const extension = filePath.includes(".") ? `.${filePath.split(".").pop() || ""}` : "";
+	const languageKey = getLanguageForExtension({ extension });
 
 	if (!languageKey) {
-		throw new CtxError(`Unsupported file extension: ${extWithDot}`, undefined, {
-			filePath,
-		});
+		throw new CtxError(`Unsupported file extension: ${extension}`, undefined, { filePath });
 	}
 
 	const langEntry = getLanguageEntry({ language: languageKey });
 	if (!langEntry) {
-		throw new CtxError(
-			`Language entry not found for: ${languageKey}`,
-			undefined,
-			{ filePath },
-		);
+		throw new CtxError(`Language entry not found for: ${languageKey}`, undefined, { filePath });
 	}
 
 	let content: string;
 	try {
-		const file = Bun.file(filePath);
-		content = await file.text();
+		content = await Bun.file(filePath).text();
 	} catch (error) {
 		throw new CtxError(
 			`Failed to read file: ${error instanceof Error ? error.message : String(error)}`,
@@ -185,7 +176,7 @@ export async function parseFunctions(params: {
 	});
 
 	const language = await getLanguage({ grammarPath });
-	const mod = await getParserModule();
+	const mod = await parserModulePromise;
 
 	const parser = new mod.Parser();
 	parser.setLanguage(language);
@@ -196,25 +187,13 @@ export async function parseFunctions(params: {
 	}
 
 	const queries = langEntry.getQueries();
+	const functionCaptures = new mod.Query(language, queries.functionQuery).captures(tree.rootNode);
+	const classCaptures = new mod.Query(language, queries.classQuery).captures(tree.rootNode);
 
-	const functionQuery = new mod.Query(language, queries.functionQuery);
-	const functionCaptures = functionQuery.captures(tree.rootNode);
+	const parseResults = queries.parseResults({ functionCaptures, classCaptures });
 
-	const classQuery = new mod.Query(language, queries.classQuery);
-	const classCaptures = classQuery.captures(tree.rootNode);
-
-	const parseResults = queries.parseResults({
-		functionCaptures,
-		classCaptures,
-	});
-
-	const db = await getDbConnection({ config });
-
-	await correlateWithScip({
-		db,
-		filePath,
-		symbols: parseResults.functions,
-	});
+	parser.delete();
+	tree.delete();
 
 	const metrics = calculateFileMetrics({
 		content,
@@ -222,12 +201,26 @@ export async function parseFunctions(params: {
 		classes: parseResults.classes,
 	});
 
-	parser.delete();
-	tree.delete();
-
 	return {
 		functions: parseResults.functions,
+		classes: parseResults.classes,
 		metrics,
+	};
+}
+
+export async function parseFunctions(params: {
+	filePath: string;
+	config: Config;
+}): Promise<{ functions: FunctionInfo[]; metrics: FileMetrics }> {
+	const { filePath, config } = params;
+	const parsed = await parseFile({ filePath, config });
+
+	const db = getDbConnection({ config });
+	await correlateWithScip({ db, filePath, symbols: parsed.functions });
+
+	return {
+		functions: parsed.functions,
+		metrics: parsed.metrics,
 	};
 }
 
@@ -236,80 +229,12 @@ export async function parseClasses(params: {
 	config: Config;
 }): Promise<{ classes: ClassInfo[] }> {
 	const { filePath, config } = params;
+	const parsed = await parseFile({ filePath, config });
 
-	const extension = filePath.includes(".") ? filePath.split(".").pop() || "" : "";
-	const extWithDot = extension ? `.${extension}` : "";
-	const languageKey = getLanguageForExtension({ extension: extWithDot });
-
-	if (!languageKey) {
-		throw new CtxError(`Unsupported file extension: ${extWithDot}`, undefined, {
-			filePath,
-		});
-	}
-
-	const langEntry = getLanguageEntry({ language: languageKey });
-	if (!langEntry) {
-		throw new CtxError(
-			`Language entry not found for: ${languageKey}`,
-			undefined,
-			{ filePath },
-		);
-	}
-
-	let content: string;
-	try {
-		const file = Bun.file(filePath);
-		content = await file.text();
-	} catch (error) {
-		throw new CtxError(
-			`Failed to read file: ${error instanceof Error ? error.message : String(error)}`,
-			undefined,
-			{ filePath },
-		);
-	}
-
-	const grammarPath = await findGrammarPath({
-		lang: languageKey,
-		config,
-		projectRoot: config.root,
-	});
-
-	const language = await getLanguage({ grammarPath });
-	const mod = await getParserModule();
-
-	const parser = new mod.Parser();
-	parser.setLanguage(language);
-
-	const tree = parser.parse(content);
-	if (!tree) {
-		throw new CtxError("Failed to parse file", undefined, { filePath });
-	}
-
-	const queries = langEntry.getQueries();
-
-	const functionQuery = new mod.Query(language, queries.functionQuery);
-	const functionCaptures = functionQuery.captures(tree.rootNode);
-
-	const classQuery = new mod.Query(language, queries.classQuery);
-	const classCaptures = classQuery.captures(tree.rootNode);
-
-	const parseResults = queries.parseResults({
-		functionCaptures,
-		classCaptures,
-	});
-
-	const db = await getDbConnection({ config });
-
-	await correlateWithScip({
-		db,
-		filePath,
-		symbols: parseResults.classes,
-	});
-
-	parser.delete();
-	tree.delete();
+	const db = getDbConnection({ config });
+	await correlateWithScip({ db, filePath, symbols: parsed.classes });
 
 	return {
-		classes: parseResults.classes,
+		classes: parsed.classes,
 	};
 }

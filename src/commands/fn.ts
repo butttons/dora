@@ -1,19 +1,23 @@
+import { getLanguageForExtension } from "../tree-sitter/languages/registry.ts";
 import { parseFunctions } from "../tree-sitter/parser.ts";
 import type { FnResult, FunctionInfo } from "../schemas/treesitter.ts";
 import { resolveAndValidatePath, setupCommand } from "./shared.ts";
-import { getLanguageForExtension } from "../tree-sitter/languages/registry.ts";
 
-export async function fn(
-	path: string,
-	options: {
-		sort?: string;
-		minComplexity?: number;
-		limit?: number;
-	},
-): Promise<FnResult> {
+type FnOptions = {
+	sort?: string;
+	minComplexity?: number;
+	limit?: number;
+};
+
+type FnParams = {
+	path: string;
+	options?: FnOptions;
+};
+
+export async function fn(params: FnParams): Promise<FnResult> {
+	const { path, options = {} } = params;
 	const ctx = await setupCommand();
 	const relativePath = resolveAndValidatePath({ ctx, inputPath: path });
-
 	const absolutePath = `${ctx.config.root}/${relativePath}`;
 
 	const extension = relativePath.includes(".")
@@ -32,7 +36,7 @@ export async function fn(
 	const minComplexity = options.minComplexity;
 	if (minComplexity !== undefined && minComplexity > 0) {
 		filteredFunctions = filteredFunctions.filter(
-			(f) => f.cyclomatic_complexity >= minComplexity,
+			(item) => item.cyclomatic_complexity >= minComplexity,
 		);
 	}
 
