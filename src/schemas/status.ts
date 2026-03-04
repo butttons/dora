@@ -21,6 +21,13 @@ export const StatusResultSchema = z.object({
 			}),
 		)
 		.optional(),
+	tree_sitter: z
+		.object({
+			available: z.boolean(),
+			language: z.string(),
+			grammar_path: z.string().nullable(),
+		})
+		.optional(),
 });
 
 export const IndexResultSchema = z.object({

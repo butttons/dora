@@ -5,6 +5,7 @@ import {
 	getFileCount,
 	getSymbolCount,
 } from "../db/queries.ts";
+import { findGrammarPath } from "../tree-sitter/grammar.ts";
 import type { StatusResult } from "../types.ts";
 import { isIndexed, loadConfig } from "../utils/config.ts";
 
@@ -37,6 +38,27 @@ export async function status(): Promise<StatusResult> {
 			// Database might be corrupt, but we can still report it exists
 			result.indexed = false;
 		}
+	}
+
+	// Check tree-sitter grammar availability (try TypeScript)
+	const grammarLanguage = config.language || "typescript";
+	try {
+		const grammarPath = await findGrammarPath({
+			lang: grammarLanguage,
+			config,
+			projectRoot: config.root,
+		});
+		result.tree_sitter = {
+			available: true,
+			language: grammarLanguage,
+			grammar_path: grammarPath,
+		};
+	} catch (error) {
+		result.tree_sitter = {
+			available: false,
+			language: grammarLanguage,
+			grammar_path: null,
+		};
 	}
 
 	return result;
