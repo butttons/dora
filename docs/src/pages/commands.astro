@@ -31,11 +31,28 @@ const commands = [
 			},
 			{
 				name: "dora file <path>",
-				desc: "Analyze a specific file's symbols and dependencies",
+				desc: "Analyze a specific file's symbols, dependencies, and tree-sitter metrics",
 			},
 			{
 				name: "dora refs <symbol>",
 				desc: "Find all references to a symbol",
+			},
+		],
+	},
+	{
+		category: "Tree-sitter Analysis",
+		items: [
+			{
+				name: "dora fn <path>",
+				desc: "List all functions with parameters, return type, async flag, cyclomatic complexity, and LOC. Requires a tree-sitter grammar installed.",
+			},
+			{
+				name: "dora class <path>",
+				desc: "List all classes with extends, implements, decorators, abstract flag, methods, and property count.",
+			},
+			{
+				name: "dora smells <path>",
+				desc: "Detect code smells: high complexity, long functions, too many params, TODO/FIXME/HACK comments. Supports --complexity-threshold, --loc-threshold, --params-threshold.",
 			},
 		],
 	},
