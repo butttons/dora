@@ -188,6 +188,8 @@ export async function handleToolCall(
 					complexityThreshold: args.complexityThreshold,
 					locThreshold: args.locThreshold,
 					paramsThreshold: args.paramsThreshold,
+					methodsThreshold: args.methodsThreshold,
+					propertiesThreshold: args.propertiesThreshold,
 				},
 			});
 		})

@@ -541,6 +541,20 @@ export const toolsMetadata: ToolMetadata[] = [
 				required: false,
 				defaultValue: 5,
 			},
+			{
+				name: "methodsThreshold",
+				type: "number",
+				description: "Class method count threshold for god class detection (default: 20)",
+				required: false,
+				defaultValue: 20,
+			},
+			{
+				name: "propertiesThreshold",
+				type: "number",
+				description: "Class property count threshold for large class detection (default: 15)",
+				required: false,
+				defaultValue: 15,
+			},
 		],
 	},
 ];

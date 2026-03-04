@@ -174,6 +174,16 @@ program
 		"Parameter count threshold (default: 5)",
 		"5",
 	)
+	.option(
+		"--methods-threshold <number>",
+		"Class method count threshold for god class detection (default: 20)",
+		"20",
+	)
+	.option(
+		"--properties-threshold <number>",
+		"Class property count threshold for large class detection (default: 15)",
+		"15",
+	)
 	.action(
 		wrapCommand(async (path: string, options) => {
 			const result = await smells({
@@ -182,6 +192,8 @@ program
 					complexityThreshold: parseInt(options.complexityThreshold, 10),
 					locThreshold: parseInt(options.locThreshold, 10),
 					paramsThreshold: parseInt(options.paramsThreshold, 10),
+					methodsThreshold: parseInt(options.methodsThreshold, 10),
+					propertiesThreshold: parseInt(options.propertiesThreshold, 10),
 				},
 			});
 			output({ data: result, isJson: program.opts().json });

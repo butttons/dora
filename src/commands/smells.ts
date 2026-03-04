@@ -1,5 +1,6 @@
-import { parseFunctions } from "../tree-sitter/parser.ts";
+import { parseFunctions, parseClasses } from "../tree-sitter/parser.ts";
 import type {
+	ClassInfo,
 	FunctionInfo,
 	SmellItem,
 	SmellsResult,
@@ -17,6 +18,8 @@ type SmellsOptions = {
 	complexityThreshold?: number;
 	locThreshold?: number;
 	paramsThreshold?: number;
+	methodsThreshold?: number;
+	propertiesThreshold?: number;
 };
 
 type SmellsParams = {
@@ -128,6 +131,41 @@ function detectFunctionSmells(params: {
 	return smells;
 }
 
+function detectClassSmells(params: {
+	classes: ClassInfo[];
+	methodsThreshold: number;
+	propertiesThreshold: number;
+}): SmellItem[] {
+	const { classes, methodsThreshold, propertiesThreshold } = params;
+	const smells: SmellItem[] = [];
+
+	for (const cls of classes) {
+		if (cls.methods.length > methodsThreshold) {
+			smells.push({
+				kind: "god_class",
+				function: cls.name,
+				line: cls.lines[0],
+				value: cls.methods.length,
+				threshold: methodsThreshold,
+				message: `Class has ${cls.methods.length} methods, exceeds threshold ${methodsThreshold}`,
+			});
+		}
+
+		if (cls.property_count > propertiesThreshold) {
+			smells.push({
+				kind: "large_class",
+				function: cls.name,
+				line: cls.lines[0],
+				value: cls.property_count,
+				threshold: propertiesThreshold,
+				message: `Class has ${cls.property_count} properties, exceeds threshold ${propertiesThreshold}`,
+			});
+		}
+	}
+
+	return smells;
+}
+
 export async function smells(params: SmellsParams): Promise<SmellsResult> {
 	const { path, options = {} } = params;
 	const ctx = await setupCommand();
@@ -137,17 +175,25 @@ export async function smells(params: SmellsParams): Promise<SmellsResult> {
 	const complexityThreshold = options.complexityThreshold ?? 10;
 	const locThreshold = options.locThreshold ?? 100;
 	const paramsThreshold = options.paramsThreshold ?? 5;
+	const methodsThreshold = options.methodsThreshold ?? 20;
+	const propertiesThreshold = options.propertiesThreshold ?? 15;
 
-	const { functions } = await parseFunctions({
-		filePath: absolutePath,
-		config: ctx.config,
-	});
+	const [{ functions }, { classes }] = await Promise.all([
+		parseFunctions({ filePath: absolutePath, config: ctx.config }),
+		parseClasses({ filePath: absolutePath, config: ctx.config }),
+	]);
 
 	const functionSmells = detectFunctionSmells({
 		functions,
 		complexityThreshold,
 		locThreshold,
 		paramsThreshold,
+	});
+
+	const classSmells = detectClassSmells({
+		classes,
+		methodsThreshold,
+		propertiesThreshold,
 	});
 
 	const todoComments = await scanTodoComments({ filePath: absolutePath });
@@ -160,7 +206,7 @@ export async function smells(params: SmellsParams): Promise<SmellsResult> {
 		message: `TODO/FIXME/HACK comment: ${todo.text}`,
 	}));
 
-	const allSmells = [...functionSmells, ...todoSmells];
+	const allSmells = [...functionSmells, ...classSmells, ...todoSmells];
 	const isClean = allSmells.length === 0;
 
 	return {
