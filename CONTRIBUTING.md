@@ -1,120 +1,58 @@
 # Contributing to dora
 
-Thank you for your interest in contributing to dora! This document provides guidelines and information for developers.
+## Development setup
 
-## Getting Started
-
-### Prerequisites
-
-- [Bun](https://bun.sh) 1.0+ (for development)
-- A SCIP-compatible indexer for your language (e.g., scip-typescript for TypeScript/JavaScript)
-
-### Development Setup
+Requires [Bun](https://bun.sh) 1.0+.
 
 ```bash
-# Clone repository
 git clone https://github.com/butttons/dora.git
 cd dora
-
-# Install dependencies
 bun install
-
-# Run CLI directly with Bun
-bun src/index.ts <command>
-
-# Run tests
-bun test
-
-# Build and test the binary
-bun run build
-./dist/dora --help
-
-# Link for local development
-bun link
+bun link          # makes `dora` point to src/index.ts via bun
 ```
 
-For detailed architecture and development guidelines, see [CLAUDE.md](./CLAUDE.md).
-
-## Building
-
-Build standalone binaries for distribution:
+Run any command directly:
 
 ```bash
-# Build for your current platform
-bun run build
-
-# Build for specific platforms
-bun run build:linux          # Linux x64
-bun run build:macos          # macOS Intel
-bun run build:macos-arm      # macOS ARM (M1/M2/M3)
-bun run build:windows        # Windows x64
-
-# Build for all platforms
-bun run build:all
-
-# Binaries will be in the dist/ directory
+bun src/index.ts status
+bun src/index.ts symbol AuthService
 ```
-
-Binary sizes:
-
-- **macOS/Linux**: ~57MB (includes Bun runtime)
-- **Windows**: ~58MB (includes Bun runtime)
-
-The binaries are completely standalone and don't require Bun or Node.js to be installed.
 
 ## Testing
 
-The project includes comprehensive test coverage:
-
 ```bash
-# Run all tests
-bun test
-
-# Run specific test files
-bun test src/utils/paths.test.ts
-bun test src/utils/config.test.ts
-bun test src/db/queries.test.ts
-bun test src/commands/commands.test.ts
-bun test src/commands/index.test.ts
-bun test src/converter/scip-parser.test.ts
+bun test ./test/              # full suite
+bun test test/tree-sitter/    # tree-sitter tests only
+bun run type-check            # tsc
+bun run biome:format          # format src/ and test/
 ```
 
-Test coverage:
+Tests use real fixture data from `test/fixtures/`. The tree-sitter tests are pure unit tests — they mock `Parser.QueryCapture[]` objects and run against the actual parse functions without loading any wasm grammar.
 
-- **Unit Tests**: Path utilities, config management, error handling
-- **Integration Tests**: Database queries with example database
-- **Command Tests**: CLI commands and initialization
-- **Parser Tests**: SCIP protobuf parsing and conversion
-- **Index Tests**: Database schema and denormalized fields
-
-## Debug Logging
-
-The CLI uses the [`debug`](https://www.npmjs.com/package/debug) library for verbose logging during development and troubleshooting. Enable debug output using the `DEBUG` environment variable:
+## Building
 
 ```bash
-# Show all dora debug output
-DEBUG=dora:* dora index
-
-# Show only converter logs (useful for performance debugging)
-DEBUG=dora:converter dora index
-
-# Show only index command logs
-DEBUG=dora:index dora index
-
-# Show multiple namespaces
-DEBUG=dora:index,dora:converter dora index
+bun run build             # standalone binary for current platform → dist/dora
+bun run build:npm         # bun-target JS bundle → dist/index.js (used by npm package)
+bun run build:all         # all platform binaries (linux-x64, darwin-x64, darwin-arm64, windows-x64)
 ```
 
-**Available namespaces:**
+Binaries are ~57MB on macOS/Linux, ~58MB on Windows. They include the Bun runtime and have no external dependencies.
 
-- `dora:index` - Index command progress and timing
-- `dora:converter` - SCIP parsing and database conversion details
-- `dora:db` - Database operations and queries
-- `dora:config` - Configuration loading and validation
-
-**Example output:**
+## Debug logging
 
 ```bash
+DEBUG=dora:* dora index              # all namespaces
+DEBUG=dora:converter dora index      # SCIP parsing and DB conversion
+DEBUG=dora:index dora index          # index command only
+DEBUG=dora:db dora symbol Foo        # database queries
+```
+
+Available namespaces: `dora:index`, `dora:converter`, `dora:db`, `dora:config`.
+
+Example output:
+
+```
 $ DEBUG=dora:* dora index
   dora:index Loading configuration... +0ms
   dora:index Config loaded: root=/path/to/project +2ms
@@ -125,109 +63,74 @@ $ DEBUG=dora:* dora index
   dora:converter Processing files: 412/412 (100%) +265ms
 ```
 
-## Code Style
+## Code conventions
 
-- Use TypeScript for all source code
-- Follow existing code formatting (we use Bun's default formatter)
-- Write descriptive variable and function names
-- Add JSDoc comments for public APIs
-- Keep functions focused and under 50 lines when possible
+- Single object parameter — never multiple positional params
+- No inline comments, no section separators, no file headers
+- No `any` — use `unknown` or proper types
+- Boolean variables prefixed with `is` or `has`
+- Use `type` not `interface`
+- Output JSON to stdout, errors to stderr as `{"error": "message"}`, exit 1 on error
 
-## Pull Request Process
+## Adding a command
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/my-feature`)
-3. Make your changes with tests
-4. Run the test suite (`bun test`)
-5. Build the binaries (`bun run build:all`)
-6. Commit your changes (`git commit -am 'Add my feature'`)
-7. Push to the branch (`git push origin feature/my-feature`)
-8. Create a Pull Request
+1. Create `src/commands/mycommand.ts` and export a function
+2. Register it in `src/index.ts`
+3. Add MCP tool definition in `src/mcp/metadata.ts` and handler in `src/mcp/handlers.ts`
+4. Add tests in `test/commands/`
 
-### PR Requirements
+## Adding a tree-sitter language
 
-- All tests must pass
-- New features should include tests
-- Update documentation (README.md, CLAUDE.md) if needed
-- Follow the existing code style
-- Provide a clear description of the changes
+1. Create `src/tree-sitter/languages/mylang.ts` — export `functionQueryString`, `classQueryString`, `parseFunctionCaptures`, `parseClassCaptures`
+2. Register it in `src/tree-sitter/languages/registry.ts` with its grammar name and file extensions
+3. Add tests in `test/tree-sitter/mylang-captures.test.ts` — mock `Parser.QueryCapture[]` objects, test all capture variants, deduplication, and edge cases. See `test/tree-sitter/function-captures.test.ts` as the reference implementation.
 
-## Architecture
+The grammar wasm file is resolved automatically from local `node_modules`, global bun packages, or an explicit path in `.dora/config.json` under `treeSitter.grammars.<lang>`.
 
-dora is built around SCIP (Source Code Intelligence Protocol) indexes and SQLite for fast querying:
-
-### Key Components
-
-- **src/commands/** - CLI command implementations
-- **src/converter/** - SCIP protobuf parser and SQLite converter
-- **src/db/** - Database schema and queries
-- **src/utils/** - Shared utilities (config, paths, errors)
-- **src/types.ts** - TypeScript type definitions
-
-### Database Schema
-
-The database uses denormalized fields for performance:
-
-- **files** - File metadata with symbol/dependency counts
-- **symbols** - Symbol definitions with location and kind
-- **dependencies** - File-to-file dependencies with symbol lists
-- **symbol_references** - Where symbols are used
-- **packages** - External package information
-- **metadata** - System metadata (last indexed, counts)
-
-For detailed schema and query patterns, see [CLAUDE.md](./CLAUDE.md).
-
-## Common Development Tasks
-
-### Adding a New Command
-
-1. Create a new file in `src/commands/` (e.g., `mynewcommand.ts`)
-2. Implement the command function
-3. Export the command in `src/index.ts`
-4. Add tests in `src/commands/mynewcommand.test.ts`
-5. Update README.md command reference
-
-### Adding a New Query
+## Adding a query
 
 1. Add the query function in `src/db/queries.ts`
-2. Add tests in `src/db/queries.test.ts`
-3. Use the query in your command
+2. Add tests in `test/db/queries.test.ts`
+3. Use it in your command
 
-### Modifying the Database Schema
+## Modifying the database schema
 
 1. Update `src/converter/schema.sql`
 2. Update conversion logic in `src/converter/convert.ts`
-3. Increment the schema version if needed
-4. Add migration logic if backward compatibility is required
+3. Add migration logic if backward compatibility is required
 
-## Troubleshooting Development Issues
+## Architecture
 
-### Tests Failing
+```
+src/
+├── commands/       # one file per CLI command
+├── converter/      # SCIP protobuf parser + SQLite converter
+├── db/             # schema and all SQL queries
+├── mcp/            # MCP server, tool definitions, handlers
+├── schemas/        # Zod schemas and inferred types
+├── tree-sitter/    # grammar discovery, parser, language implementations
+└── utils/          # config, errors, output formatting
+```
 
-- Ensure you have the latest dependencies: `bun install`
-- Check that `.dora/dora.db` exists: `dora index`
-- Run tests in verbose mode: `DEBUG=* bun test`
+Key tables: `files`, `symbols`, `dependencies`, `symbol_references`, `packages`, `documents`, `metadata`.
 
-### Build Issues
+Denormalized counts (`symbol_count`, `dependency_count`, `dependent_count`, `reference_count`) are updated after every index run and make most queries O(1) lookups.
 
-- Clear the dist directory: `rm -rf dist`
-- Reinstall Bun if needed
-- Check Bun version: `bun --version` (should be 1.0+)
+For detailed schema and query patterns, see [CLAUDE.md](./CLAUDE.md).
 
-### Local Development
+## Troubleshooting
 
-- Use `bun link` to link the development version
-- Test with `dora --version` to ensure you're using the dev version
-- Unlink with `bun unlink` when done
+**Tests failing:** run `bun install` to sync deps, ensure `.dora/dora.db` exists (`dora index`).
 
-## Questions?
+**Build issues:** clear `dist/` and retry. Check `bun --version` is 1.0+.
 
-- Open an issue for bugs or feature requests
-- Start a discussion for architecture questions
-- Check [CLAUDE.md](./CLAUDE.md) for detailed implementation notes
+**Local dev:** `bun link` points the `dora` binary at the source. `bun unlink` to restore.
 
-> `dora` is intentionally minimal. Before proposing new features, consider if the problem can be solved with existing commands or `dora query`
+## Pull request checklist
 
-## License
-
-By contributing, you agree that your contributions will be licensed under the MIT License.
+- `bun test ./test/` passes
+- `bun run type-check` passes
+- `bun run biome:format` applied
+- New commands have tests
+- New tree-sitter languages have capture tests
+- [CLAUDE.md](./CLAUDE.md) updated if architecture changed
