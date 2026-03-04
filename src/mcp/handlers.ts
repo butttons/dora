@@ -1,6 +1,7 @@
 import { match } from "ts-pattern";
 import { adventure } from "../commands/adventure.ts";
 import { changes } from "../commands/changes.ts";
+import { classCommand } from "../commands/class.ts";
 import { complexity } from "../commands/complexity.ts";
 import { cookbookList, cookbookShow } from "../commands/cookbook.ts";
 import { coupling } from "../commands/coupling.ts";
@@ -163,6 +164,12 @@ export async function handleToolCall(
 			return await fn(args.path, {
 				sort: args.sort,
 				minComplexity: args.minComplexity,
+				limit: args.limit,
+			});
+		})
+		.with("dora_class", async () => {
+			return await classCommand(args.path, {
+				sort: args.sort,
 				limit: args.limit,
 			});
 		})

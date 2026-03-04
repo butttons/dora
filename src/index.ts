@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 
+import { classCommand } from "./commands/class.ts";
 import { Command } from "commander";
 import { adventure } from "./commands/adventure.ts";
 import { changes } from "./commands/changes.ts";
@@ -134,6 +135,17 @@ program
 	.option("--limit <number>", "Maximum number of results")
 	.action(wrapCommand(async (path: string, options) => {
 		const result = await fn(path, options);
+		output({ data: result, isJson: program.opts().json });
+	}));
+
+program
+	.command("class")
+	.description("List all classes in a file with hierarchy and method details")
+	.argument("<path>", "File path to analyze")
+	.option("--sort <metric>", "Sort by: name, methods, or complexity (default: name)")
+	.option("--limit <number>", "Maximum number of results")
+	.action(wrapCommand(async (path: string, options) => {
+		const result = await classCommand(path, options);
 		output({ data: result, isJson: program.opts().json });
 	}));
 

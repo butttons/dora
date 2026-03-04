@@ -487,4 +487,29 @@ export const toolsMetadata: ToolMetadata[] = [
 			},
 		],
 	},
+	{
+		name: "dora_class",
+		description: "List all classes in a file with hierarchy and method details",
+		arguments: [
+			{
+				name: "path",
+				required: true,
+				description: "File path to analyze",
+			},
+		],
+		options: [
+			{
+				name: "sort",
+				type: "string",
+				description: "Sort by: name, methods, or complexity (default: name)",
+				required: false,
+			},
+			{
+				name: "limit",
+				type: "number",
+				description: "Maximum number of results",
+				required: false,
+			},
+		],
+	},
 ];
