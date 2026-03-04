@@ -48,7 +48,7 @@ function makeNode(overrides: NodeOverrides = {}): Parser.Node {
 }
 
 function makeCapture(name: string, node: Parser.Node): Parser.QueryCapture {
-	return { name, node };
+	return { name, node, patternIndex: 0 } as unknown as Parser.QueryCapture;
 }
 
 describe("parseClassCaptures", () => {
@@ -92,14 +92,14 @@ describe("parseClassCaptures", () => {
 		const result = parseClassCaptures(captures);
 
 		expect(result).toHaveLength(1);
-		expect(result[0].name).toBe("Foo");
-		expect(result[0].lines).toEqual([1, 1]);
-		expect(result[0].is_abstract).toBe(false);
-		expect(result[0].decorators).toEqual([]);
-		expect(result[0].implements).toEqual([]);
-		expect(result[0].extends_name).toBeNull();
-		expect(result[0].methods).toEqual([]);
-		expect(result[0].property_count).toBe(0);
+		expect(result[0]!.name).toBe("Foo");
+		expect(result[0]!.lines).toEqual([1, 1]);
+		expect(result[0]!.is_abstract).toBe(false);
+		expect(result[0]!.decorators).toEqual([]);
+		expect(result[0]!.implements).toEqual([]);
+		expect(result[0]!.extends_name).toBeNull();
+		expect(result[0]!.methods).toEqual([]);
+		expect(result[0]!.property_count).toBe(0);
 	});
 
 	test("exported class unwraps correctly", () => {
@@ -122,7 +122,8 @@ describe("parseClassCaptures", () => {
 			parent: exportNode,
 		});
 
-		exportNode.namedChildren = [classNode];
+		(exportNode as unknown as { namedChildren: Parser.Node[] }).namedChildren =
+			[classNode];
 
 		const nameNode = makeNode({
 			type: "type_identifier",
@@ -154,9 +155,9 @@ describe("parseClassCaptures", () => {
 		const result = parseClassCaptures(captures);
 
 		expect(result).toHaveLength(1);
-		expect(result[0].name).toBe("Bar");
-		expect(result[0].lines).toEqual([1, 1]);
-		expect(result[0].is_abstract).toBe(false);
+		expect(result[0]!.name).toBe("Bar");
+		expect(result[0]!.lines).toEqual([1, 1]);
+		expect(result[0]!.is_abstract).toBe(false);
 	});
 
 	test("deduplication of same startIndex", () => {
@@ -198,7 +199,7 @@ describe("parseClassCaptures", () => {
 		const result = parseClassCaptures(captures);
 
 		expect(result).toHaveLength(1);
-		expect(result[0].name).toBe("Baz");
+		expect(result[0]!.name).toBe("Baz");
 	});
 
 	test("extends clause", () => {
@@ -249,7 +250,7 @@ describe("parseClassCaptures", () => {
 		const result = parseClassCaptures(captures);
 
 		expect(result).toHaveLength(1);
-		expect(result[0].extends_name).toBe("Parent");
+		expect(result[0]!.extends_name).toBe("Parent");
 	});
 
 	test("no extends clause", () => {
@@ -290,7 +291,7 @@ describe("parseClassCaptures", () => {
 		const result = parseClassCaptures(captures);
 
 		expect(result).toHaveLength(1);
-		expect(result[0].extends_name).toBeNull();
+		expect(result[0]!.extends_name).toBeNull();
 	});
 
 	test("implements clause via heritage", () => {
@@ -351,7 +352,10 @@ describe("parseClassCaptures", () => {
 			parent: classNode,
 		});
 
-		classNode.namedChildren = [heritageNode, bodyNode];
+		(classNode as unknown as { namedChildren: Parser.Node[] }).namedChildren = [
+			heritageNode,
+			bodyNode,
+		];
 
 		const captures = [
 			makeCapture("cls.declaration", classNode),
@@ -362,7 +366,7 @@ describe("parseClassCaptures", () => {
 		const result = parseClassCaptures(captures);
 
 		expect(result).toHaveLength(1);
-		expect(result[0].implements).toEqual(["IFoo", "IBar"]);
+		expect(result[0]!.implements).toEqual(["IFoo", "IBar"]);
 	});
 
 	test("no heritage means empty implements", () => {
@@ -394,7 +398,9 @@ describe("parseClassCaptures", () => {
 			parent: classNode,
 		});
 
-		classNode.namedChildren = [bodyNode];
+		(classNode as unknown as { namedChildren: Parser.Node[] }).namedChildren = [
+			bodyNode,
+		];
 
 		const captures = [
 			makeCapture("cls.declaration", classNode),
@@ -405,7 +411,7 @@ describe("parseClassCaptures", () => {
 		const result = parseClassCaptures(captures);
 
 		expect(result).toHaveLength(1);
-		expect(result[0].implements).toEqual([]);
+		expect(result[0]!.implements).toEqual([]);
 	});
 
 	test("abstract keyword in declaration children", () => {
@@ -452,7 +458,7 @@ describe("parseClassCaptures", () => {
 		const result = parseClassCaptures(captures);
 
 		expect(result).toHaveLength(1);
-		expect(result[0].is_abstract).toBe(true);
+		expect(result[0]!.is_abstract).toBe(true);
 	});
 
 	test("abstract keyword in export statement parent", () => {
@@ -479,7 +485,8 @@ describe("parseClassCaptures", () => {
 			parent: exportNode,
 		});
 
-		exportNode.namedChildren = [classNode];
+		(exportNode as unknown as { namedChildren: Parser.Node[] }).namedChildren =
+			[classNode];
 
 		const nameNode = makeNode({
 			type: "type_identifier",
@@ -510,7 +517,7 @@ describe("parseClassCaptures", () => {
 		const result = parseClassCaptures(captures);
 
 		expect(result).toHaveLength(1);
-		expect(result[0].is_abstract).toBe(true);
+		expect(result[0]!.is_abstract).toBe(true);
 	});
 
 	test("non-abstract class", () => {
@@ -552,7 +559,7 @@ describe("parseClassCaptures", () => {
 		const result = parseClassCaptures(captures);
 
 		expect(result).toHaveLength(1);
-		expect(result[0].is_abstract).toBe(false);
+		expect(result[0]!.is_abstract).toBe(false);
 	});
 
 	test("decorators via previousNamedSibling chain", () => {
@@ -613,7 +620,7 @@ describe("parseClassCaptures", () => {
 		const result = parseClassCaptures(captures);
 
 		expect(result).toHaveLength(1);
-		expect(result[0].decorators).toEqual(["@Component", "@Injectable"]);
+		expect(result[0]!.decorators).toEqual(["@Component", "@Injectable"]);
 	});
 
 	test("no decorators", () => {
@@ -655,7 +662,7 @@ describe("parseClassCaptures", () => {
 		const result = parseClassCaptures(captures);
 
 		expect(result).toHaveLength(1);
-		expect(result[0].decorators).toEqual([]);
+		expect(result[0]!.decorators).toEqual([]);
 	});
 
 	test("method extraction with async and complexity", () => {
@@ -766,14 +773,14 @@ describe("parseClassCaptures", () => {
 		const result = parseClassCaptures(captures);
 
 		expect(result).toHaveLength(1);
-		expect(result[0].methods).toHaveLength(2);
-		expect(result[0].methods[0].name).toBe("asyncMethod");
-		expect(result[0].methods[0].is_async).toBe(true);
-		expect(result[0].methods[0].cyclomatic_complexity).toBe(2);
-		expect(result[0].methods[0].line).toBe(2);
-		expect(result[0].methods[1].name).toBe("normalMethod");
-		expect(result[0].methods[1].is_async).toBe(false);
-		expect(result[0].methods[1].cyclomatic_complexity).toBe(1);
+		expect(result[0]!.methods).toHaveLength(2);
+		expect(result[0]!.methods[0]!.name).toBe("asyncMethod");
+		expect(result[0]!.methods[0]!.is_async).toBe(true);
+		expect(result[0]!.methods[0]!.cyclomatic_complexity).toBe(2);
+		expect(result[0]!.methods[0]!.line).toBe(2);
+		expect(result[0]!.methods[1]!.name).toBe("normalMethod");
+		expect(result[0]!.methods[1]!.is_async).toBe(false);
+		expect(result[0]!.methods[1]!.cyclomatic_complexity).toBe(1);
 	});
 
 	test("property counting with public_field_definition", () => {
@@ -829,7 +836,7 @@ describe("parseClassCaptures", () => {
 		const result = parseClassCaptures(captures);
 
 		expect(result).toHaveLength(1);
-		expect(result[0].property_count).toBe(3);
+		expect(result[0]!.property_count).toBe(3);
 	});
 
 	test("property counting with field_definition", () => {
@@ -875,7 +882,7 @@ describe("parseClassCaptures", () => {
 		const result = parseClassCaptures(captures);
 
 		expect(result).toHaveLength(1);
-		expect(result[0].property_count).toBe(1);
+		expect(result[0]!.property_count).toBe(1);
 	});
 
 	test("empty body has zero properties", () => {
@@ -916,7 +923,7 @@ describe("parseClassCaptures", () => {
 		const result = parseClassCaptures(captures);
 
 		expect(result).toHaveLength(1);
-		expect(result[0].property_count).toBe(0);
+		expect(result[0]!.property_count).toBe(0);
 	});
 
 	test("missing name capture skips class", () => {

@@ -40,7 +40,7 @@ function makeNode(overrides: NodeOverrides = {}): Parser.Node {
 }
 
 function makeCapture(name: string, node: Parser.Node): Parser.QueryCapture {
-	return { name, node } as unknown as Parser.QueryCapture;
+	return { name, node, patternIndex: 0 } as unknown as Parser.QueryCapture;
 }
 
 describe("parseFunctionCaptures capture type routing", () => {
@@ -80,9 +80,9 @@ describe("parseFunctionCaptures capture type routing", () => {
 		const results = parseFunctionCaptures(captures);
 
 		expect(results).toHaveLength(1);
-		expect(results[0].name).toBe("foo");
-		expect(results[0].is_exported).toBe(false);
-		expect(results[0].is_method).toBe(false);
+		expect(results[0]!.name).toBe("foo");
+		expect(results[0]!.is_exported).toBe(false);
+		expect(results[0]!.is_method).toBe(false);
 	});
 
 	test("fn.export sets is_exported=true", () => {
@@ -132,8 +132,8 @@ describe("parseFunctionCaptures capture type routing", () => {
 		const results = parseFunctionCaptures(captures);
 
 		expect(results).toHaveLength(1);
-		expect(results[0].is_exported).toBe(true);
-		expect(results[0].is_method).toBe(false);
+		expect(results[0]!.is_exported).toBe(true);
+		expect(results[0]!.is_method).toBe(false);
 	});
 
 	test("fn.arrow is detected as arrow function", () => {
@@ -193,7 +193,7 @@ describe("parseFunctionCaptures capture type routing", () => {
 		const results = parseFunctionCaptures(captures);
 
 		expect(results).toHaveLength(1);
-		expect(results[0].name).toBe("arrowFn");
+		expect(results[0]!.name).toBe("arrowFn");
 	});
 
 	test("fn.export_arrow sets is_exported=true", () => {
@@ -250,7 +250,7 @@ describe("parseFunctionCaptures capture type routing", () => {
 		const results = parseFunctionCaptures(captures);
 
 		expect(results).toHaveLength(1);
-		expect(results[0].is_exported).toBe(true);
+		expect(results[0]!.is_exported).toBe(true);
 	});
 
 	test("fn.method sets is_method=true, is_exported=false", () => {
@@ -289,8 +289,8 @@ describe("parseFunctionCaptures capture type routing", () => {
 		const results = parseFunctionCaptures(captures);
 
 		expect(results).toHaveLength(1);
-		expect(results[0].is_method).toBe(true);
-		expect(results[0].is_exported).toBe(false);
+		expect(results[0]!.is_method).toBe(true);
+		expect(results[0]!.is_exported).toBe(false);
 	});
 
 	test("unknown capture name like fn.other is ignored", () => {
@@ -368,7 +368,7 @@ describe("parseFunctionCaptures deduplication", () => {
 		const results = parseFunctionCaptures(captures);
 
 		expect(results).toHaveLength(1);
-		expect(results[0].name).toBe("foo");
+		expect(results[0]!.name).toBe("foo");
 	});
 });
 
@@ -412,7 +412,7 @@ describe("parseFunctionCaptures async detection", () => {
 		const results = parseFunctionCaptures(captures);
 
 		expect(results).toHaveLength(1);
-		expect(results[0].is_async).toBe(true);
+		expect(results[0]!.is_async).toBe(true);
 	});
 
 	test("node without async child has is_async=false", () => {
@@ -459,7 +459,7 @@ describe("parseFunctionCaptures async detection", () => {
 		const results = parseFunctionCaptures(captures);
 
 		expect(results).toHaveLength(1);
-		expect(results[0].is_async).toBe(false);
+		expect(results[0]!.is_async).toBe(false);
 	});
 });
 
@@ -506,7 +506,7 @@ describe("parseFunctionCaptures parameter extraction", () => {
 		const results = parseFunctionCaptures(captures);
 
 		expect(results).toHaveLength(1);
-		expect(results[0].parameters).toEqual([{ name: "x", type: null }]);
+		expect(results[0]!.parameters).toEqual([{ name: "x", type: null }]);
 	});
 
 	test("required_parameter with pattern and type fields", () => {
@@ -567,7 +567,7 @@ describe("parseFunctionCaptures parameter extraction", () => {
 		const results = parseFunctionCaptures(captures);
 
 		expect(results).toHaveLength(1);
-		expect(results[0].parameters).toEqual([{ name: "user", type: "User" }]);
+		expect(results[0]!.parameters).toEqual([{ name: "user", type: "User" }]);
 	});
 
 	test('rest_pattern becomes { name: "...args", type: null }', () => {
@@ -618,7 +618,7 @@ describe("parseFunctionCaptures parameter extraction", () => {
 		const results = parseFunctionCaptures(captures);
 
 		expect(results).toHaveLength(1);
-		expect(results[0].parameters).toEqual([{ name: "...args", type: null }]);
+		expect(results[0]!.parameters).toEqual([{ name: "...args", type: null }]);
 	});
 
 	test("assignment_pattern uses name from left field", () => {
@@ -672,7 +672,7 @@ describe("parseFunctionCaptures parameter extraction", () => {
 		const results = parseFunctionCaptures(captures);
 
 		expect(results).toHaveLength(1);
-		expect(results[0].parameters).toEqual([{ name: "options", type: null }]);
+		expect(results[0]!.parameters).toEqual([{ name: "options", type: null }]);
 	});
 });
 
@@ -720,7 +720,7 @@ describe("parseFunctionCaptures return type", () => {
 		const results = parseFunctionCaptures(captures);
 
 		expect(results).toHaveLength(1);
-		expect(results[0].return_type).toBe("Promise<string>");
+		expect(results[0]!.return_type).toBe("Promise<string>");
 	});
 
 	test("no fn.return_type capture results in return_type=null", () => {
@@ -759,7 +759,7 @@ describe("parseFunctionCaptures return type", () => {
 		const results = parseFunctionCaptures(captures);
 
 		expect(results).toHaveLength(1);
-		expect(results[0].return_type).toBe(null);
+		expect(results[0]!.return_type).toBe(null);
 	});
 });
 
@@ -807,7 +807,7 @@ describe("parseFunctionCaptures jsdoc", () => {
 		const results = parseFunctionCaptures(captures);
 
 		expect(results).toHaveLength(1);
-		expect(results[0].jsdoc).toBe("/** This is a JSDoc comment */");
+		expect(results[0]!.jsdoc).toBe("/** This is a JSDoc comment */");
 	});
 
 	test("previousNamedSibling // comment results in jsdoc=null", () => {
@@ -853,7 +853,7 @@ describe("parseFunctionCaptures jsdoc", () => {
 		const results = parseFunctionCaptures(captures);
 
 		expect(results).toHaveLength(1);
-		expect(results[0].jsdoc).toBe(null);
+		expect(results[0]!.jsdoc).toBe(null);
 	});
 
 	test("no previousNamedSibling results in jsdoc=null", () => {
@@ -893,7 +893,7 @@ describe("parseFunctionCaptures jsdoc", () => {
 		const results = parseFunctionCaptures(captures);
 
 		expect(results).toHaveLength(1);
-		expect(results[0].jsdoc).toBe(null);
+		expect(results[0]!.jsdoc).toBe(null);
 	});
 });
 
@@ -934,8 +934,8 @@ describe("parseFunctionCaptures line numbers", () => {
 		const results = parseFunctionCaptures(captures);
 
 		expect(results).toHaveLength(1);
-		expect(results[0].lines).toEqual([5, 10]);
-		expect(results[0].loc).toBe(6);
+		expect(results[0]!.lines).toEqual([5, 10]);
+		expect(results[0]!.loc).toBe(6);
 	});
 });
 
