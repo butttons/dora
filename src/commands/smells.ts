@@ -43,12 +43,34 @@ async function scanTodoComments(params: {
 	const lines = content.split("\n");
 	const todoPattern = /TODO|FIXME|HACK/;
 	const results: TodoComment[] = [];
+	let isInBlockComment = false;
 
 	for (let index = 0; index < lines.length; index++) {
 		const lineContent = lines[index] ?? "";
-		const commentMatch = lineContent.match(/\/\/(.+)|\/\*(.+?)\*\//);
-		if (commentMatch) {
-			const commentText = (commentMatch[1] ?? commentMatch[2]) || "";
+		const trimmed = lineContent.trim();
+
+		if (isInBlockComment) {
+			if (todoPattern.test(trimmed)) {
+				results.push({ line: index + 1, text: trimmed });
+			}
+			if (trimmed.includes("*/")) {
+				isInBlockComment = false;
+			}
+			continue;
+		}
+
+		if (trimmed.startsWith("/*")) {
+			isInBlockComment = !trimmed.includes("*/");
+			const commentText = trimmed.replace(/^\/\*+/, "").replace(/\*\/$/, "").trim();
+			if (todoPattern.test(commentText)) {
+				results.push({ line: index + 1, text: commentText });
+			}
+			continue;
+		}
+
+		const lineCommentMatch = trimmed.match(/\/\/(.+)/);
+		if (lineCommentMatch) {
+			const commentText = lineCommentMatch[1] ?? "";
 			if (todoPattern.test(commentText)) {
 				results.push({ line: index + 1, text: commentText.trim() });
 			}
