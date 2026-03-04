@@ -6,3 +6,4 @@ export * from "./analysis.ts";
 export * from "./metrics.ts";
 export * from "./docs.ts";
 export * from "./results.ts";
+export * from "./treesitter.ts";
