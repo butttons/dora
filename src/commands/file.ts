@@ -5,7 +5,6 @@ import {
 } from "../db/queries.ts";
 import type { FileResult } from "../types.ts";
 import { parseFunctions } from "../tree-sitter/parser.ts";
-import { CtxError } from "../utils/errors.ts";
 import { debugDb } from "../utils/logger.ts";
 import { resolveAndValidatePath, setupCommand } from "./shared.ts";
 
@@ -54,9 +53,7 @@ export async function file(path: string): Promise<FileResult> {
 		metrics = parseResult.metrics;
 		functions = parseResult.functions;
 	} catch (error) {
-		if (error instanceof CtxError) {
-			debugDb(`Tree-sitter parse failed for ${relativePath}: ${error.message}`);
-		}
+		debugDb(`Tree-sitter parse failed for ${relativePath}: ${error instanceof Error ? error.message : String(error)}`);
 	}
 
 	const result: FileResult = {

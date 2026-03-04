@@ -12,15 +12,10 @@ async function findGlobalNodeModulesPath(): Promise<string | null> {
 	const output = await new Response(proc.stdout).text();
 	await proc.exited;
 
-	const lines = output.split("\n");
-	for (const line of lines) {
-		const trimmed = line.trim();
-		if (trimmed.startsWith("/") && trimmed.includes("node_modules")) {
-			const match = trimmed.match(/^(.+\/node_modules)/);
-			if (match && match[1]) {
-				return match[1];
-			}
-		}
+	const firstLine = output.split("\n")[0]?.trim() ?? "";
+	const match = firstLine.match(/^(\/.+?)\s+node_modules/);
+	if (match && match[1]) {
+		return join(match[1], "node_modules");
 	}
 
 	return null;

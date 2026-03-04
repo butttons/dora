@@ -1,7 +1,6 @@
 import { searchSymbols } from "../db/queries.ts";
 import { parseFunctions } from "../tree-sitter/parser.ts";
 import type { SymbolResult, SymbolSearchResult } from "../types.ts";
-import { CtxError } from "../utils/errors.ts";
 import { debugDb } from "../utils/logger.ts";
 import {
 	DEFAULTS,
@@ -53,46 +52,32 @@ export async function symbol(
 				config: ctx.config,
 			});
 
-			const functionMap = new Map<
-				string,
-				{
-					cyclomatic_complexity: number;
-					parameters: Array<{ name: string; type: string | null }>;
-					return_type: string | null;
-				}
-			>();
-
+			const functionsByName = new Map<string, typeof functions>();
 			for (const fnItem of functions) {
-				const key = `${fnItem.name}:${fnItem.lines[0]}`;
-				functionMap.set(key, {
-					cyclomatic_complexity: fnItem.cyclomatic_complexity,
-					parameters: fnItem.parameters,
-					return_type: fnItem.return_type,
-				});
+				const existing = functionsByName.get(fnItem.name) ?? [];
+				existing.push(fnItem);
+				functionsByName.set(fnItem.name, existing);
 			}
 
 			for (const item of items) {
-				const startLine = item.result.lines?.[0];
-				if (startLine === undefined) {
-					continue;
-				}
+				const scipLine = item.result.lines?.[0];
+				const cleanName = item.result.name.replace(/\(\)[^(]*$/, "");
+				const candidates = functionsByName.get(cleanName);
+				if (!candidates || scipLine === undefined) continue;
 
-				const key = `${item.result.name}:${startLine}`;
-				const fnInfo = functionMap.get(key);
+				const best = candidates.reduce((a, b) =>
+					Math.abs(a.lines[0] - scipLine) <= Math.abs(b.lines[0] - scipLine) ? a : b,
+				);
 
-				if (fnInfo) {
-					enhancedResults[item.index] = {
-						...item.result,
-						cyclomatic_complexity: fnInfo.cyclomatic_complexity,
-						parameters: fnInfo.parameters,
-						return_type: fnInfo.return_type,
-					};
-				}
+				enhancedResults[item.index] = {
+					...item.result,
+					cyclomatic_complexity: best.cyclomatic_complexity,
+					parameters: best.parameters,
+					return_type: best.return_type,
+				};
 			}
 		} catch (error) {
-			if (error instanceof CtxError) {
-				debugDb(`Tree-sitter parse failed for ${filePath}: ${error.message}`);
-			}
+			debugDb(`Tree-sitter parse failed for ${filePath}: ${error instanceof Error ? error.message : String(error)}`);
 		}
 	}
 

@@ -27,7 +27,8 @@ async function getLanguage(params: {
 	}
 
 	const mod = await parserModulePromise;
-	await mod.Parser.init();
+	const wasmPath = import.meta.resolve("web-tree-sitter/web-tree-sitter.wasm").replace("file://", "");
+	await mod.Parser.init({ locateFile: () => wasmPath });
 	const language = await mod.Language.load(grammarPath);
 	languageCache.set(grammarPath, language);
 	return language;
