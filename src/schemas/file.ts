@@ -1,4 +1,8 @@
 import { z } from "zod";
+import {
+	FileMetricsSchema,
+	FunctionInfoSchema,
+} from "./treesitter.ts";
 
 export const FileSymbolSchema = z.object({
 	name: z.string(),
@@ -21,6 +25,9 @@ export const FileResultSchema = z.object({
 	symbols: z.array(FileSymbolSchema),
 	depends_on: z.array(FileDependencySchema),
 	depended_by: z.array(FileDependentSchema),
+	metrics: FileMetricsSchema.optional(),
+	functions: z.array(FunctionInfoSchema).optional(),
+	documented_in: z.array(z.string()).optional(),
 });
 
 export const LeavesResultSchema = z.object({

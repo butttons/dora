@@ -4,6 +4,9 @@ import {
 	getFileSymbols,
 } from "../db/queries.ts";
 import type { FileResult } from "../types.ts";
+import { parseFunctions } from "../tree-sitter/parser.ts";
+import { CtxError } from "../utils/errors.ts";
+import { debugDb } from "../utils/logger.ts";
 import { resolveAndValidatePath, setupCommand } from "./shared.ts";
 
 export async function file(path: string): Promise<FileResult> {
@@ -15,9 +18,9 @@ export async function file(path: string): Promise<FileResult> {
 	const depended_by = getFileDependents(ctx.db, relativePath);
 
 	const fileIdQuery = "SELECT id FROM files WHERE path = ?";
-	const fileRow = ctx.db.query(fileIdQuery).get(relativePath) as {
-		id: number;
-	} | null;
+	const fileRow = ctx.db.query(fileIdQuery).get(relativePath) as
+		| { id: number }
+		| null;
 
 	let documented_in: string[] | undefined;
 
@@ -39,11 +42,30 @@ export async function file(path: string): Promise<FileResult> {
 		}
 	}
 
+	const absolutePath = `${ctx.config.root}/${relativePath}`;
+	let metrics: FileResult["metrics"];
+	let functions: FileResult["functions"];
+
+	try {
+		const parseResult = await parseFunctions({
+			filePath: absolutePath,
+			config: ctx.config,
+		});
+		metrics = parseResult.metrics;
+		functions = parseResult.functions;
+	} catch (error) {
+		if (error instanceof CtxError) {
+			debugDb(`Tree-sitter parse failed for ${relativePath}: ${error.message}`);
+		}
+	}
+
 	const result: FileResult = {
 		path: relativePath,
 		symbols,
 		depends_on,
 		depended_by,
+		...(metrics && { metrics }),
+		...(functions && { functions }),
 		...(documented_in && { documented_in }),
 	};
 
