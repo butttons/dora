@@ -139,8 +139,10 @@ export function validateConfig(data: unknown): Config {
  * Detect package manager and workspace type based on lock files
  */
 function detectWorkspaceType(root: string): "bun" | "pnpm" | "yarn" | null {
-	// Check for Bun first (bun.lockb)
-	if (existsSync(join(root, "bun.lockb"))) {
+	if (
+		existsSync(join(root, "bun.lockb")) ||
+		existsSync(join(root, "bun.lock"))
+	) {
 		return "bun";
 	}
 
