@@ -456,4 +456,35 @@ export const toolsMetadata: ToolMetadata[] = [
 			},
 		],
 	},
+	{
+		name: "dora_fn",
+		description: "List all functions in a file with complexity metrics",
+		arguments: [
+			{
+				name: "path",
+				required: true,
+				description: "File path to analyze",
+			},
+		],
+		options: [
+			{
+				name: "sort",
+				type: "string",
+				description: "Sort by: complexity, loc, or name (default: complexity)",
+				required: false,
+			},
+			{
+				name: "minComplexity",
+				type: "number",
+				description: "Filter functions below complexity threshold",
+				required: false,
+			},
+			{
+				name: "limit",
+				type: "number",
+				description: "Maximum number of results",
+				required: false,
+			},
+		],
+	},
 ];

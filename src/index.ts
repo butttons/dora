@@ -13,6 +13,7 @@ import { docsSearch } from "./commands/docs/search.ts";
 import { docsShow } from "./commands/docs/show.ts";
 import { exports } from "./commands/exports.ts";
 import { file } from "./commands/file.ts";
+import { fn } from "./commands/fn.ts";
 import { graph } from "./commands/graph.ts";
 import { imports } from "./commands/imports.ts";
 import { index } from "./commands/index.ts";
@@ -121,6 +122,18 @@ program
 	.argument("<path>", "File path to analyze")
 	.action(wrapCommand(async (path: string) => {
 		const result = await file(path);
+		output({ data: result, isJson: program.opts().json });
+	}));
+
+program
+	.command("fn")
+	.description("List all functions in a file with complexity metrics")
+	.argument("<path>", "File path to analyze")
+	.option("--sort <metric>", "Sort by: complexity, loc, or name (default: complexity)")
+	.option("--min-complexity <number>", "Filter functions below complexity threshold")
+	.option("--limit <number>", "Maximum number of results")
+	.action(wrapCommand(async (path: string, options) => {
+		const result = await fn(path, options);
 		output({ data: result, isJson: program.opts().json });
 	}));
 

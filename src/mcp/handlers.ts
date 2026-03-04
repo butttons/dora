@@ -11,6 +11,7 @@ import { docsSearch } from "../commands/docs/search.ts";
 import { docsShow } from "../commands/docs/show.ts";
 import { exports } from "../commands/exports.ts";
 import { file } from "../commands/file.ts";
+import { fn } from "../commands/fn.ts";
 import { graph } from "../commands/graph.ts";
 import { imports } from "../commands/imports.ts";
 import { index } from "../commands/index.ts";
@@ -156,6 +157,13 @@ export async function handleToolCall(
 		.with("dora_docs_show", async () => {
 			return await docsShow(args.path, {
 				content: args.content,
+			});
+		})
+		.with("dora_fn", async () => {
+			return await fn(args.path, {
+				sort: args.sort,
+				minComplexity: args.minComplexity,
+				limit: args.limit,
 			});
 		})
 		.otherwise(() => {
