@@ -43,13 +43,16 @@ export async function fn(params: FnParams): Promise<FnResult> {
 	}
 
 	const sortBy = options.sort || "complexity";
+	const validSorts = ["complexity", "loc", "name"] as const;
+	if (!validSorts.includes(sortBy as (typeof validSorts)[number])) {
+		throw new Error(`Invalid sort value "${sortBy}". Valid values: ${validSorts.join(", ")}`);
+	}
 	filteredFunctions.sort((a: FunctionInfo, b: FunctionInfo) => {
 		switch (sortBy) {
 			case "loc":
 				return b.loc - a.loc;
 			case "name":
 				return a.name.localeCompare(b.name);
-			case "complexity":
 			default:
 				return b.cyclomatic_complexity - a.cyclomatic_complexity;
 		}

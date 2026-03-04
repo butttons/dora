@@ -45,6 +45,10 @@ export async function classCommand(
 	let filteredClasses = classes;
 
 	const sortBy = options.sort || "name";
+	const validSorts = ["name", "methods", "complexity"] as const;
+	if (!validSorts.includes(sortBy as (typeof validSorts)[number])) {
+		throw new Error(`Invalid sort value "${sortBy}". Valid values: ${validSorts.join(", ")}`);
+	}
 	filteredClasses.sort((a: ClassInfo, b: ClassInfo) => {
 		switch (sortBy) {
 			case "methods":
@@ -53,7 +57,6 @@ export async function classCommand(
 				return (
 					getClassComplexity({ item: b }) - getClassComplexity({ item: a })
 				);
-			case "name":
 			default:
 				return a.name.localeCompare(b.name);
 		}
