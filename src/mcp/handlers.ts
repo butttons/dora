@@ -27,6 +27,7 @@ import { refs } from "../commands/refs.ts";
 import { schema } from "../commands/schema.ts";
 import { status } from "../commands/status.ts";
 import { symbol } from "../commands/symbol.ts";
+import { smells } from "../commands/smells.ts";
 import { treasure } from "../commands/treasure.ts";
 
 export async function handleToolCall(
@@ -171,6 +172,13 @@ export async function handleToolCall(
 			return await classCommand(args.path, {
 				sort: args.sort,
 				limit: args.limit,
+			});
+		})
+		.with("dora_smells", async () => {
+			return await smells(args.path, {
+				complexityThreshold: args.complexityThreshold,
+				locThreshold: args.locThreshold,
+				paramsThreshold: args.paramsThreshold,
 			});
 		})
 		.otherwise(() => {

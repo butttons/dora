@@ -31,6 +31,7 @@ import { status } from "./commands/status.ts";
 import { symbol } from "./commands/symbol.ts";
 import { treasure } from "./commands/treasure.ts";
 import { wrapCommand } from "./utils/errors.ts";
+import { smells } from "./commands/smells.ts";
 import { output } from "./utils/output.ts";
 
 import packageJson from "../package.json";
@@ -135,6 +136,22 @@ program
 	.option("--limit <number>", "Maximum number of results")
 	.action(wrapCommand(async (path: string, options) => {
 		const result = await fn(path, options);
+		output({ data: result, isJson: program.opts().json });
+	}));
+
+program
+	.command("smells")
+	.description("Detect code smells in a file")
+	.argument("<path>", "File path to analyze")
+	.option("--complexity-threshold <number>", "Cyclomatic complexity threshold (default: 10)", "10")
+	.option("--loc-threshold <number>", "Lines of code threshold (default: 100)", "100")
+	.option("--params-threshold <number>", "Parameter count threshold (default: 5)", "5")
+	.action(wrapCommand(async (path: string, options) => {
+		const result = await smells(path, {
+			complexityThreshold: parseInt(options.complexityThreshold, 10),
+			locThreshold: parseInt(options.locThreshold, 10),
+			paramsThreshold: parseInt(options.paramsThreshold, 10),
+		});
 		output({ data: result, isJson: program.opts().json });
 	}));
 

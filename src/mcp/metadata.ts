@@ -512,4 +512,38 @@ export const toolsMetadata: ToolMetadata[] = [
 			},
 		],
 	},
+	{
+		name: "dora_smells",
+		description: "Detect code smells in a file",
+		arguments: [
+			{
+				name: "path",
+				required: true,
+				description: "File path to analyze",
+			},
+		],
+		options: [
+			{
+				name: "complexityThreshold",
+				type: "number",
+				description: "Cyclomatic complexity threshold (default: 10)",
+				required: false,
+				defaultValue: 10,
+			},
+			{
+				name: "locThreshold",
+				type: "number",
+				description: "Lines of code threshold (default: 100)",
+				required: false,
+				defaultValue: 100,
+			},
+			{
+				name: "paramsThreshold",
+				type: "number",
+				description: "Parameter count threshold (default: 5)",
+				required: false,
+				defaultValue: 5,
+			},
+		],
+	},
 ];
