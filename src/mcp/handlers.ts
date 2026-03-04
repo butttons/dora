@@ -32,8 +32,9 @@ import { treasure } from "../commands/treasure.ts";
 
 export async function handleToolCall(
 	name: string,
-	args: Record<string, any>,
-): Promise<any> {
+	// MCP protocol delivers args as untyped JSON - no schema available at the boundary
+	args: Record<string, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
+): Promise<unknown> {
 	return match(name)
 		.with("dora_init", async () => {
 			return await init({ language: args.language });
