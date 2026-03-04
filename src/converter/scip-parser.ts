@@ -15,7 +15,7 @@ import {
 /**
  * Parsed SCIP data structure
  */
-export interface ScipData {
+export type ScipData = {
 	documents: ParsedDocument[];
 	externalSymbols: ParsedSymbol[];
 	metadata?: {
@@ -23,68 +23,68 @@ export interface ScipData {
 		toolVersion?: string;
 		projectRoot?: string;
 	};
-}
+};
 
 /**
  * Parsed document with all its symbols and occurrences
  */
-export interface ParsedDocument {
+export type ParsedDocument = {
 	relativePath: string;
 	language: string;
 	occurrences: ParsedOccurrence[];
 	symbols: ParsedSymbol[];
-}
+};
 
 /**
  * Parsed occurrence (symbol reference or definition)
  */
-export interface ParsedOccurrence {
+export type ParsedOccurrence = {
 	range: [number, number, number, number]; // [startLine, startChar, endLine, endChar]
 	symbol: string; // Full SCIP identifier
 	symbolRoles: number; // Bitset: 0x1 = definition, 0x2 = import, etc.
 	enclosingRange?: [number, number, number, number];
-}
+};
 
 /**
  * Parsed symbol information
  */
-export interface ParsedSymbol {
+export type ParsedSymbol = {
 	symbol: string; // Full SCIP identifier
 	displayName?: string;
 	kind: number;
 	documentation?: string[];
 	relationships?: ParsedRelationship[];
 	enclosingSymbol?: string;
-}
+};
 
 /**
  * Symbol relationship (inheritance, implementation, etc.)
  */
-export interface ParsedRelationship {
+export type ParsedRelationship = {
 	symbol: string;
 	isReference: boolean;
 	isImplementation: boolean;
 	isTypeDefinition: boolean;
 	isDefinition: boolean;
-}
+};
 
 /**
  * Symbol definition extracted from occurrences
  */
-export interface SymbolDefinition {
+export type SymbolDefinition = {
 	symbol: string;
 	range: [number, number, number, number];
 	enclosingRange?: [number, number, number, number];
-}
+};
 
 /**
  * Symbol reference extracted from occurrences
  */
-export interface SymbolReference {
+export type SymbolReference = {
 	symbol: string;
 	range: [number, number, number, number];
 	line: number;
-}
+};
 
 /**
  * Parses a SCIP (Source Code Intelligence Protocol) protobuf file.

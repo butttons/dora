@@ -170,12 +170,12 @@ CREATE INDEX IF NOT EXISTS idx_document_document_refs_document ON document_docum
 CREATE INDEX IF NOT EXISTS idx_document_document_refs_referenced ON document_document_refs(referenced_document_id);
 CREATE INDEX IF NOT EXISTS idx_document_document_refs_line ON document_document_refs(line);`;
 
-export interface ConversionOptions {
+export type ConversionOptions = {
 	force?: boolean;
 	ignore?: string[];
-}
+};
 
-export interface ConversionStats {
+export type ConversionStats = {
 	mode: "full" | "incremental";
 	total_files: number;
 	total_symbols: number;
@@ -184,12 +184,12 @@ export interface ConversionStats {
 	time_ms: number;
 	total_documents?: number;
 	processed_documents?: number;
-}
+};
 
-interface ChangedFile {
+type ChangedFile = {
 	path: string;
 	mtime: number;
-}
+};
 
 /**
  * Helper function to chunk an array into smaller batches

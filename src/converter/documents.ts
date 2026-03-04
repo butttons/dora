@@ -7,32 +7,32 @@ import {
 } from "../utils/fileScanner.js";
 import { debugDocs } from "../utils/logger.js";
 
-export interface DocumentProcessingStats {
+export type DocumentProcessingStats = {
 	processed: number;
 	skipped: number;
 	total: number;
-}
+};
 
-interface SymbolReference {
+type SymbolReference = {
 	symbolId: number;
 	line: number;
-}
+};
 
-interface FileReference {
+type FileReference = {
 	fileId: number;
 	line: number;
-}
+};
 
-interface DocReference {
+type DocReference = {
 	docId: number;
 	line: number;
-}
+};
 
-interface DocumentReference {
+type DocumentReference = {
 	symbolRefs: SymbolReference[];
 	fileRefs: FileReference[];
 	docRefs: DocReference[];
-}
+};
 
 /**
  * Process documentation files and index them in the database
