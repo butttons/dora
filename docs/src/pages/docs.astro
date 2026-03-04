@@ -977,6 +977,41 @@ dora index</code></pre>
             </div>
         </div>
 
+        <!-- Tree-sitter -->
+        <div class="mb-16">
+            <h2 class="text-2xl font-bold mb-6 text-blue-400">Tree-sitter Analysis</h2>
+            <p class="text-zinc-300 mb-4">
+                <code class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded">dora fn</code>,
+                <code class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded">dora class</code>, and
+                <code class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded">dora smells</code> parse source files directly using WebAssembly grammars.
+                They work without a SCIP index and run on-demand per file.
+            </p>
+            <p class="text-zinc-300 mb-4">
+                Install a grammar for your language. For TypeScript and TSX:
+            </p>
+            <div class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm space-y-2 overflow-x-auto mb-4">
+                <div><span class="text-zinc-500">$</span> <span class="text-zinc-300">bun add -g tree-sitter-typescript</span></div>
+            </div>
+            <p class="text-zinc-300 mb-4">For JavaScript and JSX:</p>
+            <div class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm space-y-2 overflow-x-auto mb-4">
+                <div><span class="text-zinc-500">$</span> <span class="text-zinc-300">bun add -g tree-sitter-javascript</span></div>
+            </div>
+            <p class="text-zinc-300 mb-4">
+                dora discovers grammars automatically from local <code class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded">node_modules</code>,
+                global bun packages, or an explicit path in <code class="text-blue-300 bg-zinc-900/50 px-2 py-1 rounded">.dora/config.json</code>:
+            </p>
+            <pre class="bg-zinc-900/50 rounded-lg p-4 font-mono text-sm overflow-x-auto mb-4"><code class="text-zinc-300">{`{
+  "treeSitter": {
+    "grammars": {
+      "typescript": "/path/to/tree-sitter-typescript.wasm"
+    }
+  }
+}`}</code></pre>
+            <p class="text-zinc-400 text-sm">
+                Run <code class="text-blue-300 bg-zinc-900/50 px-1 rounded">dora status</code> to see which grammars are available.
+            </p>
+        </div>
+
         <!-- Output Format -->
         <div class="mb-16">
             <h2 class="text-2xl font-bold mb-6 text-blue-400">Output Format</h2>
