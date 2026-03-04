@@ -3,22 +3,30 @@ import { join } from "path";
 import { CtxError } from "../utils/errors.ts";
 import type { Config } from "../utils/config.ts";
 
+let globalNodeModulesPromise: Promise<string | null> | null = null;
+
 async function findGlobalNodeModulesPath(): Promise<string | null> {
-	const proc = Bun.spawn(["bun", "pm", "ls", "-g"], {
-		stdout: "pipe",
-		stderr: "pipe",
-	});
-
-	const output = await new Response(proc.stdout).text();
-	await proc.exited;
-
-	const firstLine = output.split("\n")[0]?.trim() ?? "";
-	const match = firstLine.match(/^(\/.+?)\s+node_modules/);
-	if (match && match[1]) {
-		return join(match[1], "node_modules");
+	if (globalNodeModulesPromise) {
+		return globalNodeModulesPromise;
 	}
+	globalNodeModulesPromise = (async () => {
+		const proc = Bun.spawn(["bun", "pm", "ls", "-g"], {
+			stdout: "pipe",
+			stderr: "pipe",
+		});
 
-	return null;
+		const output = await new Response(proc.stdout).text();
+		await proc.exited;
+
+		const firstLine = output.split("\n")[0]?.trim() ?? "";
+		const match = firstLine.match(/^(\/.+?)\s+node_modules/);
+		if (match && match[1]) {
+			return join(match[1], "node_modules");
+		}
+
+		return null;
+	})();
+	return globalNodeModulesPromise;
 }
 
 export async function findGrammarPath(params: {
