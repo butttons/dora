@@ -8,6 +8,7 @@ import {
 	parseOptionalStringFlag,
 	setupCommand,
 } from "./shared.ts";
+import { resolveAbsolute } from "../utils/paths.ts";
 
 type FileGroupItem = {
 	index: number;
@@ -48,7 +49,7 @@ export async function symbol(
 	for (const [filePath, items] of fileGroups) {
 		try {
 			const { functions } = await parseFunctions({
-				filePath: `${ctx.config.root}/${filePath}`,
+				filePath: resolveAbsolute({ root: ctx.config.root, relativePath: filePath }),
 				config: ctx.config,
 			});
 

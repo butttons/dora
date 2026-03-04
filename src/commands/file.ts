@@ -7,6 +7,7 @@ import type { FileResult } from "../types.ts";
 import { parseFunctions } from "../tree-sitter/parser.ts";
 import { debugDb } from "../utils/logger.ts";
 import { resolveAndValidatePath, setupCommand } from "./shared.ts";
+import { resolveAbsolute } from "../utils/paths.ts";
 
 export async function file(path: string): Promise<FileResult> {
 	const ctx = await setupCommand();
@@ -41,7 +42,7 @@ export async function file(path: string): Promise<FileResult> {
 		}
 	}
 
-	const absolutePath = `${ctx.config.root}/${relativePath}`;
+	const absolutePath = resolveAbsolute({ root: ctx.config.root, relativePath });
 	let metrics: FileResult["metrics"];
 	let functions: FileResult["functions"];
 

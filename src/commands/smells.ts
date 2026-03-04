@@ -6,6 +6,7 @@ import type {
 } from "../schemas/treesitter.ts";
 import { CtxError } from "../utils/errors.ts";
 import { resolveAndValidatePath, setupCommand } from "./shared.ts";
+import { resolveAbsolute } from "../utils/paths.ts";
 
 type TodoComment = {
 	line: number;
@@ -109,7 +110,7 @@ export async function smells(params: SmellsParams): Promise<SmellsResult> {
 	const { path, options = {} } = params;
 	const ctx = await setupCommand();
 	const relativePath = resolveAndValidatePath({ ctx, inputPath: path });
-	const absolutePath = `${ctx.config.root}/${relativePath}`;
+	const absolutePath = resolveAbsolute({ root: ctx.config.root, relativePath });
 
 	const complexityThreshold = options.complexityThreshold ?? 10;
 	const locThreshold = options.locThreshold ?? 100;

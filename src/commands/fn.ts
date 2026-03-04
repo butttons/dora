@@ -2,6 +2,7 @@ import { getLanguageForExtension } from "../tree-sitter/languages/registry.ts";
 import { parseFunctions } from "../tree-sitter/parser.ts";
 import type { FnResult, FunctionInfo } from "../schemas/treesitter.ts";
 import { resolveAndValidatePath, setupCommand } from "./shared.ts";
+import { resolveAbsolute } from "../utils/paths.ts";
 
 type FnOptions = {
 	sort?: string;
@@ -18,7 +19,7 @@ export async function fn(params: FnParams): Promise<FnResult> {
 	const { path, options = {} } = params;
 	const ctx = await setupCommand();
 	const relativePath = resolveAndValidatePath({ ctx, inputPath: path });
-	const absolutePath = `${ctx.config.root}/${relativePath}`;
+	const absolutePath = resolveAbsolute({ root: ctx.config.root, relativePath });
 
 	const extension = relativePath.includes(".")
 		? relativePath.split(".").pop() || ""
