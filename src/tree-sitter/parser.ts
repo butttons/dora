@@ -8,7 +8,11 @@ import {
 	getLanguageForExtension,
 	getLanguageEntry,
 } from "./languages/registry.ts";
-import type { FunctionInfo, ClassInfo, FileMetrics } from "../schemas/treesitter.ts";
+import type {
+	FunctionInfo,
+	ClassInfo,
+	FileMetrics,
+} from "../schemas/treesitter.ts";
 
 type ParserModule = typeof import("web-tree-sitter");
 
@@ -27,7 +31,9 @@ async function getLanguage(params: {
 	}
 
 	const mod = await parserModulePromise;
-	const wasmPath = import.meta.resolve("web-tree-sitter/web-tree-sitter.wasm").replace("file://", "");
+	const wasmPath = import.meta
+		.resolve("web-tree-sitter/web-tree-sitter.wasm")
+		.replace("file://", "");
 	await mod.Parser.init({ locateFile: () => wasmPath });
 	const language = await mod.Language.load(grammarPath);
 	languageCache.set(grammarPath, language);
@@ -64,9 +70,9 @@ async function correlateWithScip(params: {
          WHERE file_id = ? AND start_line = ? AND name = ?
          LIMIT 1`,
 			)
-			.get(fileId, symbol.lines[0], symbol.name) as
-				| { reference_count: number }
-				| null;
+			.get(fileId, symbol.lines[0], symbol.name) as {
+			reference_count: number;
+		} | null;
 
 		if (symbolRow) {
 			symbol.reference_count = symbolRow.reference_count;
@@ -74,7 +80,7 @@ async function correlateWithScip(params: {
 	}
 }
 
-function calculateFileMetrics(params: {
+export function calculateFileMetrics(params: {
 	content: string;
 	functions: FunctionInfo[];
 	classes: ClassInfo[];
@@ -147,16 +153,24 @@ async function parseFile(params: {
 }): Promise<ParsedFile> {
 	const { filePath, config } = params;
 
-	const extension = filePath.includes(".") ? `.${filePath.split(".").pop() || ""}` : "";
+	const extension = filePath.includes(".")
+		? `.${filePath.split(".").pop() || ""}`
+		: "";
 	const languageKey = getLanguageForExtension({ extension });
 
 	if (!languageKey) {
-		throw new CtxError(`Unsupported file extension: ${extension}`, undefined, { filePath });
+		throw new CtxError(`Unsupported file extension: ${extension}`, undefined, {
+			filePath,
+		});
 	}
 
 	const langEntry = getLanguageEntry({ language: languageKey });
 	if (!langEntry) {
-		throw new CtxError(`Language entry not found for: ${languageKey}`, undefined, { filePath });
+		throw new CtxError(
+			`Language entry not found for: ${languageKey}`,
+			undefined,
+			{ filePath },
+		);
 	}
 
 	let content: string;
@@ -188,10 +202,18 @@ async function parseFile(params: {
 	}
 
 	const queries = langEntry.getQueries();
-	const functionCaptures = new mod.Query(language, queries.functionQuery).captures(tree.rootNode);
-	const classCaptures = new mod.Query(language, queries.classQuery).captures(tree.rootNode);
+	const functionCaptures = new mod.Query(
+		language,
+		queries.functionQuery,
+	).captures(tree.rootNode);
+	const classCaptures = new mod.Query(language, queries.classQuery).captures(
+		tree.rootNode,
+	);
 
-	const parseResults = queries.parseResults({ functionCaptures, classCaptures });
+	const parseResults = queries.parseResults({
+		functionCaptures,
+		classCaptures,
+	});
 
 	parser.delete();
 	tree.delete();
