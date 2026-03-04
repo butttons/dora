@@ -20,6 +20,22 @@ const parserModulePromise: Promise<ParserModule> = import("web-tree-sitter");
 
 const languageCache = new Map<string, Parser.Language>();
 
+let parserInitPromise: Promise<ParserModule> | null = null;
+
+async function getInitializedModule(): Promise<ParserModule> {
+	if (parserInitPromise) {
+		return parserInitPromise;
+	}
+	parserInitPromise = parserModulePromise.then(async (mod) => {
+		const wasmPath = import.meta
+			.resolve("web-tree-sitter/web-tree-sitter.wasm")
+			.replace("file://", "");
+		await mod.Parser.init({ locateFile: () => wasmPath });
+		return mod;
+	});
+	return parserInitPromise;
+}
+
 async function getLanguage(params: {
 	grammarPath: string;
 }): Promise<Parser.Language> {
@@ -30,11 +46,7 @@ async function getLanguage(params: {
 		return cached;
 	}
 
-	const mod = await parserModulePromise;
-	const wasmPath = import.meta
-		.resolve("web-tree-sitter/web-tree-sitter.wasm")
-		.replace("file://", "");
-	await mod.Parser.init({ locateFile: () => wasmPath });
+	const mod = await getInitializedModule();
 	const language = await mod.Language.load(grammarPath);
 	languageCache.set(grammarPath, language);
 	return language;
@@ -191,7 +203,7 @@ async function parseFile(params: {
 	});
 
 	const language = await getLanguage({ grammarPath });
-	const mod = await parserModulePromise;
+	const mod = await getInitializedModule();
 
 	const parser = new mod.Parser();
 	parser.setLanguage(language);
