@@ -13,6 +13,7 @@
         "debug": "^4.4.3",
         "ignore": "^5.3.0",
         "ts-pattern": "^5.9.0",
+        "web-tree-sitter": "^0.26.6",
         "zod": "^4.3.5",
       },
       "devDependencies": {
@@ -401,6 +402,8 @@
     "unpipe": ["unpipe@1.0.0", "", {}, "sha512-pjy2bYhSsufwWlKwPc+l3cN7+wuJlK6uz0YdJEOlQDbl6jo/YlPi4mb8agUkVC8BF7V8NuzeyPNqRksA3hztKQ=="],
 
     "vary": ["vary@1.1.2", "", {}, "sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg=="],
+
+    "web-tree-sitter": ["web-tree-sitter@0.26.6", "", {}, "sha512-fSPR7VBW/fZQdUSp/bXTDLT+i/9dwtbnqgEBMzowrM4U3DzeCwDbY3MKo0584uQxID4m/1xpLflrlT/rLIRPew=="],
 
     "which": ["which@2.0.2", "", { "dependencies": { "isexe": "^2.0.0" }, "bin": { "node-which": "./bin/node-which" } }, "sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA=="],
 
