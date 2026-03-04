@@ -91,12 +91,12 @@ function countComplexity(bodyNode: Parser.Node): number {
 			const operatorNode = node.childForFieldName("operator");
 			if (
 				operatorNode &&
-				(operatorNode.text === "&&" || operatorNode.text === "||")
+				(operatorNode.text === "&&" ||
+					operatorNode.text === "||" ||
+					operatorNode.text === "??")
 			) {
 				count++;
 			}
-		} else if (node.type === "??") {
-			count++;
 		}
 
 		for (const child of node.children) {
