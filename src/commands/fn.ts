@@ -24,7 +24,8 @@ export async function fn(params: FnParams): Promise<FnResult> {
 		? relativePath.split(".").pop() || ""
 		: "";
 	const extWithDot = extension ? `.${extension}` : "";
-	const languageKey = getLanguageForExtension({ extension: extWithDot }) || "unknown";
+	const languageKey =
+		getLanguageForExtension({ extension: extWithDot }) || "unknown";
 
 	const { functions, metrics } = await parseFunctions({
 		filePath: absolutePath,

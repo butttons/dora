@@ -1,5 +1,9 @@
 import type Parser from "web-tree-sitter";
-import type { ClassInfo, FunctionInfo, MethodInfo } from "../../schemas/treesitter.ts";
+import type {
+	ClassInfo,
+	FunctionInfo,
+	MethodInfo,
+} from "../../schemas/treesitter.ts";
 
 export const functionQueryString = `
 (function_declaration
@@ -104,7 +108,9 @@ function countComplexity(bodyNode: Parser.Node): number {
 	return count;
 }
 
-function extractParameters(paramsNode: Parser.Node): Array<{ name: string; type: string | null }> {
+function extractParameters(
+	paramsNode: Parser.Node,
+): Array<{ name: string; type: string | null }> {
 	const params: Array<{ name: string; type: string | null }> = [];
 
 	for (const child of paramsNode.namedChildren) {
@@ -123,7 +129,10 @@ function extractParameters(paramsNode: Parser.Node): Array<{ name: string; type:
 			if (leftNode) {
 				params.push({ name: leftNode.text, type: null });
 			}
-		} else if (child.type === "object_pattern" || child.type === "array_pattern") {
+		} else if (
+			child.type === "object_pattern" ||
+			child.type === "array_pattern"
+		) {
 			params.push({ name: child.text, type: null });
 		}
 	}
@@ -168,10 +177,7 @@ export function parseFunctionCaptures(
 		const declarationNode = capture.node;
 
 		let fnNode = declarationNode;
-		if (
-			capture.name === "fn.export" ||
-			capture.name === "fn.export_arrow"
-		) {
+		if (capture.name === "fn.export" || capture.name === "fn.export_arrow") {
 			const inner =
 				fnNode.childForFieldName("declaration") ||
 				fnNode.namedChildren.find(
@@ -224,7 +230,8 @@ export function parseFunctionCaptures(
 			capture.name === "fn.export" || capture.name === "fn.export_arrow";
 		const isAsync = isAsyncFunction(
 			fnNode.type === "variable_declarator"
-				? fnNode.namedChildren.find((c) => c.type === "arrow_function") ?? fnNode
+				? (fnNode.namedChildren.find((c) => c.type === "arrow_function") ??
+						fnNode)
 				: fnNode,
 		);
 

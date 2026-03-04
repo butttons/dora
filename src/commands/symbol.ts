@@ -66,7 +66,9 @@ export async function symbol(
 				if (!candidates || scipLine === undefined) continue;
 
 				const best = candidates.reduce((a, b) =>
-					Math.abs(a.lines[0] - scipLine) <= Math.abs(b.lines[0] - scipLine) ? a : b,
+					Math.abs(a.lines[0] - scipLine) <= Math.abs(b.lines[0] - scipLine)
+						? a
+						: b,
 				);
 
 				enhancedResults[item.index] = {
@@ -77,7 +79,9 @@ export async function symbol(
 				};
 			}
 		} catch (error) {
-			debugDb(`Tree-sitter parse failed for ${filePath}: ${error instanceof Error ? error.message : String(error)}`);
+			debugDb(
+				`Tree-sitter parse failed for ${filePath}: ${error instanceof Error ? error.message : String(error)}`,
+			);
 		}
 	}
 

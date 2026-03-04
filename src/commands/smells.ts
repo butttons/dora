@@ -63,7 +63,8 @@ function detectFunctionSmells(params: {
 	locThreshold: number;
 	paramsThreshold: number;
 }): SmellItem[] {
-	const { functions, complexityThreshold, locThreshold, paramsThreshold } = params;
+	const { functions, complexityThreshold, locThreshold, paramsThreshold } =
+		params;
 	const smells: SmellItem[] = [];
 
 	for (const fnItem of functions) {

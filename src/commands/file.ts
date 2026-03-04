@@ -17,9 +17,9 @@ export async function file(path: string): Promise<FileResult> {
 	const depended_by = getFileDependents(ctx.db, relativePath);
 
 	const fileIdQuery = "SELECT id FROM files WHERE path = ?";
-	const fileRow = ctx.db.query(fileIdQuery).get(relativePath) as
-		| { id: number }
-		| null;
+	const fileRow = ctx.db.query(fileIdQuery).get(relativePath) as {
+		id: number;
+	} | null;
 
 	let documented_in: string[] | undefined;
 
@@ -53,7 +53,9 @@ export async function file(path: string): Promise<FileResult> {
 		metrics = parseResult.metrics;
 		functions = parseResult.functions;
 	} catch (error) {
-		debugDb(`Tree-sitter parse failed for ${relativePath}: ${error instanceof Error ? error.message : String(error)}`);
+		debugDb(
+			`Tree-sitter parse failed for ${relativePath}: ${error instanceof Error ? error.message : String(error)}`,
+		);
 	}
 
 	const result: FileResult = {

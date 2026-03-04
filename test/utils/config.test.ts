@@ -260,8 +260,7 @@ describe("Config Management", () => {
 		afterEach(async () => {
 			try {
 				await Bun.$`rm -rf ${tempDir}`;
-			} catch {
-			}
+			} catch {}
 		});
 
 		test("should use explicit language when provided", async () => {

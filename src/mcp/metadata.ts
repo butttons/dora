@@ -124,8 +124,7 @@ export const toolsMetadata: ToolMetadata[] = [
 			{
 				name: "kind",
 				type: "string",
-				description:
-					"Filter by symbol kind (type, class, function, interface)",
+				description: "Filter by symbol kind (type, class, function, interface)",
 				required: false,
 			},
 		],
@@ -313,8 +312,7 @@ export const toolsMetadata: ToolMetadata[] = [
 	},
 	{
 		name: "dora_cycles",
-		description:
-			"Find bidirectional dependencies (A imports B, B imports A)",
+		description: "Find bidirectional dependencies (A imports B, B imports A)",
 		arguments: [],
 		options: [
 			{
@@ -391,8 +389,7 @@ export const toolsMetadata: ToolMetadata[] = [
 			{
 				name: "recipe",
 				required: false,
-				description:
-					"Recipe name (quickstart, methods, references, exports)",
+				description: "Recipe name (quickstart, methods, references, exports)",
 			},
 		],
 		options: [

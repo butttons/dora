@@ -11,7 +11,9 @@ import { CtxError } from "../utils/errors.ts";
 import { findRepoRoot, getConfigPath, getDoraDir } from "../utils/paths.ts";
 import { copyTemplates } from "../utils/templates.ts";
 
-export async function init(params?: { language?: string }): Promise<InitResult> {
+export async function init(params?: {
+	language?: string;
+}): Promise<InitResult> {
 	if (params?.language) {
 		const result = LanguageSchema.safeParse(params.language);
 		if (!result.success) {

@@ -91,18 +91,22 @@ program
 program
 	.command("status")
 	.description("Show index status and statistics")
-	.action(wrapCommand(async () => {
-		const result = await status();
-		output({ data: result, isJson: program.opts().json });
-	}));
+	.action(
+		wrapCommand(async () => {
+			const result = await status();
+			output({ data: result, isJson: program.opts().json });
+		}),
+	);
 
 program
 	.command("map")
 	.description("Show high-level codebase map")
-	.action(wrapCommand(async () => {
-		const result = await map();
-		output({ data: result, isJson: program.opts().json });
-	}));
+	.action(
+		wrapCommand(async () => {
+			const result = await map();
+			output({ data: result, isJson: program.opts().json });
+		}),
+	);
 
 program
 	.command("ls")
@@ -113,61 +117,92 @@ program
 		"--sort <field>",
 		"Sort by: path, symbols, deps, or rdeps (default: path)",
 	)
-	.action(wrapCommand(async (directory, options) => {
-		const result = await ls(directory, options);
-		output({ data: result, isJson: program.opts().json });
-	}));
+	.action(
+		wrapCommand(async (directory, options) => {
+			const result = await ls(directory, options);
+			output({ data: result, isJson: program.opts().json });
+		}),
+	);
 
 program
 	.command("file")
 	.description("Analyze a specific file with symbols and dependencies")
 	.argument("<path>", "File path to analyze")
-	.action(wrapCommand(async (path: string) => {
-		const result = await file(path);
-		output({ data: result, isJson: program.opts().json });
-	}));
+	.action(
+		wrapCommand(async (path: string) => {
+			const result = await file(path);
+			output({ data: result, isJson: program.opts().json });
+		}),
+	);
 
 program
 	.command("fn")
 	.description("List all functions in a file with complexity metrics")
 	.argument("<path>", "File path to analyze")
-	.option("--sort <metric>", "Sort by: complexity, loc, or name (default: complexity)")
-	.option("--min-complexity <number>", "Filter functions below complexity threshold")
+	.option(
+		"--sort <metric>",
+		"Sort by: complexity, loc, or name (default: complexity)",
+	)
+	.option(
+		"--min-complexity <number>",
+		"Filter functions below complexity threshold",
+	)
 	.option("--limit <number>", "Maximum number of results")
-	.action(wrapCommand(async (path: string, options) => {
-		const result = await fn({ path, options });
-		output({ data: result, isJson: program.opts().json });
-	}));
+	.action(
+		wrapCommand(async (path: string, options) => {
+			const result = await fn({ path, options });
+			output({ data: result, isJson: program.opts().json });
+		}),
+	);
 
 program
 	.command("smells")
 	.description("Detect code smells in a file")
 	.argument("<path>", "File path to analyze")
-	.option("--complexity-threshold <number>", "Cyclomatic complexity threshold (default: 10)", "10")
-	.option("--loc-threshold <number>", "Lines of code threshold (default: 100)", "100")
-	.option("--params-threshold <number>", "Parameter count threshold (default: 5)", "5")
-	.action(wrapCommand(async (path: string, options) => {
-		const result = await smells({
-			path,
-			options: {
-				complexityThreshold: parseInt(options.complexityThreshold, 10),
-				locThreshold: parseInt(options.locThreshold, 10),
-				paramsThreshold: parseInt(options.paramsThreshold, 10),
-			},
-		});
-		output({ data: result, isJson: program.opts().json });
-	}));
+	.option(
+		"--complexity-threshold <number>",
+		"Cyclomatic complexity threshold (default: 10)",
+		"10",
+	)
+	.option(
+		"--loc-threshold <number>",
+		"Lines of code threshold (default: 100)",
+		"100",
+	)
+	.option(
+		"--params-threshold <number>",
+		"Parameter count threshold (default: 5)",
+		"5",
+	)
+	.action(
+		wrapCommand(async (path: string, options) => {
+			const result = await smells({
+				path,
+				options: {
+					complexityThreshold: parseInt(options.complexityThreshold, 10),
+					locThreshold: parseInt(options.locThreshold, 10),
+					paramsThreshold: parseInt(options.paramsThreshold, 10),
+				},
+			});
+			output({ data: result, isJson: program.opts().json });
+		}),
+	);
 
 program
 	.command("class")
 	.description("List all classes in a file with hierarchy and method details")
 	.argument("<path>", "File path to analyze")
-	.option("--sort <metric>", "Sort by: name, methods, or complexity (default: name)")
+	.option(
+		"--sort <metric>",
+		"Sort by: name, methods, or complexity (default: name)",
+	)
 	.option("--limit <number>", "Maximum number of results")
-	.action(wrapCommand(async (path: string, options) => {
-		const result = await classCommand({ path, options });
-		output({ data: result, isJson: program.opts().json });
-	}));
+	.action(
+		wrapCommand(async (path: string, options) => {
+			const result = await classCommand({ path, options });
+			output({ data: result, isJson: program.opts().json });
+		}),
+	);
 
 program
 	.command("symbol")
@@ -178,10 +213,12 @@ program
 		"--kind <type>",
 		"Filter by symbol kind (type, class, function, interface)",
 	)
-	.action(wrapCommand(async (query, options) => {
-		const result = await symbol(query, options);
-		output({ data: result, isJson: program.opts().json });
-	}));
+	.action(
+		wrapCommand(async (query, options) => {
+			const result = await symbol(query, options);
+			output({ data: result, isJson: program.opts().json });
+		}),
+	);
 
 program
 	.command("refs")
@@ -189,30 +226,36 @@ program
 	.argument("<symbol>", "Symbol name to find references for")
 	.option("--kind <type>", "Filter by symbol kind")
 	.option("--limit <number>", "Maximum number of results")
-	.action(wrapCommand(async (symbol, options) => {
-		const result = await refs(symbol, options);
-		output({ data: result, isJson: program.opts().json });
-	}));
+	.action(
+		wrapCommand(async (symbol, options) => {
+			const result = await refs(symbol, options);
+			output({ data: result, isJson: program.opts().json });
+		}),
+	);
 
 program
 	.command("deps")
 	.description("Show file dependencies")
 	.argument("<path>", "File path to analyze")
 	.option("--depth <number>", "Recursion depth (default: 1)")
-	.action(wrapCommand(async (path, options) => {
-		const result = await deps(path, options);
-		output({ data: result, isJson: program.opts().json });
-	}));
+	.action(
+		wrapCommand(async (path, options) => {
+			const result = await deps(path, options);
+			output({ data: result, isJson: program.opts().json });
+		}),
+	);
 
 program
 	.command("rdeps")
 	.description("Show reverse dependencies (what depends on this file)")
 	.argument("<path>", "File path to analyze")
 	.option("--depth <number>", "Recursion depth (default: 1)")
-	.action(wrapCommand(async (path, options) => {
-		const result = await rdeps(path, options);
-		output({ data: result, isJson: program.opts().json });
-	}));
+	.action(
+		wrapCommand(async (path, options) => {
+			const result = await rdeps(path, options);
+			output({ data: result, isJson: program.opts().json });
+		}),
+	);
 
 program
 	.command("adventure")
@@ -233,10 +276,12 @@ program
 		"--max-dependents <number>",
 		"Maximum number of dependents (default: 0)",
 	)
-	.action(wrapCommand(async (options) => {
-		const result = await leaves(options);
-		output({ data: result, isJson: program.opts().json });
-	}));
+	.action(
+		wrapCommand(async (options) => {
+			const result = await leaves(options);
+			output({ data: result, isJson: program.opts().json });
+		}),
+	);
 
 program
 	.command("exports")
@@ -253,28 +298,34 @@ program
 	.command("imports")
 	.description("Show what a file imports (direct dependencies)")
 	.argument("<path>", "File path to analyze")
-	.action(wrapCommand(async (path, options) => {
-		const result = await imports(path, options);
-		output({ data: result, isJson: program.opts().json });
-	}));
+	.action(
+		wrapCommand(async (path, options) => {
+			const result = await imports(path, options);
+			output({ data: result, isJson: program.opts().json });
+		}),
+	);
 
 program
 	.command("lost")
 	.description("Find lost symbols (potentially unused)")
 	.option("--limit <number>", "Maximum number of results (default: 50)")
-	.action(wrapCommand(async (options) => {
-		const result = await lost(options);
-		output({ data: result, isJson: program.opts().json });
-	}));
+	.action(
+		wrapCommand(async (options) => {
+			const result = await lost(options);
+			output({ data: result, isJson: program.opts().json });
+		}),
+	);
 
 program
 	.command("treasure")
 	.description("Find treasure (most referenced files and largest dependencies)")
 	.option("--limit <number>", "Maximum number of results (default: 10)")
-	.action(wrapCommand(async (options) => {
-		const result = await treasure(options);
-		output({ data: result, isJson: program.opts().json });
-	}));
+	.action(
+		wrapCommand(async (options) => {
+			const result = await treasure(options);
+			output({ data: result, isJson: program.opts().json });
+		}),
+	);
 
 program
 	.command("changes")
@@ -307,19 +358,23 @@ program
 	.command("cycles")
 	.description("Find bidirectional dependencies (A imports B, B imports A)")
 	.option("--limit <number>", "Maximum number of results (default: 50)")
-	.action(wrapCommand(async (options) => {
-		const result = await cycles(options);
-		output({ data: result, isJson: program.opts().json });
-	}));
+	.action(
+		wrapCommand(async (options) => {
+			const result = await cycles(options);
+			output({ data: result, isJson: program.opts().json });
+		}),
+	);
 
 program
 	.command("coupling")
 	.description("Find tightly coupled file pairs")
 	.option("--threshold <number>", "Minimum total coupling score (default: 5)")
-	.action(wrapCommand(async (options) => {
-		const result = await coupling(options);
-		output({ data: result, isJson: program.opts().json });
-	}));
+	.action(
+		wrapCommand(async (options) => {
+			const result = await coupling(options);
+			output({ data: result, isJson: program.opts().json });
+		}),
+	);
 
 program
 	.command("complexity")
@@ -328,27 +383,33 @@ program
 		"--sort <metric>",
 		"Sort by: complexity, symbols, or stability (default: complexity)",
 	)
-	.action(wrapCommand(async (options) => {
-		const result = await complexity(options);
-		output({ data: result, isJson: program.opts().json });
-	}));
+	.action(
+		wrapCommand(async (options) => {
+			const result = await complexity(options);
+			output({ data: result, isJson: program.opts().json });
+		}),
+	);
 
 program
 	.command("schema")
 	.description("Show database schema (tables, columns, indexes)")
-	.action(wrapCommand(async () => {
-		const result = await schema();
-		output({ data: result, isJson: program.opts().json });
-	}));
+	.action(
+		wrapCommand(async () => {
+			const result = await schema();
+			output({ data: result, isJson: program.opts().json });
+		}),
+	);
 
 program
 	.command("query")
 	.description("Execute raw SQL query (read-only)")
 	.argument("<sql>", "SQL query to execute")
-	.action(wrapCommand(async (sql) => {
-		const result = await query(sql);
-		output({ data: result, isJson: program.opts().json });
-	}));
+	.action(
+		wrapCommand(async (sql) => {
+			const result = await query(sql);
+			output({ data: result, isJson: program.opts().json });
+		}),
+	);
 
 const cookbook = program
 	.command("cookbook")

@@ -1,5 +1,9 @@
 import type Parser from "web-tree-sitter";
-import type { ClassInfo, FunctionInfo, MethodInfo } from "../../schemas/treesitter.ts";
+import type {
+	ClassInfo,
+	FunctionInfo,
+	MethodInfo,
+} from "../../schemas/treesitter.ts";
 
 export const functionQueryString = `
 (function_declaration
@@ -111,7 +115,9 @@ function countComplexity(bodyNode: Parser.Node): number {
 	return count;
 }
 
-function extractParameters(paramsNode: Parser.Node): Array<{ name: string; type: string | null }> {
+function extractParameters(
+	paramsNode: Parser.Node,
+): Array<{ name: string; type: string | null }> {
 	const params: Array<{ name: string; type: string | null }> = [];
 
 	for (const child of paramsNode.namedChildren) {
@@ -125,8 +131,7 @@ function extractParameters(paramsNode: Parser.Node): Array<{ name: string; type:
 			child.type === "optional_parameter"
 		) {
 			const nameNode =
-				child.childForFieldName("pattern") ||
-				child.childForFieldName("name");
+				child.childForFieldName("pattern") || child.childForFieldName("name");
 			const typeNode = child.childForFieldName("type");
 			if (nameNode) {
 				let paramName = nameNode.text;
@@ -192,10 +197,7 @@ export function parseFunctionCaptures(
 		const declarationNode = capture.node;
 
 		let fnNode = declarationNode;
-		if (
-			capture.name === "fn.export" ||
-			capture.name === "fn.export_arrow"
-		) {
+		if (capture.name === "fn.export" || capture.name === "fn.export_arrow") {
 			const inner =
 				fnNode.childForFieldName("declaration") ||
 				fnNode.namedChildren.find(
@@ -252,9 +254,12 @@ export function parseFunctionCaptures(
 		const isMethod = capture.name === "fn.method";
 		const isExported =
 			capture.name === "fn.export" || capture.name === "fn.export_arrow";
-		const isAsync = isAsyncFunction(fnNode.type === "variable_declarator"
-			? fnNode.namedChildren.find((c) => c.type === "arrow_function") ?? fnNode
-			: fnNode);
+		const isAsync = isAsyncFunction(
+			fnNode.type === "variable_declarator"
+				? (fnNode.namedChildren.find((c) => c.type === "arrow_function") ??
+						fnNode)
+				: fnNode,
+		);
 
 		const parameters = extractParameters(paramsCapture.node);
 		const returnType = returnCapture

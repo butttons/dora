@@ -1,8 +1,5 @@
 import { z } from "zod";
-import {
-	FileMetricsSchema,
-	FunctionInfoSchema,
-} from "./treesitter.ts";
+import { FileMetricsSchema, FunctionInfoSchema } from "./treesitter.ts";
 
 export const FileSymbolSchema = z.object({
 	name: z.string(),

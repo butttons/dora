@@ -1,9 +1,5 @@
 import type { Database } from "bun:sqlite";
-import {
-	parseIntFlag,
-	parseStringFlag,
-	setupCommand,
-} from "./shared.ts";
+import { parseIntFlag, parseStringFlag, setupCommand } from "./shared.ts";
 
 interface LsOptions {
 	limit?: number;

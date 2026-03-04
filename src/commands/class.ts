@@ -21,7 +21,9 @@ function getClassComplexity(params: { item: ClassInfo }): number {
 	);
 }
 
-export async function classCommand(params: ClassCommandParams): Promise<ClassResult> {
+export async function classCommand(
+	params: ClassCommandParams,
+): Promise<ClassResult> {
 	const { path, options = {} } = params;
 	const ctx = await setupCommand();
 	const relativePath = resolveAndValidatePath({ ctx, inputPath: path });
@@ -31,7 +33,8 @@ export async function classCommand(params: ClassCommandParams): Promise<ClassRes
 		? relativePath.split(".").pop() || ""
 		: "";
 	const extWithDot = extension ? `.${extension}` : "";
-	const languageKey = getLanguageForExtension({ extension: extWithDot }) || "unknown";
+	const languageKey =
+		getLanguageForExtension({ extension: extWithDot }) || "unknown";
 
 	const { classes } = await parseClasses({
 		filePath: absolutePath,
@@ -47,8 +50,7 @@ export async function classCommand(params: ClassCommandParams): Promise<ClassRes
 				return b.methods.length - a.methods.length;
 			case "complexity":
 				return (
-					getClassComplexity({ item: b }) -
-					getClassComplexity({ item: a })
+					getClassComplexity({ item: b }) - getClassComplexity({ item: a })
 				);
 			case "name":
 			default:
