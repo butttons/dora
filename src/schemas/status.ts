@@ -23,9 +23,13 @@ export const StatusResultSchema = z.object({
 		.optional(),
 	tree_sitter: z
 		.object({
-			available: z.boolean(),
-			language: z.string(),
-			grammar_path: z.string().nullable(),
+			grammars: z.array(
+				z.object({
+					language: z.string(),
+					available: z.boolean(),
+					grammar_path: z.string().nullable(),
+				}),
+			),
 		})
 		.optional(),
 });
