@@ -1,5 +1,34 @@
 # @butttons/dora
 
+## 2.0.0
+
+### New Commands
+
+- `dora fn <path>` — list all functions in a file with cyclomatic complexity, LOC, parameter types, return type, async/export flags, and SCIP reference count. Sort by complexity, loc, or name. Filter by minimum complexity.
+- `dora class <path>` — list all classes with inheritance, implemented interfaces, decorators, abstract flag, method list, and property count. Sort by name, method count, or total complexity.
+- `dora smells <path>` — detect code smells: high cyclomatic complexity, long functions, too many parameters, god classes (too many methods), large classes (too many properties), and TODO/FIXME/HACK comments. All thresholds configurable.
+
+### Enhancements
+
+- `dora file` now includes per-file metrics (LOC, SLOC, comment lines, blank lines, function count, avg/max complexity) and a full function list when a tree-sitter grammar is available.
+- `dora symbol` now enriches function and method results with cyclomatic complexity, parameter types, and return type from tree-sitter.
+- `dora status` now reports grammar availability for every registered language instead of only the project's primary language.
+
+### Tree-sitter Integration
+
+- Grammar discovery checks project-local `node_modules`, global bun packages, and explicit paths in `.dora/config.json` under `treeSitter.grammars`.
+- TypeScript, TSX, JavaScript, and JSX supported out of the box. Additional languages can be added by implementing a query module and registering it.
+- Parser WASM is initialized once per process. Language grammars are cached after first load. Global node_modules path is resolved once and cached.
+- A tree-sitter cookbook recipe (`dora cookbook show tree-sitter`) covers workflows, complexity thresholds, and pre-refactor checklists.
+
+### Bug Fixes
+
+- Nullish coalescing (`??`) was not counted in cyclomatic complexity. The operator is a `binary_expression` node in tree-sitter, not a standalone node type.
+- `bun.lock` (text format, Bun 1.1+) was not recognized by workspace detection. Only `bun.lockb` was checked, causing wrong `scip-typescript` flags for newer Bun projects.
+- TODO comment scanning in `dora smells` missed markers inside multi-line block comments.
+- `dora fn` and `dora class` silently fell back to the default sort on unrecognized `--sort` values instead of throwing an error.
+- Absolute paths in tree-sitter commands were built with string interpolation instead of `path.resolve`, which is fragile on Windows and with trailing slashes.
+
 ## 1.7.0
 
 ### Minor Changes
